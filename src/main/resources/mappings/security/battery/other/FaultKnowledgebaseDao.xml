@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.security.battery.other.FaultKnowledgebaseDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.security.battery.other.FaultKnowledgebase">
+    <id column="base_id" jdbcType="VARCHAR" property="baseId" />
+    <result column="event_name" jdbcType="VARCHAR" property="eventName" />
+    <result column="warning_status" jdbcType="INTEGER" property="warningStatus" />
+    <result column="warning_type" jdbcType="INTEGER" property="warningType" />
+    <result column="warning_level" jdbcType="INTEGER" property="warningLevel" />
+    <result column="warning_time" jdbcType="TIMESTAMP" property="warningTime" />
+    <result column="reporting_time" jdbcType="TIMESTAMP" property="reportingTime" />
+    <result column="reporting_person" jdbcType="VARCHAR" property="reportingPerson" />
+    <result column="processed_time" jdbcType="TIMESTAMP" property="processedTime" />
+    <result column="processe_desc" jdbcType="VARCHAR" property="processeDesc" />
+    <result column="processe_result" jdbcType="VARCHAR" property="processeResult" />
+    <result column="processe_person" jdbcType="VARCHAR" property="processePerson" />
+    <result column="is_risk" jdbcType="INTEGER" property="isRisk" />
+    <result column="operator_reg_address" jdbcType="VARCHAR" property="operatorRegAddress" />
+    <result column="contact_person" jdbcType="VARCHAR" property="contactPerson" />
+    <result column="appendix" jdbcType="VARCHAR" property="appendix" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List">
+    base_id, event_name, warning_status, warning_type, warning_level, warning_time, reporting_time, 
+    reporting_person, processed_time, processe_desc, processe_result, processe_person, 
+    is_risk,operator_reg_address,contact_person, appendix
+  </sql>
+ 
+  <select id="queryAnaFaultKnowledgebase" resultMap="BaseResultMap">
+  	select 
+  		<include refid="Base_Column_List" />
+    from 
+    	sec_fault_knowledgebase
+    where
+    	1=1 
+    	<if test="param.eventName != null and param.eventName != ''">
+	      and event_name like TRIM(REPLACE(CONCAT('%',#{param.eventName},'%'),' ',''))
+	  	</if>
+    	<if test="param.warningStatus != null and param.warningStatus != ''">
+	      and warning_status =#{param.warningStatus}
+	  	</if>
+    	<if test="param.warningType != null and param.warningType != ''">
+	      and warning_type =#{param.warningType}
+	  	</if>
+    	<if test="param.warningLevel != null and param.warningLevel != ''">
+	      and warning_level =#{param.warningLevel}
+	  	</if>
+    	<if test="param.startTime != null">
+          and reporting_time &gt;= #{param.startTime,jdbcType=TIMESTAMP}
+      </if>
+    	<if test="param.endTime != null">
+          and reporting_time &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+      </if>
+      ORDER BY update_time DESC
+  </select>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.security.battery.other.FaultKnowledgebase">
+    insert into sec_fault_knowledgebase
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="baseId != null">
+        base_id,
+      </if>
+      <if test="eventName != null">
+        event_name,
+      </if>
+      <if test="warningStatus != null">
+        warning_status,
+      </if>
+      <if test="warningType != null">
+        warning_type,
+      </if>
+      <if test="warningLevel != null">
+        warning_level,
+      </if>
+      <if test="warningTime != null">
+        warning_time,
+      </if>
+      <if test="reportingTime != null">
+        reporting_time,
+      </if>
+      <if test="reportingPerson != null">
+        reporting_person,
+      </if>
+      <if test="processedTime != null">
+        processed_time,
+      </if>
+      <if test="processeDesc != null">
+        processe_desc,
+      </if>
+      <if test="processeResult != null">
+        processe_result,
+      </if>
+      <if test="processePerson != null">
+        processe_person,
+      </if>
+      <if test="isRisk != null">
+        is_risk,
+      </if>
+      <if test="operatorRegAddress != null">
+        operator_reg_address,
+      </if>
+      <if test="contactPerson != null">
+        contact_person,
+      </if>
+      <if test="appendix != null">
+        appendix,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="baseId != null">
+        #{baseId,jdbcType=VARCHAR},
+      </if>
+      <if test="eventName != null">
+        #{eventName,jdbcType=VARCHAR},
+      </if>
+      <if test="warningStatus != null">
+        #{warningStatus,jdbcType=INTEGER},
+      </if>
+      <if test="warningType != null">
+        #{warningType,jdbcType=INTEGER},
+      </if>
+      <if test="warningLevel != null">
+        #{warningLevel,jdbcType=INTEGER},
+      </if>
+      <if test="warningTime != null">
+        #{warningTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportingTime != null">
+        #{reportingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportingPerson != null">
+        #{reportingPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="processedTime != null">
+        #{processedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processeDesc != null">
+        #{processeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="processeResult != null">
+        #{processeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="processePerson != null">
+        #{processePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="isRisk != null">
+        #{isRisk,jdbcType=INTEGER},
+      </if>
+      <if test="operatorRegAddress != null">
+        #{operatorRegAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPerson != null">
+        #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="appendix != null">
+        #{appendix,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.security.battery.other.FaultKnowledgebase">
+    update sec_fault_knowledgebase
+    <set>
+      <if test="eventName != null">
+        event_name = #{eventName,jdbcType=VARCHAR},
+      </if>
+      <if test="warningStatus != null">
+        warning_status = #{warningStatus,jdbcType=INTEGER},
+      </if>
+      <if test="warningType != null">
+        warning_type = #{warningType,jdbcType=INTEGER},
+      </if>
+      <if test="warningLevel != null">
+        warning_level = #{warningLevel,jdbcType=INTEGER},
+      </if>
+      <if test="warningTime != null">
+        warning_time = #{warningTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportingTime != null">
+        reporting_time = #{reportingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reportingPerson != null">
+        reporting_person = #{reportingPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="processedTime != null">
+        processed_time = #{processedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processeDesc != null">
+        processe_desc = #{processeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="processeResult != null">
+        processe_result = #{processeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="processePerson != null">
+        processe_person = #{processePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="isRisk != null">
+        is_risk = #{isRisk,jdbcType=INTEGER},
+      </if>
+      <if test="operatorRegAddress != null">
+        operator_reg_address = #{operatorRegAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPerson != null">
+        contact_person = #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="appendix != null">
+        appendix = #{appendix,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where base_id = #{baseId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sec_fault_knowledgebase
+    where base_id = #{baseId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sec_fault_knowledgebase
+    where base_id = #{baseId,jdbcType=VARCHAR}
+  </delete>
+</mapper>

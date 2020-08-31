@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: cpmt-config-server
+      fail-fast: true
+      name: cc
+      profile: config
+      label:
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://rocket1:28000/eureka/

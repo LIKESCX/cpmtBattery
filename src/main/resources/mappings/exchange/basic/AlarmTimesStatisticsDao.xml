@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.AlarmTimesStatisticsDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.AlarmTimesStatistics">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="alarm_type" jdbcType="VARCHAR" property="alarmType" />
+    <result column="alarm_level" jdbcType="VARCHAR" property="alarmLevel" />
+    <result column="alarm_times" jdbcType="INTEGER" property="alarmTimes" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_send" jdbcType="INTEGER" property="isSend" />
+  </resultMap>
+
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmTimesStatistics">
+    update exc_alarm_times_statistics
+    set 
+      alarm_times = #{alarmTimes,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+   <select id="selectByCondition" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmTimesStatistics" resultMap="BaseResultMap">
+  	 SELECT 
+  	 	id, 
+  	 	alarm_times
+  	  FROM exc_alarm_times_statistics
+  	  WHERE 
+  	  	operator_id = #{operatorId,jdbcType=VARCHAR} 
+  	  AND
+  	  	station_id = #{stationId,jdbcType=VARCHAR}
+  	  AND 
+  	  	alarm_type = #{alarmType,jdbcType=VARCHAR}
+  	  AND 
+  	  	alarm_level = #{alarmLevel,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_alarm_times_statistics where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmTimesStatistics">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exc_alarm_times_statistics (operator_id, station_id, alarm_type, 
+      alarm_level, alarm_times, in_time
+      )
+    values (#{operatorId,jdbcType=VARCHAR}, #{stationId,jdbcType=VARCHAR}, #{alarmType,jdbcType=VARCHAR}, 
+      #{alarmLevel,jdbcType=VARCHAR}, #{alarmTimes,jdbcType=INTEGER}, #{inTime,jdbcType=VARCHAR}
+      )
+  </insert>
+</mapper>

@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.BmsInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.BmsInfo" >
+    <result column="operator_id" property="operatorID" jdbcType="VARCHAR" />
+    <result column="connector_id" property="connectorID" jdbcType="VARCHAR" />
+    <result column="cid" property="cid" jdbcType="VARCHAR" />
+    <result column="eid" property="eid" jdbcType="VARCHAR" />
+    <result column="equipment_id" property="equipmentID" jdbcType="VARCHAR" />
+    <result column="bms_code" property="bMSCode" jdbcType="VARCHAR" />
+    <result column="bms_ver" property="bMSVer" jdbcType="VARCHAR" />
+    <result column="max_charge_current" property="maxChargeCurrent" jdbcType="VARCHAR" />
+    <result column="max_charge_cell_voltage" property="maxChargeCellVoltage" jdbcType="VARCHAR" />
+    <result column="max_temp" property="maxTemp" jdbcType="VARCHAR" />
+    <result column="rated_capacity" property="ratedCapacity" jdbcType="VARCHAR" />
+    <result column="tatal_voltage" property="tatalVoltage" jdbcType="VARCHAR" />
+    <result column="total_current" property="totalCurrent" jdbcType="VARCHAR" />
+    <result column="soc" property="soc" jdbcType="VARCHAR" />
+    <result column="alarm_info_id" property="alarmInfoId" jdbcType="INTEGER" />
+    <result column="connector_proc_data_id" property="connectorProcDataId" jdbcType="INTEGER" />
+    <result column="voltage_h" property="voltageH" jdbcType="VARCHAR" />
+    <result column="voltage_l" property="voltageL" jdbcType="VARCHAR" />
+    <result column="tempture_h" property="temptureH" jdbcType="VARCHAR" />
+    <result column="tempture_l" property="temptureL" jdbcType="VARCHAR" />
+    <result column="start_charging_time" property="startChargingTime" jdbcType="TIMESTAMP" />
+    <result column="charging_session_min" property="chargingSessionMin" jdbcType="INTEGER" />
+    <result column="received_time" property="receivedTime" jdbcType="TIMESTAMP" />
+    <result column="in_time" property="inTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    operator_id,connector_id, bms_code, bms_ver, max_charge_current, max_charge_cell_voltage, max_temp, 
+    rated_capacity, tatal_voltage, total_current, soc, voltage_h, voltage_l, tempture_h, 
+    tempture_l, received_time, in_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_bms_info
+    where connector_id = #{connectorId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from exc_bms_info
+    where connector_id = #{connectorId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.BmsInfo" >
+    insert into exc_bms_info (connector_id, bms_code, bms_ver, 
+      max_charge_current, max_charge_cell_voltage, 
+      max_temp, rated_capacity, tatal_voltage, 
+      total_current, soc, voltage_h, 
+      voltage_l,connector_proc_data_id, tempture_h, tempture_l, 
+      received_time, in_time)
+    values (#{connectorId,jdbcType=VARCHAR}, #{bMSCode,jdbcType=VARCHAR}, #{bMSVer,jdbcType=VARCHAR}, 
+      #{maxChargeCurrent,jdbcType=VARCHAR}, #{maxChargeCellVoltage,jdbcType=VARCHAR}, 
+      #{maxTemp,jdbcType=VARCHAR}, #{ratedCapacity,jdbcType=VARCHAR}, #{tatalVoltage,jdbcType=VARCHAR}, 
+      #{totalCurrent,jdbcType=VARCHAR}, #{soc,jdbcType=VARCHAR}, #{voltageH,jdbcType=VARCHAR}, 
+      #{voltageL,jdbcType=VARCHAR}, #{temptureH,jdbcType=VARCHAR}, #{temptureL,jdbcType=VARCHAR}, 
+      #{receivedTime,jdbcType=TIMESTAMP}, #{inTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.BmsInfo">
+    <!-- <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey> -->
+    insert into exc_bms_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="eid != null">
+        eid,
+      </if>
+      <if test="equipmentID != null">
+        equipment_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="connectorID != null">
+        connector_id,
+      </if>
+      <if test="bMSCode != null">
+        bms_code,
+      </if>
+      <if test="bMSVer != null">
+        bms_ver,
+      </if>
+      <if test="maxChargeCurrent != null">
+        max_charge_current,
+      </if>
+      <if test="maxChargeCellVoltage != null">
+        max_charge_cell_voltage,
+      </if>
+      <if test="maxTemp != null">
+        max_temp,
+      </if>
+      <if test="ratedCapacity != null">
+        rated_capacity,
+      </if>
+      <if test="tatalVoltage != null">
+        tatal_voltage,
+      </if>
+      <if test="totalCurrent != null">
+        total_current,
+      </if>
+      <if test="soc != null">
+        soc,
+      </if>
+      <if test="voltageH != null">
+        voltage_h,
+      </if>
+      <if test="voltageL != null">
+        voltage_l,
+      </if>
+      <if test="temptureH != null">
+        tempture_h,
+      </if>
+      <if test="temptureL != null">
+        tempture_l,
+      </if>
+      <if test="sourceType != null">
+        source_type,
+      </if>
+      <if test="alarmInfoId != null">
+        alarm_info_id,
+      </if>
+      <if test="connectorProcDataId != null">
+        connector_proc_data_id,
+      </if>
+      <if test="startChargingTime != null">
+        start_charging_time,
+      </if>
+      <if test="chargingSessionMin != null">
+        charging_session_min,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+       <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cid != null">
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="eid != null">
+        #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentID != null">
+        #{equipmentID,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null">
+         #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorID != null">
+        #{connectorID,jdbcType=VARCHAR},
+      </if>
+      <if test="bMSCode != null">
+        #{bMSCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bMSVer != null">
+        #{bMSVer,jdbcType=VARCHAR},
+      </if>
+      <if test="maxChargeCurrent != null">
+        #{maxChargeCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="maxChargeCellVoltage != null">
+        #{maxChargeCellVoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="maxTemp != null">
+        #{maxTemp,jdbcType=VARCHAR},
+      </if>
+      <if test="ratedCapacity != null">
+        #{ratedCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="tatalVoltage != null">
+        #{tatalVoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCurrent != null">
+        #{totalCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="soc != null">
+        #{soc,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageH != null">
+        #{voltageH,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageL != null">
+        #{voltageL,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureH != null">
+        #{temptureH,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureL != null">
+        #{temptureL,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmInfoId != null">
+         #{alarmInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="connectorProcDataId != null">
+        #{connectorProcDataId,jdbcType=INTEGER},
+      </if>
+      <if test="startChargingTime != null">
+      	#{startChargingTime,jdbcType=INTEGER},
+      </if>
+      <if test="chargingSessionMin != null">
+        #{chargingSessionMin,jdbcType=INTEGER},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.BmsInfo" >
+    update exc_bms_info
+    <set >
+      <if test="bMSCode != null" >
+        bms_code = #{bMSCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bMSVer != null" >
+        bms_ver = #{bMSVer,jdbcType=VARCHAR},
+      </if>
+      <if test="MaxChargeCurrent != null" >
+        max_charge_current = #{MaxChargeCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="MaxChargeCellVoltage != null" >
+        max_charge_cell_voltage = #{MaxChargeCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="MaxTemp != null" >
+        max_temp = #{MaxTemp,jdbcType=VARCHAR},
+      </if>
+      <if test="RatedCapacity != null" >
+        rated_capacity = #{RatedCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="TatalVoltage != null" >
+        tatal_voltage = #{TatalVoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="TotalCurrent != null" >
+        total_current = #{TotalCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="Soc != null" >
+        soc = #{Soc,jdbcType=VARCHAR},
+      </if>
+      <if test="VoltageH != null" >
+        voltage_h = #{VoltageH,jdbcType=VARCHAR},
+      </if>
+      <if test="VoltageL != null" >
+        voltage_l = #{VoltageL,jdbcType=VARCHAR},
+      </if>
+      <if test="TemptureH != null" >
+        tempture_h = #{TemptureH,jdbcType=VARCHAR},
+      </if>
+      <if test="TemptureL != null" >
+        tempture_l = #{TemptureL,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null" >
+        received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null" >
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where connector_id = #{ConnectorID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByConditions" parameterType="com.cpit.cpmt.dto.exchange.basic.BmsInfo" >
+    update exc_bms_info
+    <set >
+      <if test="bMSCode != null" >
+        bms_code = #{bMSCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bMSVer != null" >
+        bms_ver = #{bMSVer,jdbcType=VARCHAR},
+      </if>
+      <if test="maxChargeCurrent != null" >
+        max_charge_current = #{maxChargeCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="maxChargeCellVoltage != null" >
+        max_charge_cell_voltage = #{maxChargeCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="maxTemp != null" >
+        max_temp = #{maxTemp,jdbcType=VARCHAR},
+      </if>
+      <if test="ratedCapacity != null" >
+        rated_capacity = #{ratedCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="tatalVoltage != null" >
+        tatal_voltage = #{tatalVoltage,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCurrent != null" >
+        total_current = #{totalCurrent,jdbcType=VARCHAR},
+      </if>
+      <if test="soc != null" >
+        soc = #{soc,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageH != null" >
+        voltage_h = #{voltageH,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageL != null" >
+        voltage_l = #{voltageL,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureH != null" >
+        tempture_h = #{temptureH,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureL != null" >
+        tempture_l = #{temptureL,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null" >
+        received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null" >
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where connector_id = #{connectorID,jdbcType=VARCHAR} and connector_proc_data_id=#{connectorProcDataId,jdbcType=INTEGER}
+  </update>
+  <!-- <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.BmsInfo" >
+    update exc_bms_info
+    set bms_code = #{bMSCode,jdbcType=VARCHAR},
+      bms_ver = #{bMSVer,jdbcType=VARCHAR},
+      max_charge_current = #{maxChargeCurrent,jdbcType=VARCHAR},
+      max_charge_cell_voltage = #{maxChargeCellVoltage,jdbcType=VARCHAR},
+      max_temp = #{maxTemp,jdbcType=VARCHAR},
+      rated_capacity = #{ratedCapacity,jdbcType=VARCHAR},
+      tatal_voltage = #{tatalVoltage,jdbcType=VARCHAR},
+      total_current = #{totalCurrent,jdbcType=VARCHAR},
+      soc = #{soc,jdbcType=VARCHAR},
+      voltage_h = #{voltageH,jdbcType=VARCHAR},
+      voltage_l = #{voltageL,jdbcType=VARCHAR},
+      tempture_h = #{temptureH,jdbcType=VARCHAR},
+      tempture_l = #{temptureL,jdbcType=VARCHAR},
+      received_time = #{receivedTime,jdbcType=VARCHAR},
+      in_time = #{inTime,jdbcType=VARCHAR}
+    where connector_id = #{connectorId,jdbcType=VARCHAR} and 
+  </update> -->
+
+  <select id="queryBmsequipmentIDList" resultMap="BaseResultMap">
+    SELECT DISTINCT equipment_id,operator_id
+    from  exc_bms_info
+    where 1=1
+    <if test="beginTime != null">
+      <![CDATA[ and in_time >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and in_time <= #{endTime} ]]>
+    </if>
+  </select>
+
+  <select id="queryBmsAverageList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from  exc_bms_info
+    where 1=1
+    <if test="beginTime != null">
+      <![CDATA[ and in_time >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and in_time <= #{endTime} ]]>
+    </if>
+    <if test="equipmentID!='' and equipmentID!=null ">
+      and equipment_id=#{equipmentID}
+    </if>
+    <if test="operatorID!='' and operatorID!=null ">
+      and operator_id=#{operatorID}
+    </if>
+
+  </select>
+
+  <select id="queryBmsHistoryList" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from  exc_bms_info
+    where 1=1
+    <if test="beginTime != null">
+      <![CDATA[ and in_time >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and in_time <= #{endTime} ]]>
+    </if>
+    <if test="equipmentID!='' and equipmentID!=null ">
+      and equipment_id=#{equipmentID}
+    </if>
+    <if test="operatorID!='' and operatorID!=null ">
+      and operator_id=#{operatorID}
+    </if>
+    <if test="stationId != null">
+      and station_id=#{stationId}
+    </if>
+    <if test="connectorId != null">
+      and connector_id=#{connectorId}
+    </if>
+  </select>
+  
+  <select id="queryBatteryBasicInformation" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select 
+  		bms_code,
+  		bms_ver,
+  		rated_capacity
+  	from  exc_bms_info
+  	where  bms_code = #{bMSCode,jdbcType=VARCHAR} and rated_capacity IS NOT NULL LIMIT 1;
+  </select>
+  
+  <select id="queryBmsInfoByAlarmInfoId" resultMap="BaseResultMap">
+  	select 
+  		bms_code
+  	from  exc_bms_info
+  	where  alarm_info_id = #{param.alarmInfoId};
+  </select>
+</mapper>

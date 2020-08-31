@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.EventInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.EventInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="station_id" property="stationID" jdbcType="VARCHAR" />
+    <result column="operator_id" property="operatorID" jdbcType="VARCHAR" />
+    <result column="equipment_owner_id" property="equipmentOwnerID" jdbcType="VARCHAR" />
+    <result column="station_name" property="stationName" jdbcType="VARCHAR" />
+    <result column="event_type" property="eventType" jdbcType="VARCHAR" />
+    <result column="event_code" property="eventCode" jdbcType="VARCHAR" />
+    <result column="event_time" property="eventTime" jdbcType="VARCHAR" />
+    <result column="note_string" property="noteString" jdbcType="VARCHAR" />
+    <result column="received_time" property="receivedTime" jdbcType="TIMESTAMP" />
+    <result column="in_time" property="inTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, station_id, operator_id, equipment_owner_id, station_name, event_type, event_code, 
+    event_time, note_string, received_time, in_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_event_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.exchange.basic.EventInfo" >
+    select
+    <include refid="Base_Column_List" />
+    from exc_event_info
+    where 1=1
+    <if test="stationID != null">
+      and station_id = #{stationID}
+    </if>
+    <if test="operatorID != null">
+      and operator_id = #{operatorID}
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from exc_event_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.EventInfo" >
+    insert into exc_event_info (id, station_id, operator_id, 
+      equipment_owner_id, station_name, event_type, 
+      event_code, event_time, note_string, 
+      received_time, in_time)
+    values (#{id,jdbcType=INTEGER}, #{stationId,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, 
+      #{equipmentOwnerId,jdbcType=VARCHAR}, #{stationName,jdbcType=VARCHAR}, #{eventType,jdbcType=VARCHAR}, 
+      #{eventCode,jdbcType=VARCHAR}, #{eventTime,jdbcType=VARCHAR}, #{noteString,jdbcType=VARCHAR}, 
+      #{receivedTime,jdbcType=TIMESTAMP}, #{inTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.EventInfo">
+    <!-- <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey> -->
+    insert into exc_event_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="stationID != null">
+        station_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="equipmentOwnerID != null">
+        equipment_owner_id,
+      </if>
+      <if test="stationName != null">
+        station_name,
+      </if>
+      <if test="eventType != null">
+        event_type,
+      </if>
+      <if test="eventCode != null">
+        event_code,
+      </if>
+      <if test="eventTime != null">
+        event_time,
+      </if>
+      <if test="noteString != null">
+        note_string,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+         #{id,jdbcType=INTEGER},
+      </if>
+      <if test="stationID != null">
+        #{stationID,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentOwnerID != null">
+        #{equipmentOwnerID,jdbcType=VARCHAR},
+      </if>
+      <if test="stationName != null">
+        #{stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="eventType != null">
+        #{eventType,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCode != null">
+        #{eventCode,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTime != null">
+        #{eventTime,jdbcType=VARCHAR},
+      </if>
+      <if test="noteString != null">
+        #{noteString,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.EventInfo" >
+    update exc_event_info
+    <set >
+      <if test="stationId != null" >
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentOwnerId != null" >
+        equipment_owner_id = #{equipmentOwnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationName != null" >
+        station_name = #{stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="eventType != null" >
+        event_type = #{eventType,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCode != null" >
+        event_code = #{eventCode,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTime != null" >
+        event_time = #{eventTime,jdbcType=VARCHAR},
+      </if>
+      <if test="noteString != null" >
+        note_string = #{noteString,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null" >
+        received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null" >
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.EventInfo" >
+    update exc_event_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      operator_id = #{operatorId,jdbcType=VARCHAR},
+      equipment_owner_id = #{equipmentOwnerId,jdbcType=VARCHAR},
+      station_name = #{stationName,jdbcType=VARCHAR},
+      event_type = #{eventType,jdbcType=VARCHAR},
+      event_code = #{eventCode,jdbcType=VARCHAR},
+      event_time = #{eventTime,jdbcType=VARCHAR},
+      note_string = #{noteString,jdbcType=VARCHAR},
+      received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      in_time = #{inTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- checkCurrentEventValid -->
+  <select id="checkCurrentEventValid" parameterType="java.lang.Integer" resultType="com.cpit.cpmt.dto.exchange.basic.EventItem">
+  	select
+  	 event_code as eventCode,
+  	 event_code as eventType
+  	from 
+  	exc_event_item 
+  	where event_code = #{eventCode,jdbcType=INTEGER} and event_type = #{eventType,jdbcType=INTEGER}
+  </select>
+  <!-- 新加入的sql 批量插入推送的事件信息 -->
+  <!-- <insert id="batchInsert" 
+  			parameterType="java.util.List">
+  		INSERT INTO exc_event_info
+	    (
+	    station_id,
+  		operator_id,
+		equipment_owner_id,
+  		balance,
+  		object_type,
+  		pre_use,
+  		write_off,
+  		serv_id,
+  		change_date
+  		)
+		VALUES
+  		<foreach collection="list" item="item" index="index" separator=",">
+  			(   
+  				#{item.acctBalanceId,jdbcType=BIGINT},
+	  			#{item.balanceTypeId,jdbcType=INTEGER},
+	  			#{item.acctId,jdbcType=INTEGER},
+	  			#{item.balance,jdbcType=DECIMAL},
+	  			#{item.objectType,jdbcType=VARCHAR},
+	  			#{item.preUse,jdbcType=DECIMAL},
+	  			#{item.writeOff,jdbcType=DECIMAL},
+	  			#{item.servId,jdbcType=INTEGER},
+	  			#{item.changeDate,jdbcType=TIMESTAMP}
+  			) 
+  		</foreach>
+  	</insert> -->
+</mapper>

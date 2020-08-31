@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.security.EquipmentSafeWarningDao">
+    <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.security.EquipmentSafeWarning">
+        <id column="warning_id" jdbcType="INTEGER" property="warningId"/>
+        <result column="operator_id" jdbcType="VARCHAR" property="operatorId"/>
+        <result column="station_id" jdbcType="VARCHAR" property="stationId"/>
+        <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId"/>
+        <result column="risk_assessment_result" jdbcType="VARCHAR" property="riskAssessmentResult"/>
+        <result column="screening_result" jdbcType="VARCHAR" property="screeningResult"/>
+        <result column="warning_level" jdbcType="INTEGER" property="warningLevel"/>
+        <result column="sms_receiver" jdbcType="VARCHAR" property="smsReceiver"/>
+        <result column="warning_time" jdbcType="TIMESTAMP" property="warningTime"/>
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime"/>
+        <result column="send_sms_status" jdbcType="INTEGER" property="sendSmsStatus"/>
+        <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+        <result column="station_Name" jdbcType="VARCHAR" property="stationName"/>
+        <result column="area_Code" jdbcType="VARCHAR" property="areaCode"/>
+        <result column="station_Street" jdbcType="VARCHAR" property="stationStreet"/>
+        <result column="area_Name" jdbcType="VARCHAR" property="areaName"/>
+        <result column="station_Street_Name" jdbcType="VARCHAR" property="stationStreetName"/>
+        <result column="equipment_Name" jdbcType="VARCHAR" property="equipmentName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        warning_id, operator_id, station_id, equipment_id, risk_assessment_result, screening_result,
+    warning_level, sms_receiver, warning_time,send_sms_status,send_time,operator_name,station_Name,area_Code,station_Street,area_Name,station_Street_Name,equipment_Name
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select warning_id,
+               a.operator_id,
+               a.station_id,
+               a.equipment_id,
+               risk_assessment_result,
+               screening_result,
+               warning_level,
+               sms_receiver,
+               warning_time,
+               send_sms_status,
+               send_time,
+               b.operator_name,
+               c.station_Name,
+               c.area_Code,
+               c.station_Street,
+               f.area_Name,
+               e.street_name as station_Street_Name,
+               d.equipment_Name
+        from sec_equipment_safe_warning a
+                 left join exc_operator_info b on a.operator_id = b.operator_id
+                 left join exc_station_info c on a.operator_id = c.operator_id and a.station_id = c.station_id
+                 left join exc_equipment_info d on a.operator_id = d.operator_id and a.equipment_id = d.equipment_id
+                 left join sys_area_street e on c.area_Code = e.area_Code and c.station_Street = e.street_id
+                 left join sys_area_dict f on c.area_Code = f.area_Code
+        where warning_id = #{warningId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from sec_equipment_safe_warning
+        where warning_id = #{warningId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.security.EquipmentSafeWarning">
+        insert into sec_equipment_safe_warning
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="warningId != null">
+                warning_id,
+            </if>
+            <if test="operatorId != null">
+                operator_id,
+            </if>
+            <if test="stationId != null">
+                station_id,
+            </if>
+            <if test="equipmentId != null">
+                equipment_id,
+            </if>
+            <if test="riskAssessmentResult != null">
+                risk_assessment_result,
+            </if>
+            <if test="screeningResult != null">
+                screening_result,
+            </if>
+            <if test="warningLevel != null">
+                warning_level,
+            </if>
+            <if test="smsReceiver != null">
+                sms_receiver,
+            </if>
+            <if test="warningTime != null">
+                warning_time,
+            </if>
+            <if test="warningTime == null">
+                warning_time,
+            </if>
+            <if test="sendSmsStatus != null">
+                send_Sms_Status,
+            </if>
+            <if test="sendTime != null">
+                send_Time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="warningId != null">
+                #{warningId,jdbcType=INTEGER},
+            </if>
+            <if test="operatorId != null">
+                #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="stationId != null">
+                #{stationId,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentId != null">
+                #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="riskAssessmentResult != null">
+                #{riskAssessmentResult,jdbcType=VARCHAR},
+            </if>
+            <if test="screeningResult != null">
+                #{screeningResult,jdbcType=VARCHAR},
+            </if>
+            <if test="warningLevel != null">
+                #{warningLevel,jdbcType=INTEGER},
+            </if>
+            <if test="smsReceiver != null">
+                #{smsReceiver,jdbcType=VARCHAR},
+            </if>
+            <if test="warningTime != null">
+                #{warningTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="warningTime == null">
+                now(),
+            </if>
+            <if test="sendSmsStatus != null">
+                #{sendSmsStatus,jdbcType=INTEGER},
+            </if>
+            <if test="sendTime != null">
+                #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.security.EquipmentSafeWarning">
+        update sec_equipment_safe_warning
+        <set>
+            <if test="operatorId != null">
+                operator_id = #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="stationId != null">
+                station_id = #{stationId,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentId != null">
+                equipment_id = #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="riskAssessmentResult != null">
+                risk_assessment_result = #{riskAssessmentResult,jdbcType=VARCHAR},
+            </if>
+            <if test="screeningResult != null">
+                screening_result = #{screeningResult,jdbcType=VARCHAR},
+            </if>
+            <if test="warningLevel != null">
+                warning_level = #{warningLevel,jdbcType=INTEGER},
+            </if>
+            <if test="smsReceiver != null">
+                sms_receiver = #{smsReceiver,jdbcType=VARCHAR},
+            </if>
+            <if test="warningTime != null">
+                warning_time = #{warningTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sendSmsStatus != null">
+                send_Sms_Status = #{sendSmsStatus,jdbcType=INTEGER},
+            </if>
+            <if test="sendTime != null">
+                send_Time = #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where warning_id = #{warningId,jdbcType=INTEGER}
+    </update>
+
+    <select id="getEquipmentSafeWarningListByEquipmentSafeWarning"
+            parameterType="com.cpit.cpmt.dto.security.EquipmentSafeWarning" resultMap="BaseResultMap">
+        select
+        warning_id, a.operator_id, a.station_id, a.equipment_id, risk_assessment_result, screening_result,
+        warning_level, sms_receiver,
+        warning_time,send_Sms_Status,send_time,b.operator_name,c.station_Name,c.area_Code,c.station_Street,f.area_Name,e.street_name
+        as station_Street_Name,d.equipment_Name
+        from sec_equipment_safe_warning a
+        left join exc_operator_info b on a.operator_id = b.operator_id
+        left join exc_station_info c on a.operator_id = c.operator_id and a.station_id = c.station_id
+        left join exc_equipment_info d on a.operator_id = d.operator_id and a.equipment_id = d.equipment_id
+        left join sys_area_street e on c.area_Code = e.area_Code and c.station_Street = e.street_id
+        left join sys_area_dict f on c.area_Code = f.area_Code
+        <trim prefix="where" suffixOverrides="and">
+            <if test="warningId != null">
+                warning_id = #{warningId,jdbcType=INTEGER} and
+            </if>
+            <if test="operatorId != null">
+                a.operator_id = #{operatorId,jdbcType=VARCHAR} and
+            </if>
+            <if test="stationId != null">
+                a.station_id = #{stationId,jdbcType=VARCHAR} and
+            </if>
+            <if test="equipmentId != null">
+                a.equipment_id = #{equipmentId,jdbcType=VARCHAR} and
+            </if>
+            <if test="riskAssessmentResult != null">
+                a.risk_assessment_result = #{riskAssessmentResult,jdbcType=VARCHAR} and
+            </if>
+            <if test="screeningResult != null">
+                screening_result= #{screeningResult,jdbcType=VARCHAR} and
+            </if>
+            <if test="warningLevel != null">
+                warning_level = #{warningLevel,jdbcType=INTEGER} and
+            </if>
+            <if test="smsReceiver != null">
+                sms_receiver= #{smsReceiver,jdbcType=VARCHAR} and
+            </if>
+            <if test="warningTime != null">
+                warning_Time = #{warningTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="sendSmsStatus != null">
+                send_Sms_Status = #{sendSmsStatus,jdbcType=INTEGER} and
+            </if>
+            <if test="startTime != null">
+                a.warning_Time &gt;= #{startTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="endTime != null">
+                a.warning_Time &lt;= #{endTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="sendTime != null">
+                send_time = #{sendTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="areaList != null and areaList.size() != 0">
+                c.area_code in
+                <foreach collection="areaList" item="area" index="index" open="(" close=")" separator=",">
+                    #{area.areaCode}
+                </foreach>
+                and
+            </if>
+        </trim>
+        order by a.warning_Time desc
+    </select>
+
+    <select id="selectStationWarning" resultType="java.lang.Integer">
+        select count(0)
+        from sec_equipment_safe_warning
+        where station_id = #{stationId}
+          and operator_id = #{operatorId}
+    </select>
+
+    <select id="selectOperatorESWListForNotice" parameterType="com.cpit.cpmt.dto.security.EquipmentSafeWarning"
+            resultType="map">
+        SELECT a.operator_id as operatorId,
+        f.operator_name as operatorName,
+        a.sms_receiver as smsReceiver,
+        b.warning1Count,
+        c.warning2Count,
+        d.warning3Count,
+        e.warning4Count
+        FROM (SELECT m.operator_id, sms_receiver FROM sec_equipment_safe_warning m
+        <if test="areaList != null and areaList.size() != 0">
+            inner join (select operator_id from exc_station_info where area_code in
+            <foreach collection="areaList" item="area" index="index" open="(" close=")" separator=",">
+                #{area.areaCode}
+            </foreach>)n on m.operator_id = n.operator_id
+        </if>
+        WHERE warning_level = 1 GROUP BY operator_id HAVING count(1) > 0) a
+        LEFT JOIN (SELECT operator_id, warning_level, count(1) AS warning1Count FROM sec_equipment_safe_warning WHERE warning_level = 1 GROUP BY operator_id, warning_level) b ON a.operator_id = b.operator_id
+        LEFT JOIN (SELECT operator_id, warning_level, count(1) AS warning2Count FROM sec_equipment_safe_warning WHERE warning_level = 2  GROUP BY operator_id, warning_level) c ON a.operator_id = c.operator_id
+        LEFT JOIN (SELECT operator_id, warning_level, count(1) AS warning3Count FROM sec_equipment_safe_warning WHERE warning_level = 3 GROUP BY operator_id, warning_level) d ON a.operator_id = d.operator_id
+        LEFT JOIN (SELECT operator_id, warning_level, count(1) AS warning4Count FROM sec_equipment_safe_warning WHERE warning_level = 4 GROUP BY operator_id, warning_level) e ON a.operator_id = e.operator_id
+        left join exc_operator_info f on a.operator_id = f.operator_id
+    </select>
+
+
+</mapper>

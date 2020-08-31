@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.ExcParameterCtlMapper">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcParameterCtl">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+    <result column="status_cd" jdbcType="TINYINT" property="statusCd" />
+    <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
+    <result column="server_port" jdbcType="VARCHAR" property="serverPort" />
+    <result column="uptdate" jdbcType="TIMESTAMP" property="uptdate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, server_name, status_cd, server_ip, server_port, uptdate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_parameter_ctl
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_parameter_ctl
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcParameterCtl">
+    insert into exc_parameter_ctl (id, server_name, status_cd, 
+      server_ip, server_port, uptdate
+      )
+    values (#{id,jdbcType=INTEGER}, #{serverName,jdbcType=VARCHAR}, #{statusCd,jdbcType=TINYINT}, 
+      #{serverIp,jdbcType=VARCHAR}, #{serverPort,jdbcType=VARCHAR}, #{uptdate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcParameterCtl">
+    insert into exc_parameter_ctl
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="serverName != null">
+        server_name,
+      </if>
+      <if test="statusCd != null">
+        status_cd,
+      </if>
+      <if test="serverIp != null">
+        server_ip,
+      </if>
+      <if test="serverPort != null">
+        server_port,
+      </if>
+      <if test="uptdate != null">
+        uptdate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="serverName != null">
+        #{serverName,jdbcType=VARCHAR},
+      </if>
+      <if test="statusCd != null">
+        #{statusCd,jdbcType=TINYINT},
+      </if>
+      <if test="serverIp != null">
+        #{serverIp,jdbcType=VARCHAR},
+      </if>
+      <if test="serverPort != null">
+        #{serverPort,jdbcType=VARCHAR},
+      </if>
+      <if test="uptdate != null">
+        #{uptdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcParameterCtl">
+    update exc_parameter_ctl
+    <set>
+      <if test="serverName != null">
+        server_name = #{serverName,jdbcType=VARCHAR},
+      </if>
+      <if test="statusCd != null">
+        status_cd = #{statusCd,jdbcType=TINYINT},
+      </if>
+      <if test="serverIp != null">
+        server_ip = #{serverIp,jdbcType=VARCHAR},
+      </if>
+      <if test="serverPort != null">
+        server_port = #{serverPort,jdbcType=VARCHAR},
+      </if>
+      <if test="uptdate != null">
+        uptdate = #{uptdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcParameterCtl">
+    update exc_parameter_ctl
+    set server_name = #{serverName,jdbcType=VARCHAR},
+      status_cd = #{statusCd,jdbcType=TINYINT},
+      server_ip = #{serverIp,jdbcType=VARCHAR},
+      server_port = #{serverPort,jdbcType=VARCHAR},
+      uptdate = #{uptdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByParam" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcParameterCtl" resultMap="BaseResultMap">
+  	  select 
+    	<include refid="Base_Column_List" />
+      from exc_parameter_ctl 
+      	where 1=1
+	  	  <if test="id != null">
+	        and id = #{id}
+	      </if>
+	  	  <if test="serverName != null and serverName != '' ">
+	        and server_name = #{serverName}
+	      </if>
+	      <if test="statusCd != null">
+	        and status_cd = #{statusCd}
+	      </if>
+	      <if test="serverIp != null and serverIp != ''">
+	        and server_ip = #{serverIp}
+	      </if>
+	      <if test="serverPort != null and serverPort != ''">
+	        and server_port = #{serverPort}
+	      </if>
+	      <if test="startDate != null">
+		    	and uptdate &gt;= #{startDate}
+	      </if>
+	      <if test="endDate != null">
+		    	and uptdate &lt;= #{endDate}
+	      </if>
+	      ORDER BY id DESC
+  </select>
+  
+</mapper>

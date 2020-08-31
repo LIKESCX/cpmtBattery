@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.analyze.preprocess.StationStatisticsDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.analyze.preprocess.StationStatisticsHour" >
+    <result column="operator_id" property="operatorId" jdbcType="VARCHAR" />
+    <result column="station_id" property="stationId" jdbcType="VARCHAR" />
+    <result column="insert_time" property="insertTime" jdbcType="TIMESTAMP" />
+    <result column="charging_capacity" property="chargingCapacity" jdbcType="DOUBLE" />
+    <result column="charging_duration" property="chargingDuration" jdbcType="DOUBLE" />
+    <result column="online_duration" property="onlineDuration" jdbcType="DOUBLE" />
+    <result column="pole_num" property="poleNum" jdbcType="INTEGER" />
+    <result column="charging_num" property="chargingNum" jdbcType="INTEGER" />
+    <result column="direct_charging_duration" property="directChargingDuration" jdbcType="DOUBLE" />
+    <result column="communication_charging_duration" property="communicationChargingDuration" jdbcType="DOUBLE" />
+    <result column="mix_charging_duration" property="mixChargingDuration" jdbcType="DOUBLE" />
+    <result column="wireless_charging_duration" property="wirelessChargingDuration" jdbcType="DOUBLE" />
+    <result column="charge_discharge_charging_duration" property="chargeDischargeChargingDuration" jdbcType="DOUBLE" />
+    <result column="other_charging_duration" property="otherChargingDuration" jdbcType="DOUBLE" />
+  </resultMap>
+    
+ 
+ <select id="selectAll" resultMap="BaseResultMap">
+ 	select * from exc_station_statistics_hour
+ </select>
+ 
+ 
+ <select id="selectByPrimary" resultMap="BaseResultMap">
+ 
+ select * from exc_station_statistics_hour where operator_id=#{operatorId} and station_id=#{stationId} and insert_time=#{insertTime}
+ </select>
+ 
+ <insert id="insertStationStatisticsHour" parameterType="com.cpit.cpmt.dto.analyze.preprocess.StationStatisticsHour">
+		insert into exc_station_statistics_hour 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+      		<if test="operatorId!=null">
+				operator_id,
+			</if>
+			<if test="stationId!=null">
+				station_id,
+			</if>
+			<if test="insertTime!=null">
+				insert_time,
+			</if>
+			<if test="chargingCapacity!=null">
+				charging_capacity,
+			</if>
+			<if test="chargingDuration!=null">
+				charging_duration,
+			</if>
+			<if test="onlineDuration!=null">
+				online_duration,
+			</if>
+			<if test="poleNum!=null and poleNum!=-1">
+				pole_num,
+			</if>
+			<if test="chargingNum!=null and chargingNum!=-1">
+				charging_num,
+			</if>
+			<if test="directChargingDuration!=null">
+				direct_charging_duration,
+			</if>
+			<if test="communicationChargingDuration!=null">
+				communication_charging_duration,
+			</if>
+			<if test="mixChargingDuration!=null">
+				mix_charging_duration,
+			</if>
+			<if test="wirelessChargingDuration!=null">
+				wireless_charging_duration,
+			</if>
+			<if test="chargeDischargeChargingDuration!=null">
+				charge_discharge_charging_duration,
+			</if>
+			<if test="otherChargingDuration!=null">
+				other_charging_duration,
+			</if>
+    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			
+			<if test="operatorId!=null">
+				#{operatorId},
+			</if>
+			<if test="stationId!=null">
+				#{stationId},
+			</if>
+			<if test="insertTime!=null">
+				#{insertTime},
+			</if>
+			<if test="chargingCapacity!=null">
+				#{chargingCapacity},
+			</if>
+			<if test="chargingDuration!=null">
+				#{chargingDuration},
+			</if>
+			<if test="onlineDuration!=null">
+				#{onlineDuration},
+			</if>
+			<if test="poleNum!=null and poleNum!=-1">
+				#{poleNum},
+			</if>
+			<if test="chargingNum!=null and chargingNum!=-1">
+				#{chargingNum},
+			</if>
+			<if test="chargingDuration!=null">
+				#{directChargingDuration},
+			</if>
+			<if test="chargingDuration!=null">
+				#{communicationChargingDuration},
+			</if>
+			<if test="chargingDuration!=null">
+				#{mixChargingDuration},
+			</if>
+			<if test="chargingDuration!=null">
+				#{wirelessChargingDuration},
+			</if>
+			<if test="chargingDuration!=null">
+				#{chargeDischargeChargingDuration},
+			</if>
+			<if test="chargingDuration!=null">
+				#{otherChargingDuration},
+			</if>
+		</trim>
+	</insert>
+ 
+ 	<update id="updateStationStatisticsHour" >
+ 		update exc_station_statistics_hour
+ 		<trim prefix="set" suffixOverrides=",">
+ 			<if test="stationStatisticsHour.operatorId!=null">
+				operator_id=#{stationStatisticsHour.operatorId},
+			</if>
+			<if test="stationStatisticsHour.stationId!=null">
+				station_id=#{stationStatisticsHour.stationId},
+			</if>
+			<if test="stationStatisticsHour.insertTime!=null">
+				insert_time=#{stationStatisticsHour.insertTime},
+			</if>
+			<if test="stationStatisticsHour.chargingCapacity!=null">
+				charging_capacity=#{stationStatisticsHour.chargingCapacity},
+			</if>
+			<if test="stationStatisticsHour.chargingDuration!=null">
+				charging_duration=#{stationStatisticsHour.chargingDuration},
+			</if>
+			<if test="stationStatisticsHour.onlineDuration!=null">
+				online_duration=#{stationStatisticsHour.onlineDuration},
+			</if>
+			<if test="stationStatisticsHour.poleNum!=null and stationStatisticsHour.poleNum!=-1">
+				pole_num=#{stationStatisticsHour.poleNum},
+			</if>
+			<if test="stationStatisticsHour.chargingNum!=null and stationStatisticsHour.chargingNum!=-1">
+				charging_num=#{stationStatisticsHour.chargingNum},
+			</if>
+ 		</trim>
+ 			where 1=1
+ 			and
+ 			operator_id=#{operator_id}
+ 			and
+ 			station_id=#{station_id}
+ 			and
+ 			insert_time=#{insert_time}
+ 	</update>
+ 
+ 	
+ 	<update id="updateOnlineDurationByPrimary">
+ 	
+
+update exc_station_statistics_hour set online_duration=online_duration+#{onlineDuration} where operator_id=#{operatorId} and station_id=#{stationId} and insert_time=#{insertTime}
+ 		
+ 	</update>
+ 	
+ 	<update id="updateChargingDurationAndChargingCapacity">
+ 		update exc_station_statistics_hour set charging_duration=charging_duration+#{chargingDuration},charging_capacity=charging_capacity+#{chargingCapacity} where operator_id=#{operatorId} and station_id=#{stationId} and insert_time=#{insertTime}
+ 		
+ 	</update>
+ 	
+ 	<update id="updateChargingNumByPrimary">
+ 	UPDATE exc_station_statistics_hour
+SET charging_num = charging_num +#{ChargingNum} where operator_id=#{operatorId} and station_id=#{stationId} and insert_time=#{insertTime}
+ 	
+ 	</update>
+ 	
+ 	
+ 	<update id="updateTypeCharging">
+ 		UPDATE exc_station_statistics_hour
+		SET pole_num = pole_num
+		<if test="type==1">
+			,direct_charging_duration=direct_charging_duration+#{duration}
+		</if>
+		<if test="type==2">
+			,communication_charging_duration=communication_charging_duration+#{duration}
+		</if>
+		<if test="type==3">
+			,mix_charging_duration=mix_charging_duration+#{duration}
+		</if>
+		<if test="type==4">
+			,wireless_charging_duration=wireless_charging_duration+#{duration}
+		</if>
+		<if test="type==5">
+			,charge_discharge_charging_duration=charge_discharge_charging_duration+#{duration}
+		</if>
+		<if test="type==6">
+			,other_charging_duration=other_charging_duration+#{duration}
+		</if>
+		where operator_id=#{operatorId} and station_id=#{stationId} and insert_time=#{insertTime}
+ 	</update>
+</mapper>

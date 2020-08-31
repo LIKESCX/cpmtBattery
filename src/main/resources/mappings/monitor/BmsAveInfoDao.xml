@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.monitor.BmsAveInfoDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.monitor.BmsAveInfo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+    <result column="tatal_voltage_ave" jdbcType="DOUBLE" property="tatalVoltageAve" />
+    <result column="total_current_ave" jdbcType="DOUBLE" property="totalCurrentAve" />
+    <result column="soc_ave" jdbcType="INTEGER" property="socAve" />
+    <result column="voltage_h_ave" jdbcType="DOUBLE" property="voltageHAve" />
+    <result column="voltage_l_ave" jdbcType="DOUBLE" property="voltageLAve" />
+    <result column="tempture_h_ave" jdbcType="INTEGER" property="temptureHAve" />
+    <result column="tempture_l_ave" jdbcType="INTEGER" property="temptureLAve" />
+
+    <result column="tatal_voltage_ave_container" jdbcType="VARCHAR" property="tatalVoltageAveContainer" />
+    <result column="total_current_ave_container" jdbcType="VARCHAR" property="totalCurrentAveContainer" />
+    <result column="soc_ave_container" jdbcType="VARCHAR" property="socAveContainer" />
+    <result column="voltage_h_ave_container" jdbcType="VARCHAR" property="voltageHAveContainer" />
+    <result column="voltage_l_ave_container" jdbcType="VARCHAR" property="voltageLAveContainer" />
+    <result column="tempture_h_ave_container" jdbcType="VARCHAR" property="temptureHAveContainer" />
+    <result column="tempture_l_ave_container" jdbcType="VARCHAR" property="temptureLAveContainer" />
+
+    <result column="fault_rate" jdbcType="DOUBLE" property="faultRate" />
+    <result column="copare_result" jdbcType="VARCHAR" property="copareResult" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, operator_id, equipment_id, tatal_voltage_ave, total_current_ave, soc_ave, voltage_h_ave,
+    voltage_l_ave, tempture_h_ave, tempture_l_ave, fault_rate, copare_result, in_time,tatal_voltage_ave_container
+    total_current_ave_container,soc_ave_container,voltage_h_ave_container,voltage_l_ave_container,
+    tempture_h_ave_container,tempture_l_ave_container
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mon_bms_ave_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectBmsAveLastest" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mon_bms_ave_info where operator_id='1' ORDER BY in_time desc limit 1;
+  </select>
+
+  <select id="selectBmsAveLastestMonth" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+      from mon_bms_ave_info ORDER BY in_time desc limit 1;
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from mon_bms_ave_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.monitor.BmsAveInfo">
+    insert into mon_bms_ave_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="tatalVoltageAve != null">
+        tatal_voltage_ave,
+      </if>
+      <if test="totalCurrentAve != null">
+        total_current_ave,
+      </if>
+      <if test="socAve != null">
+        soc_ave,
+      </if>
+      <if test="voltageHAve != null">
+        voltage_h_ave,
+      </if>
+      <if test="voltageLAve != null">
+        voltage_l_ave,
+      </if>
+      <if test="temptureHAve != null">
+        tempture_h_ave,
+      </if>
+      <if test="temptureLAve != null">
+        tempture_l_ave,
+      </if>
+
+      <if test="tatalVoltageAveContainer != null">
+        tatal_voltage_ave_container,
+      </if>
+      <if test="totalCurrentAveContainer != null">
+        total_current_ave_container,
+      </if>
+      <if test="socAveContainer != null">
+        soc_ave_container,
+      </if>
+      <if test="voltageHAveContainer != null">
+        voltage_h_ave_container,
+      </if>
+      <if test="voltageLAveContainer != null">
+        voltage_l_ave_container,
+      </if>
+      <if test="temptureHAveContainer != null">
+        tempture_h_ave_container,
+      </if>
+      <if test="temptureLAveContainer != null">
+        tempture_l_ave_container,
+      </if>
+
+      <if test="faultRate != null">
+        fault_rate,
+      </if>
+      <if test="copareResult != null">
+        copare_result,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="tatalVoltageAve != null">
+        #{tatalVoltageAve,jdbcType=DOUBLE},
+      </if>
+      <if test="totalCurrentAve != null">
+        #{totalCurrentAve,jdbcType=DOUBLE},
+      </if>
+      <if test="socAve != null">
+        #{socAve,jdbcType=INTEGER},
+      </if>
+      <if test="voltageHAve != null">
+        #{voltageHAve,jdbcType=DOUBLE},
+      </if>
+      <if test="voltageLAve != null">
+        #{voltageLAve,jdbcType=DOUBLE},
+      </if>
+      <if test="temptureHAve != null">
+        #{temptureHAve,jdbcType=INTEGER},
+      </if>
+      <if test="temptureLAve != null">
+        #{temptureLAve,jdbcType=INTEGER},
+      </if>
+
+      <if test="tatalVoltageAveContainer != null">
+        #{tatalVoltageAveContainer},
+      </if>
+      <if test="totalCurrentAveContainer != null">
+        #{totalCurrentAveContainer},
+      </if>
+      <if test="socAveContainer != null">
+        #{socAveContainer},
+      </if>
+      <if test="voltageHAveContainer != null">
+        #{voltageHAveContainer},
+      </if>
+      <if test="voltageLAveContainer != null">
+        #{voltageLAveContainer},
+      </if>
+      <if test="temptureHAveContainer != null">
+        #{temptureHAveContainer},
+      </if>
+      <if test="temptureLAveContainer != null">
+        #{temptureLAveContainer},
+      </if>
+
+      <if test="faultRate != null">
+        #{faultRate,jdbcType=DOUBLE},
+      </if>
+      <if test="copareResult != null">
+        #{copareResult,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.monitor.BmsAveInfo">
+    update mon_bms_ave_info
+    <set>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="tatalVoltageAve != null">
+        tatal_voltage_ave = #{tatalVoltageAve,jdbcType=DOUBLE},
+      </if>
+      <if test="totalCurrentAve != null">
+        total_current_ave = #{totalCurrentAve,jdbcType=DOUBLE},
+      </if>
+      <if test="socAve != null">
+        soc_ave = #{socAve,jdbcType=INTEGER},
+      </if>
+      <if test="voltageHAve != null">
+        voltage_h_ave = #{voltageHAve,jdbcType=DOUBLE},
+      </if>
+      <if test="voltageLAve != null">
+        voltage_l_ave = #{voltageLAve,jdbcType=DOUBLE},
+      </if>
+      <if test="temptureHAve != null">
+        tempture_h_ave = #{temptureHAve,jdbcType=INTEGER},
+      </if>
+      <if test="temptureLAve != null">
+        tempture_l_ave = #{temptureLAve,jdbcType=INTEGER},
+      </if>
+      <if test="faultRate != null">
+        fault_rate = #{faultRate,jdbcType=DOUBLE},
+      </if>
+      <if test="copareResult != null">
+        copare_result = #{copareResult,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+  <select id="getBmsTotalVoltageNumber" resultMap="BaseResultMap">
+    SELECT a.tatal_voltage tatal_voltage_ave,MAX(a.number) number from
+    (select bms.tatal_voltage, COUNT(bms.tatal_voltage) number
+			from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+			where alarm.alarm_status=1
+            <if test="beginTime != null">
+              <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+            </if>
+            <if test="endTime != null">
+              <![CDATA[ and bms.in_time <= #{endTime} ]]>
+            </if>
+        GROUP BY bms.tatal_voltage ) a
+    ORDER BY number
+  </select>
+
+  <select id="getBmsTotalCurrentNumber" resultMap="BaseResultMap">
+    SELECT a.total_current total_current_ave,MAX(a.number) number from
+      (select bms.total_current, COUNT(bms.total_current) number
+      from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+      where alarm.alarm_status=1
+      <if test="beginTime != null">
+        <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+      </if>
+      <if test="endTime != null">
+        <![CDATA[ and bms.in_time <= #{endTime} ]]>
+      </if>
+      GROUP BY bms.total_current ) a
+    ORDER BY number
+  </select>
+
+  <select id="getBmsSocNumber" resultMap="BaseResultMap">
+    SELECT a.soc soc_ave,MAX(a.number) number from
+      (select bms.soc, COUNT(bms.soc) number
+      from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+      where alarm.alarm_status=1
+      <if test="beginTime != null">
+        <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+      </if>
+      <if test="endTime != null">
+        <![CDATA[ and bms.in_time <= #{endTime} ]]>
+      </if>
+      GROUP BY bms.soc ) a
+    ORDER BY number
+  </select>
+
+  <select id="getBmsVoltagehNumber" resultMap="BaseResultMap">
+    SELECT a.voltage_h voltage_h_ave,MAX(a.number) number from
+      (select bms.voltage_h, COUNT(bms.voltage_h) number
+      from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+      where alarm.alarm_status=1
+      <if test="beginTime != null">
+        <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+      </if>
+      <if test="endTime != null">
+        <![CDATA[ and bms.in_time <= #{endTime} ]]>
+      </if>
+      GROUP BY bms.voltage_h ) a
+    ORDER BY number
+  </select>
+
+  <select id="getBmsVoltagelNumber" resultMap="BaseResultMap">
+    SELECT a.voltage_l voltage_l_ave,MAX(a.number) number from
+      (select bms.voltage_l, COUNT(bms.voltage_l) number
+      from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+      where alarm.alarm_status=1
+      <if test="beginTime != null">
+        <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+      </if>
+      <if test="endTime != null">
+        <![CDATA[ and bms.in_time <= #{endTime} ]]>
+      </if>
+      GROUP BY bms.voltage_l ) a
+    ORDER BY number
+  </select>
+
+  <select id="getBmsTempturehNumber" resultMap="BaseResultMap">
+    SELECT a.tempture_h tempture_h_ave,MAX(a.number) number from
+      (select bms.tempture_h, COUNT(bms.tempture_h) number
+      from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+      where alarm.alarm_status=1
+      <if test="beginTime != null">
+        <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+      </if>
+      <if test="endTime != null">
+        <![CDATA[ and bms.in_time <= #{endTime} ]]>
+      </if>
+      GROUP BY bms.tempture_h ) a
+    ORDER BY number
+  </select>
+
+  <select id="getBmsTempturelNumber" resultMap="BaseResultMap">
+    SELECT a.tempture_l tempture_l_ave,MAX(a.number) number from
+      (select bms.tempture_l, COUNT(bms.tempture_l) number
+      from exc_alarm_info alarm RIGHT JOIN exc_bms_info bms on alarm.id=bms.alarm_info_id
+      where alarm.alarm_status=1
+      <if test="beginTime != null">
+        <![CDATA[ and bms.in_time >= #{beginTime} ]]>
+      </if>
+      <if test="endTime != null">
+        <![CDATA[ and bms.in_time <= #{endTime} ]]>
+      </if>
+      GROUP BY bms.tempture_l ) a
+    ORDER BY number
+  </select>
+
+    <select id="selectFault" parameterType="com.cpit.cpmt.dto.monitor.BmsAveInfo" resultType="java.lang.Integer">
+        SELECT count(*) from exc_connector_status_info
+        where 1=1
+        <if test="copareResult!=null">
+            and `status`=#{copareResult}
+        </if>
+        <if test="beginTime != null">
+            <![CDATA[ and in_time >= #{beginTime} ]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[ and in_time <= #{endTime} ]]>
+        </if>
+    </select>
+</mapper>

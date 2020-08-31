@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.ConnectorHistoryPowerInfoDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.ConnectorHistoryPowerInfo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+    <result column="connector_id" jdbcType="VARCHAR" property="connectorId" />
+     <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="park_status" property="parkStatus" jdbcType="VARCHAR" />
+    <result column="lock_status" property="lockStatus" jdbcType="VARCHAR" />
+    <result column="current_a" property="currentA" jdbcType="VARCHAR" />
+    <result column="current_b" property="currentB" jdbcType="VARCHAR" />
+    <result column="current_c" property="currentC" jdbcType="VARCHAR" />
+    <result column="voltage_a" property="voltageA" jdbcType="VARCHAR" />
+    <result column="voltage_b" property="voltageB" jdbcType="VARCHAR" />
+    <result column="voltage_c" property="voltageC" jdbcType="VARCHAR" />
+    <result column="soc" property="sOC" jdbcType="VARCHAR" />
+    <result column="connector_temp" property="connectorTemp" jdbcType="VARCHAR" />
+    <result column="equipment_temp" property="equipmentTemp" jdbcType="VARCHAR" />
+    <result column="connector_lock" property="connectorLock" jdbcType="VARCHAR" />
+    <result column="power" jdbcType="DOUBLE" property="power" />
+    <result column="charge_electricity" jdbcType="VARCHAR" property="chargeElectricity" />
+    <result column="discharge_electricity" jdbcType="VARCHAR" property="dischargeElectricity" />
+    <result column="received_time" jdbcType="TIMESTAMP" property="receivedTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="remark_1" jdbcType="VARCHAR" property="remark1" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, operator_id,station_id, equipment_id, connector_id, status,park_status,lock_status,current_a,current_b,
+    current_c,voltage_a,voltage_b,voltage_c,soc,connector_temp,equipment_temp,connector_lock,power, charge_electricity,
+    discharge_electricity,received_time, in_time, remark_1
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_connector_history_power_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectPowerTenMinutes" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultMap="BaseResultMap">
+    SELECT SUM(connectorHisPower.power) power,DATE_FORMAT(connectorHisPower.in_time, '%H:%i:%S') remark_1
+    from exc_connector_history_power_info connectorHisPower, exc_station_info stationInfo
+    where connectorHisPower.station_id=stationInfo.station_id and connectorHisPower.operator_id=stationInfo.operator_id
+    and
+    <![CDATA[ connectorHisPower.in_time >=CURRENT_TIMESTAMP - INTERVAL 1 MINUTE ]]>
+    <if test="stationID != null">
+      and stationInfo.station_id=#{stationID}
+    </if>
+    <if test="operatorID != null">
+      and stationInfo.operator_id = #{operatorID}
+    </if>
+    <if test="areaCode != null">
+      and stationInfo.area_code = #{areaCode}
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    GROUP BY connectorHisPower.in_time
+  </select>
+
+  <select id="selectABCMinutes" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="BaseResultMap">
+    select power,current_a,current_b,current_c,voltage_a,voltage_b,voltage_c,in_time
+    from exc_connector_history_power_info
+    where
+    <![CDATA[ in_time >=CURRENT_TIMESTAMP - INTERVAL 30 MINUTE ]]>
+    <if test="operatorID != null">
+      and operator_id = #{operatorID}
+    </if>
+    <if test="equipmentID != null and equipmentID != ''">
+      and equipment_id = #{equipmentID}
+    </if>
+    <if test="stationId !=null and stationId !=''">
+      and station_id=#{stationId}
+    </if>
+    ORDER BY in_time desc
+  </select>
+
+  <select id="selectABCRefresh" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="BaseResultMap">
+    select power,current_a,current_b,current_c,voltage_a,voltage_b,voltage_c,in_time
+    from exc_connector_history_power_info
+    where 1=1
+    <if test="lastEndDate != null">
+      <![CDATA[ and in_time > #{lastEndDate} ]]>
+    </if>
+    <if test="operatorID != null">
+      and operator_id = #{operatorID}
+    </if>
+    <if test="equipmentID != null">
+      and equipment_id = #{equipmentID}
+    </if>
+    <if test="stationId != null">
+      and station_id=#{stationId}
+    </if>
+    ORDER BY in_time desc
+  </select>
+
+
+  <select id="selectTotalPower" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultType="java.lang.Double">
+    SELECT ROUND(IFNULL(SUM(connectorHisPower.power) ,0)/count(connectorHisPower.id),2) power
+    from exc_connector_history_power_info connectorHisPower, exc_station_info stationInfo
+    where connectorHisPower.`status`in (3,5) and connectorHisPower.station_id=stationInfo.station_id and connectorHisPower.operator_id=stationInfo.operator_id
+    and
+    <![CDATA[ connectorHisPower.in_time >=CURRENT_TIMESTAMP - INTERVAL 1 MINUTE ]]>
+    <if test="stationID != null">
+      and stationInfo.station_id=#{stationID}
+    </if>
+    <if test="operatorID != null">
+      and stationInfo.operator_id = #{operatorID}
+    </if>
+    <if test="areaCode != null">
+      and stationInfo.area_code = #{areaCode}
+    </if>
+    <if test="equipmentOwnerID != null">
+      and connectorHisPower.equipment_id = #{equipmentOwnerID}
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectPowerByOne" resultMap="BaseResultMap">
+    SELECT sum(power) power,DATE_FORMAT(received_time, '%H:%i:%S') remark_1
+    from exc_connector_history_power_info
+    where 1=1
+    <if test="stationId">
+      and station_id=#{stationId}
+    </if>
+    <if test="equipmentId">
+      and equipment_id=#{equipmentId}
+    </if>
+    <if test="operatorId">
+      and operator_id=#{operatorId}
+    </if>
+    ORDER BY received_time DESC
+  </select>
+
+  <select id="selectPowerEach15Minute" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="BaseResultMap">
+    select DATE_FORMAT(CONCAT(CURDATE(),' ',quarterTime.quarter_time),'%Y-%m-%d %H:%i:%s') in_time,
+    sum(IFNULL(a.power_sum,0.0)) power ,sum(IFNULL(a.rated_power_sum,0.0)) charge_electricity from
+    quarter_time quarterTime LEFT JOIN
+    (
+    select a.back_time ,ROUND(IFNULL(sum(b.power)/count(b.id),0.0),2) power_sum,c.power rated_power_sum from
+    (select DATE_FORMAT(CONCAT(CURDATE(),' ',quarter_time),'%Y-%m-%d %H:%i:%s') back_time,
+    date_sub(DATE_FORMAT(CONCAT(CURDATE(),' ',quarter_time),'%Y-%m-%d %H:%i:%s'),interval 15 minute) front_time
+    from quarter_time
+    where DATE_FORMAT(CONCAT(CURDATE(),' ',quarter_time),'%Y-%m-%d %H:%i:%s') &lt;=NOW()
+    )a , exc_connector_history_power_info b ,exc_equipment_info c,exc_station_info d
+    where b.`status`in (3,5) and b.in_time&lt;=a.back_time and b.in_time&gt;=a.front_time
+    and c.equipment_id=b.equipment_id and c.operator_id=b.operator_id  and d.station_id=b.station_id and b.operator_id=d.operator_id
+    <if test="equipmentType ==1"> /*快充*/
+      and c.power &gt;=7
+    </if>
+    <if test="equipmentType ==1"> /*慢充 小于7*/
+      and c.power &lt;7
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and d.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="sidList != null and sidList.size()>0 ">
+      and c.sid in
+      <foreach collection="sidList" item="sid" index="index" open="(" close=")" separator=",">
+        #{sid}
+      </foreach>
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and b.operator_id in
+      <foreach collection="operatorIdList" item="operatorId" index="index" open="(" close=")" separator=",">
+          #{operatorId}
+      </foreach>
+    </if>
+    <if test="equipmentIdList != null and equipmentIdList.size()>0 ">
+      and b.equipment_id in
+      <foreach collection="equipmentIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+          #{equipmentID}
+      </foreach>
+    </if>
+    <if test="stationStreetList != null and stationStreetList.size()>0 ">
+      and d.station_street in
+      <foreach collection="stationStreetList" item="street" index="index" open="(" close=")" separator=",">
+          #{street}
+      </foreach>
+    </if>
+      GROUP BY b.equipment_id,b.operator_id
+
+    ) a on a.back_time= DATE_FORMAT(CONCAT(CURDATE(),' ',quarterTime.quarter_time),'%Y-%m-%d %H:%i:%s')
+    where DATE_FORMAT(CONCAT(CURDATE(),' ',quarterTime.quarter_time),'%Y-%m-%d %H:%i:%s') &lt;=NOW()
+    GROUP BY DATE_FORMAT(CONCAT(CURDATE(),' ',quarterTime.quarter_time),'%Y-%m-%d %H:%i:%s')
+
+  </select>
+
+  <select id="selectConnectorHis" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from  exc_connector_history_power_info
+    where 1=1
+    <if test="beginTime != null">
+      <![CDATA[ and in_time >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and in_time <= #{endTime} ]]>
+    </if>
+    <if test="equipmentID!='' and equipmentID!=null ">
+      and equipment_id=#{equipmentID}
+    </if>
+    <if test="operatorID!='' and operatorID!=null ">
+      and operator_id=#{operatorID}
+    </if>
+    <if test="stationId != null">
+      and station_id=#{stationId}
+    </if>
+    <if test="connectorId != null">
+      and connector_id=#{connectorId}
+    </if>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_connector_history_power_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorHistoryPowerInfo">
+    <!-- <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey> -->
+    insert into exc_connector_history_power_info (id,operator_id,station_id, equipment_id, connector_id, 
+      status, park_status, lock_status, 
+      current_a, current_b, current_c, 
+      voltage_a, voltage_b, voltage_c, 
+      soc, connector_temp, equipment_temp, 
+      connector_lock, power, charge_electricity, discharge_electricity, 
+      received_time, in_time, remark_1
+      )
+    values (#{id,jdbcType=VARCHAR},#{operatorId,jdbcType=VARCHAR},#{stationId,jdbcType=VARCHAR}, #{equipmentId,jdbcType=VARCHAR}, #{connectorId,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{parkStatus,jdbcType=VARCHAR}, #{lockStatus,jdbcType=VARCHAR}, 
+      #{currentA,jdbcType=VARCHAR}, #{currentB,jdbcType=VARCHAR}, #{currentC,jdbcType=VARCHAR}, 
+      #{voltageA,jdbcType=VARCHAR}, #{voltageB,jdbcType=VARCHAR}, #{voltageC,jdbcType=VARCHAR}, 
+      #{sOC,jdbcType=VARCHAR}, #{connectorTemp,jdbcType=VARCHAR}, #{equipmentTemp,jdbcType=VARCHAR}, 
+      #{connectorLock,jdbcType=VARCHAR},#{power,jdbcType=DOUBLE}, #{chargeElectricity,jdbcType=VARCHAR}, #{dischargeElectricity,jdbcType=VARCHAR}, 
+      #{receivedTime,jdbcType=TIMESTAMP}, #{inTime,jdbcType=TIMESTAMP}, #{remark1,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorHistoryPowerInfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exc_connector_history_power_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="connectorId != null">
+        connector_id,
+      </if>
+      <if test="power != null">
+        power,
+      </if>
+      <if test="chargeElectricity != null">
+        charge_electricity,
+      </if>
+      <if test="dischargeElectricity != null">
+        discharge_electricity,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+      <if test="remark1 != null">
+        remark_1,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorId != null">
+        #{connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null">
+        #{power,jdbcType=DOUBLE},
+      </if>
+      <if test="chargeElectricity != null">
+        #{chargeElectricity,jdbcType=VARCHAR},
+      </if>
+      <if test="dischargeElectricity != null">
+        #{dischargeElectricity,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark1 != null">
+        #{remark1,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByExample" parameterType="map">
+    update exc_connector_history_power_info
+    set id = #{record.id,jdbcType=VARCHAR},
+      operator_id = #{record.operatorId,jdbcType=VARCHAR},
+      equipment_id = #{record.equipmentId,jdbcType=VARCHAR},
+      connector_id = #{record.connectorId,jdbcType=VARCHAR},
+      power = #{record.power,jdbcType=DOUBLE},
+      charge_electricity = #{record.chargeElectricity,jdbcType=VARCHAR},
+      discharge_electricity = #{record.dischargeElectricity,jdbcType=VARCHAR},
+      received_time = #{record.receivedTime,jdbcType=TIMESTAMP},
+      in_time = #{record.inTime,jdbcType=TIMESTAMP},
+      remark_1 = #{record.remark1,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorHistoryPowerInfo">
+    update exc_connector_history_power_info
+    <set>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorId != null">
+        connector_id = #{connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null">
+        power = #{power,jdbcType=DOUBLE},
+      </if>
+      <if test="chargeElectricity != null">
+        charge_electricity = #{chargeElectricity,jdbcType=VARCHAR},
+      </if>
+      <if test="dischargeElectricity != null">
+        discharge_electricity = #{dischargeElectricity,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null">
+        received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark1 != null">
+        remark_1 = #{remark1,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorHistoryPowerInfo">
+    update exc_connector_history_power_info
+    set operator_id = #{operatorId,jdbcType=VARCHAR},
+      equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      connector_id = #{connectorId,jdbcType=VARCHAR},
+      power = #{power,jdbcType=DOUBLE},
+      charge_electricity = #{chargeElectricity,jdbcType=VARCHAR},
+      discharge_electricity = #{dischargeElectricity,jdbcType=VARCHAR},
+      received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      in_time = #{inTime,jdbcType=TIMESTAMP},
+      remark_1 = #{remark1,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="getDeteleConnStatusData" parameterType="java.lang.String" resultMap="BaseResultMap" >
+   select
+     id
+    from 
+    	exc_connector_history_power_info
+    where 
+    	operator_id = #{operatorId,jdbcType=VARCHAR}
+    	and
+    	<![CDATA[DATE_FORMAT(received_time,'%Y-%m-%d')<=#{delDate,jdbcType=VARCHAR}]]> 
+  </select>
+  <delete id="deleteByPrimaryById" parameterType="java.lang.String">
+    delete from exc_connector_history_power_info where id = #{id,jdbcType=VARCHAR}
+  </delete>
+</mapper>

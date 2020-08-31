@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.EquipmentDischargeStatsInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.EquipmentDischargeStatsInfo" >
+    <id column="equipment_id" property="equipmentID" jdbcType="VARCHAR" />
+    <result column="station_order" property="stationOrder" jdbcType="VARCHAR" />
+    <result column="equipment_discharge_electricity" property="equipmentDischargeElectricity" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    equipment_id, station_order, equipment_discharge_electricity
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_equipment_discharge_stats_info
+    where equipment_id = #{equipmentID,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from exc_equipment_discharge_stats_info
+    where equipment_id = #{equipmentID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.EquipmentDischargeStatsInfo" >
+    insert into exc_equipment_discharge_stats_info (equipment_id, station_order, equipment_discharge_electricity
+      )
+    values (#{equipmentID,jdbcType=VARCHAR}, #{stationOrder,jdbcType=VARCHAR}, #{equipmentDischargeElectricity,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.EquipmentDischargeStatsInfo" >
+    insert into exc_equipment_discharge_stats_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="equipmentID != null" >
+        equipment_id,
+      </if>
+      <if test="stationOrder != null" >
+        station_order,
+      </if>
+      <if test="equipmentDischargeElectricity != null" >
+        equipment_discharge_electricity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="equipmentID != null" >
+        #{equipmentID,jdbcType=VARCHAR},
+      </if>
+      <if test="stationOrder != null" >
+        #{stationOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentDischargeElectricity != null" >
+        #{equipmentDischargeElectricity,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.EquipmentDischargeStatsInfo" >
+    update exc_equipment_discharge_stats_info
+    <set >
+      <if test="stationOrder != null" >
+        station_order = #{stationOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentDischargeElectricity != null" >
+        equipment_discharge_electricity = #{equipmentDischargeElectricity,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where equipment_id = #{equipmentID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.EquipmentDischargeStatsInfo" >
+    update exc_equipment_discharge_stats_info
+    set station_order = #{stationOrder,jdbcType=VARCHAR},
+      equipment_discharge_electricity = #{equipmentDischargeElectricity,jdbcType=VARCHAR}
+    where equipment_id = #{equipmentID,jdbcType=VARCHAR}
+  </update>
+</mapper>

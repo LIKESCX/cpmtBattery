@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.ChargeFileHistoryDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.ChargeFileHistory">
+    <id column="file_id" jdbcType="INTEGER" property="fileId" />
+    <result column="operator_his_id" jdbcType="INTEGER" property="operatorHisId" />
+    <result column="his_sid" jdbcType="VARCHAR" property="hisSid" />
+    <result column="his_eid" jdbcType="VARCHAR" property="hisEid" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="file_size" jdbcType="VARCHAR" property="fileSize" />
+    <result column="file_kind" jdbcType="INTEGER" property="fileKind" />
+    <result column="file_class" jdbcType="INTEGER" property="fileClass" />
+    <result column="file_upload_status" jdbcType="INTEGER" property="fileUploadStatus" />
+    <result column="file_classification" jdbcType="INTEGER" property="fileClassification" />
+    <result column="file_type" jdbcType="INTEGER" property="fileType" />
+    <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate" />
+    <result column="preview_url" jdbcType="VARCHAR" property="previewUrl" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="operate" jdbcType="VARCHAR" property="operate" />
+    <result column="check_date" jdbcType="TIMESTAMP" property="checkDate" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+
+  <resultMap id="mixedResultMap" type="com.cpit.cpmt.dto.exchange.operator.ChargeFileHistory" extends="BaseResultMap">
+    <association property="operatorInfo" column="operator_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.selectByPrimaryKey"/>
+    <association property="operatorChangeHis" column="operator_his_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorChangeHisDao.selectByPrimaryKey"/>
+    <association property="stationInfo" select="com.cpit.cpmt.biz.dao.exchange.operator.StationInfoDAO.selectByStationId" column="{operatorId=operator_id,stationId=station_id}"/>
+    <association property="stationHistory" column="his_sid" select="com.cpit.cpmt.biz.dao.exchange.operator.StationHistoryInfoDAO.selectByPrimaryKey"/>
+    <association property="equipmentInfoShow" select="com.cpit.cpmt.biz.dao.exchange.operator.EquipmentInfoDAO.selectByEquipId" column="{operatorId=operator_id,equipmentId=equipment_id}"/>
+    <association property="equipmentHistoryInfo" column="his_eid" select="com.cpit.cpmt.biz.dao.exchange.operator.EquipmentHistoryInfoDAO.selectByPrimaryKey"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    file_id, operator_his_id, his_sid, his_eid, operator_id, station_id, equipment_id, 
+    file_name, file_url, file_size, file_kind, file_class, file_upload_status,file_classification, file_type,
+    upload_date, preview_url, user_id, user_name, operate, check_date, note
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_charge_file_history
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectChargeFileHistory" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFileHistory" resultMap="mixedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_charge_file_history
+    where 1=1
+    <if test="stationId != null">
+      and station_id=#{stationId}
+    </if>
+    <if test="operatorId != null">
+      and operator_id=#{operatorId}
+    </if>
+    <if test="equipmentId != null">
+      and equipment_id=#{equipmentId}
+    </if>
+    <if test="fileUploadStatus != null">
+      and file_upload_status=#{fileUploadStatus}
+    </if>
+    <if test="fileClassification != null">
+      and file_classification=#{fileClassification}
+    </if>
+    <if test="fileType != null">
+      and file_type=#{fileType}
+    </if>
+    <if test="beginTime != null">
+      <![CDATA[ and check_date >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and check_date <= #{endTime} ]]>
+    </if>
+    order by file_id desc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_charge_file_history
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFileHistory">
+    insert into exc_charge_file_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="operatorHisId != null">
+        operator_his_id,
+      </if>
+      <if test="hisSid != null">
+        his_sid,
+      </if>
+      <if test="hisEid != null">
+        his_eid,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="fileKind != null">
+        file_kind,
+      </if>
+      <if test="fileClass != null">
+        file_class,
+      </if>
+      <if test="fileUploadStatus != null">
+        file_upload_status,
+      </if>
+      <if test="fileClassification != null">
+        file_classification,
+      </if>
+      <if test="fileType != null">
+        file_type,
+      </if>
+      <if test="uploadDate != null">
+        upload_date,
+      </if>
+      <if test="previewUrl != null">
+        preview_url,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="operate != null">
+        operate,
+      </if>
+      <if test="checkDate != null">
+        check_date,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="operatorHisId != null">
+        #{operatorHisId,jdbcType=INTEGER},
+      </if>
+      <if test="hisSid != null">
+        #{hisSid,jdbcType=VARCHAR},
+      </if>
+      <if test="hisEid != null">
+        #{hisEid,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=VARCHAR},
+      </if>
+      <if test="fileKind != null">
+        #{fileKind,jdbcType=INTEGER},
+      </if>
+      <if test="fileClass != null">
+        #{fileClass,jdbcType=INTEGER},
+      </if>
+      <if test="fileUploadStatus != null">
+        #{fileUploadStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fileClassification != null">
+        #{fileClassification,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="uploadDate != null">
+        #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="previewUrl != null">
+        #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="operate != null">
+        #{operate,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null">
+        #{checkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFileHistory">
+    update exc_charge_file_history
+    <set>
+      <if test="operatorHisId != null">
+        operator_his_id = #{operatorHisId,jdbcType=INTEGER},
+      </if>
+      <if test="hisSid != null">
+        his_sid = #{hisSid,jdbcType=VARCHAR},
+      </if>
+      <if test="hisEid != null">
+        his_eid = #{hisEid,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=VARCHAR},
+      </if>
+      <if test="fileKind != null">
+        file_kind = #{fileKind,jdbcType=INTEGER},
+      </if>
+      <if test="fileClass != null">
+        file_class = #{fileClass,jdbcType=INTEGER},
+      </if>
+      <if test="fileUploadStatus != null">
+        file_upload_status = #{fileUploadStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fileClassification != null">
+        file_classification = #{fileClassification,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        file_type = #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="uploadDate != null">
+        upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="previewUrl != null">
+        preview_url = #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="operate != null">
+        operate = #{operate,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null">
+        check_date = #{checkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+</mapper>

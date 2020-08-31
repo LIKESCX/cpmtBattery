@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.ExcThirdInteractiveMapper">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    <id column="interactive_id" jdbcType="INTEGER" property="interactiveId" />
+    <result column="auth_id" jdbcType="INTEGER" property="authId" />
+    <result column="interface_id" jdbcType="INTEGER" property="interfaceId" />
+    <result column="trans_cycle" jdbcType="INTEGER" property="transCycle" />
+    <result column="status_cd" jdbcType="TINYINT" property="statusCd" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    interactive_id, auth_id, interface_id, trans_cycle, status_cd
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_third_interactive
+    where interactive_id = #{interactiveId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_third_interactive
+    where interactive_id = #{interactiveId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    insert into exc_third_interactive (interactive_id, auth_id, interface_id, 
+      trans_cycle, status_cd)
+    values (#{interactiveId,jdbcType=INTEGER}, #{authId,jdbcType=INTEGER}, #{interfaceId,jdbcType=INTEGER}, 
+      #{transCycle,jdbcType=INTEGER}, #{statusCd,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    insert into exc_third_interactive
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="interactiveId != null">
+        interactive_id,
+      </if>
+      <if test="authId != null">
+        auth_id,
+      </if>
+      <if test="interfaceId != null">
+        interface_id,
+      </if>
+      <if test="transCycle != null">
+        trans_cycle,
+      </if>
+      <if test="statusCd != null">
+        status_cd,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="interactiveId != null">
+        #{interactiveId,jdbcType=INTEGER},
+      </if>
+      <if test="authId != null">
+        #{authId,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceId != null">
+        #{interfaceId,jdbcType=INTEGER},
+      </if>
+      <if test="transCycle != null">
+        #{transCycle,jdbcType=INTEGER},
+      </if>
+      <if test="statusCd != null">
+        #{statusCd,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    update exc_third_interactive
+    <set>
+      <if test="authId != null">
+        auth_id = #{authId,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceId != null">
+        interface_id = #{interfaceId,jdbcType=INTEGER},
+      </if>
+      <if test="transCycle != null">
+        trans_cycle = #{transCycle,jdbcType=INTEGER},
+      </if>
+      <if test="statusCd != null">
+        status_cd = #{statusCd,jdbcType=TINYINT},
+      </if>
+    </set>
+    where interactive_id = #{interactiveId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    update exc_third_interactive
+    set auth_id = #{authId,jdbcType=INTEGER},
+      interface_id = #{interfaceId,jdbcType=INTEGER},
+      trans_cycle = #{transCycle,jdbcType=INTEGER},
+      status_cd = #{statusCd,jdbcType=TINYINT}
+    where interactive_id = #{interactiveId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteByAuthId" parameterType="java.lang.Integer">
+    delete from exc_third_interactive
+    where auth_id = #{authId}
+  </delete>
+  
+  
+  <resultMap id="InterResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    <id column="interactive_id" jdbcType="INTEGER" property="interactiveId" />
+    <result column="auth_id" jdbcType="INTEGER" property="authId" />
+    <result column="interface_id" jdbcType="INTEGER" property="interfaceId" />
+    <result column="trans_cycle" jdbcType="INTEGER" property="transCycle" />
+    <result column="status_cd" jdbcType="TINYINT" property="statusCd" />
+    <association property="excThirdAuthentication" column="auth_id" select="com.cpit.cpmt.biz.dao.exchange.operator.ExcThirdAuthenticationMapper.selectByPrimaryKey" /> 
+	<association property="excThirdInterface" column="interface_id" select="com.cpit.cpmt.biz.dao.exchange.operator.ExcThirdInterfaceMapper.selectByPrimaryKey" /> 
+  </resultMap>
+  
+  <select id="getExcAutListByParam" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive" resultMap="InterResultMap">
+	   SELECT a.interactive_id, a.auth_id, a.interface_id, a.trans_cycle, a.status_cd,b.interface_desc,b.interface_url FROM exc_third_interactive a left join exc_third_interface b on a.interface_id = b.interface_id where 1=1
+	   <if test="interfaceId != null">
+	   		and a.interface_id = #{interfaceId}
+	   </if>
+	   ORDER BY a.interactive_id DESC
+  </select>
+</mapper>

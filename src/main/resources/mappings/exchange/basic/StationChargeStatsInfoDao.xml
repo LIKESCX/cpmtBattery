@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.StationChargeStatsInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="operator_id" property="operatorID" jdbcType="VARCHAR" />
+    <result column="station_id" property="stationID" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+    <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+    <result column="station_charge_electricity" property="stationChargeElectricity" jdbcType="VARCHAR" />
+    <result column="rec_time" property="recTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, operator_id, station_id, start_time, end_time, station_charge_electricity, rec_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_station_charge_stats_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from exc_station_charge_stats_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" >
+    insert into exc_station_charge_stats_info (id, operator_id, station_id, 
+      start_time, end_time, station_charge_electricity, 
+      rec_time)
+    values (#{id,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, #{stationId,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, #{stationChargeElectricity,jdbcType=VARCHAR}, 
+      #{recTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" >
+    insert into exc_station_charge_stats_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="operatorID != null" >
+        operator_id,
+      </if>
+      <if test="stationID != null" >
+        station_id,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="stationChargeElectricity != null" >
+        station_charge_electricity,
+      </if>
+      <if test="recTime != null" >
+        rec_time,
+      </if>
+      <if test="inTime != null" >
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null" >
+        #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="stationID != null" >
+        #{stationID,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="stationChargeElectricity != null" >
+        #{stationChargeElectricity,jdbcType=VARCHAR},
+      </if>
+      <if test="recTime != null" >
+        #{recTime,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null" >
+        #{inTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" >
+    update exc_station_charge_stats_info
+    <set >
+      <if test="operatorId != null" >
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null" >
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="stationChargeElectricity != null" >
+        station_charge_electricity = #{stationChargeElectricity,jdbcType=VARCHAR},
+      </if>
+      <if test="recTime != null" >
+        rec_time = #{recTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" >
+    update exc_station_charge_stats_info
+    set operator_id = #{operatorID,jdbcType=VARCHAR},
+      station_id = #{stationID,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      station_charge_electricity = #{stationChargeElectricity,jdbcType=VARCHAR},
+      rec_time = #{recTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="get" parameterType="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" resultMap="BaseResultMap" >
+  select * from exc_station_charge_stats_info
+  where  operator_id = #{operatorID,jdbcType=VARCHAR} and
+      station_id = #{stationID,jdbcType=VARCHAR} and 
+      start_time = #{startTime,jdbcType=VARCHAR} and 
+      end_time = #{endTime,jdbcType=VARCHAR} 
+  </select>
+  
+   <update id="updateStats" parameterType="com.cpit.cpmt.dto.exchange.basic.StationChargeStatsInfo" >
+    update exc_station_charge_stats_info
+    set 
+      station_charge_electricity = #{stationChargeElectricity,jdbcType=VARCHAR},
+      rec_time = #{recTime,jdbcType=VARCHAR}
+     
+    where  operator_id = #{operatorID,jdbcType=VARCHAR} and
+      station_id = #{stationID,jdbcType=VARCHAR} and
+      start_time = #{startTime,jdbcType=VARCHAR} and
+      end_time = #{endTime,jdbcType=VARCHAR}
+  </update>
+</mapper>

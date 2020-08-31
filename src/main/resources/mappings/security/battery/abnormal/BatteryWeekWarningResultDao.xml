@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.security.battery.abnormal.BatteryWeekWarningResultDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.security.battery.abnormal.BatteryWeekWarningResult">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+    <result column="connector_id" jdbcType="VARCHAR" property="connectorId" />
+    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+    <result column="bms_code" jdbcType="VARCHAR" property="bmsCode" />
+    <result column="bms_ver" jdbcType="VARCHAR" property="bmsVer" />
+    <result column="warning_code" jdbcType="INTEGER" property="warningCode" />
+    <result column="warning_desc" jdbcType="VARCHAR" property="warningDesc" />
+    <result column="warning_code_times" jdbcType="INTEGER" property="warningCodeTimes" />
+    <result column="warning_level_times" jdbcType="INTEGER" property="warningLevelTimes" />
+    <result column="warning_level" jdbcType="INTEGER" property="warningLevel" />
+    <result column="statistical_time" jdbcType="DATE" property="statisticalTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+  </resultMap>
+  <select id="queryBatteryWeekWarningResult" resultMap="BaseResultMap">
+  	SELECT
+			operator_id,
+			station_id,
+			equipment_id,
+			connector_id,
+			bms_code,
+			area_code,
+			warning_code,
+			SUM(warning_code_times) AS warning_code_times,
+			warning_level
+		FROM
+			`sec_battery_day_warning_result`
+		WHERE
+			operator_id = #{operatorId}
+  		AND 
+			statistical_time  between  DATE_FORMAT(#{startDate},'%Y-%m-%d') and DATE_FORMAT(#{endDate},'%Y-%m-%d')
+		GROUP BY 
+			operator_id,
+			station_id,
+			equipment_id,
+			connector_id,
+			area_code,
+			bms_code,
+			warning_code,
+			warning_level
+  </select>
+  
+  <!-- 批量插入 -->
+  	<insert id="addBatchBatteryWeekWarningResult" parameterType="java.util.List">
+  		INSERT INTO sec_battery_week_warning_result
+	    (
+		    id,
+		    operator_id,
+			station_id,
+			equipment_id,
+			connector_id,
+			bms_code,
+			area_code,
+			warning_code,
+			warning_code_times,
+			warning_level,
+			statistical_time,
+	  		in_time
+  		)
+		VALUES
+  		<foreach collection="list" item="item" index="index" separator=",">
+  			(   
+  				#{item.id},
+	  			#{item.operatorId},
+	  			#{item.stationId},
+	  			#{item.equipmentId},
+	  			#{item.connectorId},
+	  			#{item.bmsCode},
+	  			#{item.areaCode},
+	  			#{item.warningCode},
+	  			#{item.warningCodeTimes},
+	  			#{item.warningLevel},
+	  			#{item.statisticalTime},
+	  			#{item.inTime}
+  			) 
+  		</foreach>
+  	</insert>
+  	<!-- 2.3.	异常告警数据挖掘分析 第四级钻取用  告警类型分布-->
+  <select id="queryFourthLevelAlarmTypeDistribution" parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions" resultMap="BaseResultMap">
+  	SELECT
+			bms_code,
+			warning_code,
+			SUM(warning_code_times) AS warning_code_times
+		FROM
+			`sec_battery_week_warning_result`
+		WHERE
+			bms_code = #{param.bMSCode,jdbcType=VARCHAR}
+		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+       		AND	DATE_FORMAT(statistical_time, '%Y-%m-%d') 
+       		BETWEEN DATE_FORMAT(#{param.startTime},'%Y-%m-%d') 
+       		AND  DATE_FORMAT(#{param.endTime},'%Y-%m-%d')
+		<!-- <if test="param.timeGranularity == 2">
+       		AND statistical_date  BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     		</if>
+		<if test="param.timeGranularity == 3">
+       		AND statistical_week  BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     		</if>
+		<if test="param.timeGranularity == 4">
+       		AND statistical_month  BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     		</if>
+		<if test="param.timeGranularity == 5">
+       		AND statistical_season BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     	</if> -->
+     		AND warning_code is not null and warning_code !=''
+    		GROUP BY warning_code
+  </select>
+  <!-- 2.3.	异常告警数据挖掘分析 第四级钻取用  告警等级分布-->
+  <select id="queryFourthLevelAlarmLevelDistribution"  parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions" resultMap="BaseResultMap">
+  	SELECT
+			bms_code,
+			warning_level,
+			SUM(warning_code_times) AS warning_level_times
+		FROM
+			`sec_battery_week_warning_result`
+		WHERE
+			bms_code = #{param.bMSCode,jdbcType=VARCHAR}
+		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.timeGranularity == 3">
+       		AND	DATE_FORMAT(statistical_time, '%Y-%m-%d') 
+       		BETWEEN DATE_FORMAT(#{param.startTime},'%Y-%m-%d') 
+       		AND  DATE_FORMAT(#{param.endTime},'%Y-%m-%d')
+     	</if>
+		<!-- <if test="param.timeGranularity == 2">
+       		AND statistical_date  BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     		</if>
+		<if test="param.timeGranularity == 3">
+       		AND statistical_week  BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     		</if>
+		<if test="param.timeGranularity == 4">
+       		AND statistical_month  BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     		</if>
+		<if test="param.timeGranularity == 5">
+       		AND statistical_season BETWEEN #{param.startStatisticalFlag} AND #{param.endStatisticalFlag}
+     	</if> -->
+     		AND warning_level is not null and warning_level !=''
+    		GROUP BY warning_level
+    </select>
+ <!--  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, operator_id, station_id, equipment_id, connector_id, area_code, bms_code, bms_ver, 
+    warning_code, warning_desc, warning_code_times, warning_level, statistical_time, 
+    in_time
+  </sql>
+  <select id="selectByExample" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResultExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sec_battery_week_warning_result
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sec_battery_week_warning_result
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sec_battery_week_warning_result
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResultExample">
+    delete from sec_battery_week_warning_result
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResult">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sec_battery_week_warning_result (operator_id, station_id, equipment_id, 
+      connector_id, area_code, bms_code, 
+      bms_ver, warning_code, warning_desc, 
+      warning_code_times, warning_level, statistical_time, 
+      in_time)
+    values (#{operatorId,jdbcType=VARCHAR}, #{stationId,jdbcType=VARCHAR}, #{equipmentId,jdbcType=VARCHAR}, 
+      #{connectorId,jdbcType=VARCHAR}, #{areaCode,jdbcType=VARCHAR}, #{bmsCode,jdbcType=VARCHAR}, 
+      #{bmsVer,jdbcType=VARCHAR}, #{warningCode,jdbcType=INTEGER}, #{warningDesc,jdbcType=VARCHAR}, 
+      #{warningCodeTimes,jdbcType=INTEGER}, #{warningLevel,jdbcType=INTEGER}, #{statisticalTime,jdbcType=DATE}, 
+      #{inTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResult">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sec_battery_week_warning_result
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="connectorId != null">
+        connector_id,
+      </if>
+      <if test="areaCode != null">
+        area_code,
+      </if>
+      <if test="bmsCode != null">
+        bms_code,
+      </if>
+      <if test="bmsVer != null">
+        bms_ver,
+      </if>
+      <if test="warningCode != null">
+        warning_code,
+      </if>
+      <if test="warningDesc != null">
+        warning_desc,
+      </if>
+      <if test="warningCodeTimes != null">
+        warning_code_times,
+      </if>
+      <if test="warningLevel != null">
+        warning_level,
+      </if>
+      <if test="statisticalTime != null">
+        statistical_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorId != null">
+        #{connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null">
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bmsCode != null">
+        #{bmsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bmsVer != null">
+        #{bmsVer,jdbcType=VARCHAR},
+      </if>
+      <if test="warningCode != null">
+        #{warningCode,jdbcType=INTEGER},
+      </if>
+      <if test="warningDesc != null">
+        #{warningDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="warningCodeTimes != null">
+        #{warningCodeTimes,jdbcType=INTEGER},
+      </if>
+      <if test="warningLevel != null">
+        #{warningLevel,jdbcType=INTEGER},
+      </if>
+      <if test="statisticalTime != null">
+        #{statisticalTime,jdbcType=DATE},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResultExample" resultType="java.lang.Long">
+    select count(*) from sec_battery_week_warning_result
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update sec_battery_week_warning_result
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operatorId != null">
+        operator_id = #{record.operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.equipmentId != null">
+        equipment_id = #{record.equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.connectorId != null">
+        connector_id = #{record.connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.areaCode != null">
+        area_code = #{record.areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bmsCode != null">
+        bms_code = #{record.bmsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bmsVer != null">
+        bms_ver = #{record.bmsVer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.warningCode != null">
+        warning_code = #{record.warningCode,jdbcType=INTEGER},
+      </if>
+      <if test="record.warningDesc != null">
+        warning_desc = #{record.warningDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.warningCodeTimes != null">
+        warning_code_times = #{record.warningCodeTimes,jdbcType=INTEGER},
+      </if>
+      <if test="record.warningLevel != null">
+        warning_level = #{record.warningLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.statisticalTime != null">
+        statistical_time = #{record.statisticalTime,jdbcType=DATE},
+      </if>
+      <if test="record.inTime != null">
+        in_time = #{record.inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update sec_battery_week_warning_result
+    set id = #{record.id,jdbcType=VARCHAR},
+      operator_id = #{record.operatorId,jdbcType=VARCHAR},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      equipment_id = #{record.equipmentId,jdbcType=VARCHAR},
+      connector_id = #{record.connectorId,jdbcType=VARCHAR},
+      area_code = #{record.areaCode,jdbcType=VARCHAR},
+      bms_code = #{record.bmsCode,jdbcType=VARCHAR},
+      bms_ver = #{record.bmsVer,jdbcType=VARCHAR},
+      warning_code = #{record.warningCode,jdbcType=INTEGER},
+      warning_desc = #{record.warningDesc,jdbcType=VARCHAR},
+      warning_code_times = #{record.warningCodeTimes,jdbcType=INTEGER},
+      warning_level = #{record.warningLevel,jdbcType=INTEGER},
+      statistical_time = #{record.statisticalTime,jdbcType=DATE},
+      in_time = #{record.inTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResult">
+    update sec_battery_week_warning_result
+    <set>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorId != null">
+        connector_id = #{connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null">
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bmsCode != null">
+        bms_code = #{bmsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bmsVer != null">
+        bms_ver = #{bmsVer,jdbcType=VARCHAR},
+      </if>
+      <if test="warningCode != null">
+        warning_code = #{warningCode,jdbcType=INTEGER},
+      </if>
+      <if test="warningDesc != null">
+        warning_desc = #{warningDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="warningCodeTimes != null">
+        warning_code_times = #{warningCodeTimes,jdbcType=INTEGER},
+      </if>
+      <if test="warningLevel != null">
+        warning_level = #{warningLevel,jdbcType=INTEGER},
+      </if>
+      <if test="statisticalTime != null">
+        statistical_time = #{statisticalTime,jdbcType=DATE},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.security.battery.BatteryWeekWarningResult">
+    update sec_battery_week_warning_result
+    set operator_id = #{operatorId,jdbcType=VARCHAR},
+      station_id = #{stationId,jdbcType=VARCHAR},
+      equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      connector_id = #{connectorId,jdbcType=VARCHAR},
+      area_code = #{areaCode,jdbcType=VARCHAR},
+      bms_code = #{bmsCode,jdbcType=VARCHAR},
+      bms_ver = #{bmsVer,jdbcType=VARCHAR},
+      warning_code = #{warningCode,jdbcType=INTEGER},
+      warning_desc = #{warningDesc,jdbcType=VARCHAR},
+      warning_code_times = #{warningCodeTimes,jdbcType=INTEGER},
+      warning_level = #{warningLevel,jdbcType=INTEGER},
+      statistical_time = #{statisticalTime,jdbcType=DATE},
+      in_time = #{inTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update> -->
+</mapper>

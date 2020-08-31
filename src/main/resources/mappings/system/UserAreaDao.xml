@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.UserAreaDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.system.UserAreaKey">
+    <id column="user_id" jdbcType="VARCHAR" property="userId" />
+    <id column="area_code" jdbcType="VARCHAR" property="areaCode" />
+  </resultMap>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.UserAreaKey">
+    delete from sys_user_area
+    where user_id = #{userId,jdbcType=VARCHAR}
+      and area_code = #{areaCode,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByUserId" parameterType="java.lang.String">
+    delete from sys_user_area
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </delete>  
+  
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.UserAreaKey">
+    insert into sys_user_area (user_id, area_code)
+    values (#{userId,jdbcType=VARCHAR}, #{areaCode,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.UserAreaKey">
+    insert into sys_user_area
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="areaCode != null">
+        area_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null">
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

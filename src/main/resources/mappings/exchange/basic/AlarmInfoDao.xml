@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.AlarmInfoDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.AlarmInfo">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationID" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="equipment_owner_id" jdbcType="VARCHAR" property="equipmentOwnerID" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentID" />
+    <result column="equipment_type" jdbcType="INTEGER" property="equipmentType" />
+    <result column="cid" property="cid" jdbcType="VARCHAR" />
+    <result column="eid" property="eid" jdbcType="VARCHAR" />
+    <result column="connector_id" jdbcType="VARCHAR" property="connectorID" />
+    <result column="alarm_status" jdbcType="VARCHAR" property="alarmStatus" />
+    <result column="alarm_code" jdbcType="VARCHAR" property="alarmCode" />
+    <result column="alarm_type" jdbcType="VARCHAR" property="alarmType" />
+    <result column="alarmTypeTimes" jdbcType="VARCHAR" property="alarmTypeTimes" />
+    <result column="alarm_level" jdbcType="VARCHAR" property="alarmLevel" />
+    <result column="alarmLevelTimes" jdbcType="VARCHAR" property="alarmLevelTimes" />
+    <result column="alarm_time" jdbcType="TIMESTAMP" property="alarmTime" />
+    <result column="alarm_desc" jdbcType="VARCHAR" property="alarmDesc" />
+    <result column="note_string" jdbcType="VARCHAR" property="noteString" />
+    <result column="bms_code" jdbcType="VARCHAR" property="bmsCode" />
+    <result column="received_time" jdbcType="TIMESTAMP" property="receivedTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="statisticalHour" jdbcType="CHAR" property="statisticalHour" />
+    <result column="statistical_day" jdbcType="CHAR" property="statisticalDay" />
+    <result column="statistical_week" jdbcType="CHAR" property="statisticalWeek" />
+    <result column="statistical_month" jdbcType="CHAR" property="statisticalMonth" />
+    <result column="statistical_season" jdbcType="CHAR" property="statisticalSeason" />
+    <result column="statistical_year" jdbcType="CHAR" property="statisticalYear" />
+    <result column="commonStatisticalTime" jdbcType="CHAR" property="commonStatisticalTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, station_id, operator_id, equipment_owner_id, station_name, equipment_id,equipment_type, connector_id, 
+    alarm_status, alarm_code, alarm_type, alarm_level, alarm_time, note_string, received_time, 
+    in_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_alarm_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_alarm_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmInfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exc_alarm_info (station_id, operator_id, equipment_owner_id, 
+      station_name, equipment_id, connector_id, 
+      alarm_status, alarm_code, alarm_type, 
+      alarm_level, alarm_time, note_string, 
+      received_time, in_time)
+    values (#{stationId,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, #{equipmentOwnerId,jdbcType=VARCHAR}, 
+      #{stationName,jdbcType=VARCHAR}, #{equipmentId,jdbcType=VARCHAR}, #{connectorId,jdbcType=VARCHAR}, 
+      #{alarmStatus,jdbcType=VARCHAR}, #{alarmCode,jdbcType=VARCHAR}, #{alarmType,jdbcType=VARCHAR}, 
+      #{alarmLevel,jdbcType=VARCHAR}, #{alarmTime,jdbcType=TIMESTAMP}, #{noteString,jdbcType=VARCHAR}, 
+      #{receivedTime,jdbcType=TIMESTAMP}, #{inTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmInfo">
+    <!-- <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey> -->
+    insert into exc_alarm_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="eid != null">
+        eid,
+      </if>
+      <if test="stationID != null">
+        station_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="equipmentOwnerID != null">
+        equipment_owner_id,
+      </if>
+      <if test="stationName != null">
+        station_name,
+      </if>
+      <if test="equipmentID != null">
+        equipment_id,
+      </if>
+      <if test="equipmentType != null">
+        equipment_type,
+      </if>
+      <if test="connectorID != null">
+        connector_id,
+      </if>
+      <if test="alarmStatus != null">
+        alarm_status,
+      </if>
+      <if test="alarmCode != null">
+        alarm_code,
+      </if>
+      <if test="alarmType != null">
+        alarm_type,
+      </if>
+      <if test="alarmLevel != null">
+        alarm_level,
+      </if>
+      <if test="alarmTime != null">
+        alarm_time,
+      </if>
+      <if test="alarmDesc != null">
+        alarm_desc,
+      </if>
+      <if test="noteString != null">
+        note_string,
+      </if>
+      <if test="statisticalDay != null">
+        statistical_day,
+      </if>
+      <if test="statisticalWeek != null">
+        statistical_week,
+      </if>
+      <if test="statisticalMonth != null">
+        statistical_month,
+      </if>
+      <if test="statisticalSeason != null">
+        statistical_season,
+      </if>
+      <if test="statisticalYear != null">
+        statistical_year,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+      <if test="dealResult != null" >
+        deal_result,
+      </if>
+      <if test="dealStep != null" >
+        deal_step,
+      </if>
+      <if test="dealTime != null" >
+        deal_time,
+      </if>
+      <if test="dealPerson != null" >
+        deal_person,
+      </if>
+      <if test="affirm != null" >
+        affirm,
+      </if>
+      <if test="affirmTime != null" >
+        affirm_time,
+      </if>
+      <if test="affirmPerson != null" >
+        affirm_person,
+      </if>
+      <if test="areaCode != null" >
+        area_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cid != null">
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="eid != null">
+        #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="stationID != null">
+        #{stationID,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentOwnerID != null">
+        #{equipmentOwnerID,jdbcType=VARCHAR},
+      </if>
+      <if test="stationName != null">
+        #{stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentID != null">
+        #{equipmentID,jdbcType=VARCHAR},
+      </if>
+       <if test="equipmentType != null">
+        #{equipmentType,jdbcType=INTEGER},
+      </if>
+      <if test="connectorID != null">
+        #{connectorID,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmStatus != null">
+        #{alarmStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmCode != null">
+        #{alarmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmType != null">
+        #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLevel != null">
+        #{alarmLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmTime != null">
+        #{alarmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="alarmDesc != null">
+        #{alarmDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="noteString != null">
+        #{noteString,jdbcType=VARCHAR},
+      </if>
+        <if test="statisticalDay != null">
+        #{statisticalDay,jdbcType=CHAR},
+      </if>
+      <if test="statisticalWeek != null">
+        #{statisticalWeek,jdbcType=CHAR},
+      </if>
+      <if test="statisticalMonth != null">
+        #{statisticalMonth,jdbcType=CHAR},
+      </if>
+      <if test="statisticalSeason != null">
+        #{statisticalSeason,jdbcType=CHAR},
+      </if>
+      <if test="statisticalYear != null">
+        #{statisticalYear,jdbcType=CHAR},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealResult != null" >
+        #{dealResult,jdbcType=INTEGER},
+      </if>
+      <if test="dealStep != null" >
+        #{dealStep,jdbcType=VARCHAR},
+      </if>
+      <if test="dealTime != null" >
+        #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealPerson != null" >
+        #{dealPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="affirm != null" >
+        #{affirm,jdbcType=INTEGER},
+      </if>
+      <if test="affirmTime != null" >
+        #{affirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="affirmPerson != null" >
+        #{affirmPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null" >
+      	 #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmInfo">
+    update exc_alarm_info
+    <set>
+      <!-- <if test="stationID != null">
+        station_id = #{stationID,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null">
+        operator_id = #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentOwnerID != null">
+        equipment_owner_id = #{equipmentOwnerID,jdbcType=VARCHAR},
+      </if>
+      <if test="stationName != null">
+        station_name = #{stationName,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentID != null">
+        equipment_id = #{equipmentID,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorID != null">
+        connector_id = #{connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmStatus != null">
+        alarm_status = #{alarmStatus,jdbcType=VARCHAR},
+      </if>-->
+      <if test="bmsCode != null">
+        bms_code = #{bmsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmCode != null">
+        alarm_code = #{alarmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmType != null">
+        alarm_type = #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLevel != null">
+        alarm_level = #{alarmLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmTime != null">
+        alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="noteString != null">
+        note_string = #{noteString,jdbcType=VARCHAR},
+      </if>
+      <if test="receivedTime != null">
+        received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealResult != null" >
+        deal_result = #{dealResult,jdbcType=INTEGER},
+      </if>
+      <if test="dealStep != null" >
+        deal_step = #{dealStep,jdbcType=VARCHAR},
+      </if>
+      <if test="dealTime != null" >
+        deal_time = #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealPerson != null" >
+        deal_person = #{dealPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="affirm != null" >
+        affirm = #{affirm,jdbcType=INTEGER},
+      </if>
+      <if test="affirmTime != null" >
+        affirm_time = #{affirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="affirmPerson != null" >
+        affirm_person = #{affirmPerson,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmInfo">
+    update exc_alarm_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      operator_id = #{operatorId,jdbcType=VARCHAR},
+      equipment_owner_id = #{equipmentOwnerId,jdbcType=VARCHAR},
+      station_name = #{stationName,jdbcType=VARCHAR},
+      equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      connector_id = #{connectorId,jdbcType=VARCHAR},
+      alarm_status = #{alarmStatus,jdbcType=VARCHAR},
+      alarm_code = #{alarmCode,jdbcType=VARCHAR},
+      alarm_type = #{alarmType,jdbcType=VARCHAR},
+      alarm_level = #{alarmLevel,jdbcType=VARCHAR},
+      alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
+      note_string = #{noteString,jdbcType=VARCHAR},
+      received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      in_time = #{inTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- checkCurrentAlarmValid -->
+  <select id="checkCurrentAlarmValid" parameterType="java.lang.Integer" resultType="com.cpit.cpmt.dto.exchange.basic.AlarmItem">
+  	select 
+  	    alarm_code as alarmCode,
+  	    alarm_type as alarmType,
+  	    alarm_level as alarmLevel,
+  	    alarm_desc as alarmDesc
+  	from exc_alarm_item 
+  	where 
+  		alarm_code = #{alarmCode} and alarm_type = #{alarmType} and alarm_level = #{alarmLevel}
+  </select>
+  <select id="queryAlikeAlaram" resultMap ="BaseResultMap">
+  	select 
+  	    id,
+  	    alarm_status
+  	from exc_alarm_info
+  	where 
+  		alarm_code = #{alarmCode} 
+  	and 
+  		alarm_type = #{alarmType} 
+  	and 
+  		alarm_level = #{alarmLevel}
+  	and 
+  		operator_id = #{operatorID}
+  	and 
+  		connector_id = #{connectorID}
+  	and deal_result = 1
+  	ORDER BY alarm_time DESC
+  	LIMIT 1;
+  </select>
+  <select id="selectStationAlarmLastest" resultType="java.lang.String">
+    select alarm_status from  exc_alarm_info
+    where station_id=#{stationId} and operator_id=#{operatorId}
+    ORDER BY in_time desc LIMIT 1;
+  </select>
+
+  <select id="getAlarmNum" parameterType="com.cpit.cpmt.dto.exchange.basic.AlarmInfo" resultType="java.lang.Integer">
+    select IFNULL(count(id),0)
+    from  exc_alarm_info
+    where 1=1
+    <if test="stationID != null">
+      and  station_id = #{stationID}
+    </if>
+    <if test="operatorID != null">
+      and operator_id = #{operatorID}
+    </if>
+    <if test="equipmentOwnerID != null">
+      and equipment_owner_id = #{equipmentOwnerID}
+    </if>
+  </select>
+
+      <select id="selectEquipmentAlarm" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from exc_alarm_info
+        where equipment_id=#{equipmentId} and operator_id=#{operatorId}
+      </select>
+
+      <select id="queryFirstLevelHourAbnormalAlarmData" resultMap="BaseResultMap">
+          SELECT
+              alarm_type,
+              COUNT(alarm_type) AS alarmTypeTimes,
+              DATE_FORMAT(alarm_time, '%Y-%m-%d %H') AS commonStatisticalTime
+
+          FROM
+              exc_alarm_info
+          WHERE
+              DATE_FORMAT(alarm_time, '%Y-%m-%d %H')
+              BETWEEN DATE_FORMAT(
+                        #{param.startTime},
+                        '%Y-%m-%d %H'
+            )
+            AND  DATE_FORMAT(
+                #{param.endTime},
+                '%Y-%m-%d %H'
+            )
+              <if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.alarmType==1 or param.alarmType==2 or param.alarmType==3"><!-- 故障告警类型 1-充电系统故障，2-电池系统故障，3-配电系统故障，4全部 -->
+			AND alarm_type = #{param.alarmType}
+		</if>
+		<if test="param.alarmLevel==1 or param.alarmLevel==2 or param.alarmLevel==3"><!-- 故障级别分类 1-人身安全级，2-设备安全级，3-告警提示级，4全部 -->
+			AND alarm_level = #{param.alarmLevel}
+		</if>
+		GROUP BY alarm_type,DATE_FORMAT(alarm_time, '%Y-%m-%d %H')
+		ORDER BY alarm_time ASC
+  </select>
+  <select id="queryFirstLevelDayAbnormalAlarmData" resultMap="BaseResultMap">
+  	SELECT
+  		alarm_type,
+  		COUNT(alarm_type) AS alarmTypeTimes,
+  		statistical_day AS commonStatisticalTime
+  	FROM  
+  		exc_alarm_info
+  	WHERE
+  		 statistical_day BETWEEN #{param.startStatisticalDay} AND #{param.endStatisticalDay}
+  		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.alarmType==1 or param.alarmType==2 or param.alarmType==3"><!-- 故障告警类型 1-充电系统故障，2-电池系统故障，3-配电系统故障，4全部 -->
+			AND alarm_type = #{param.alarmType}
+		</if>
+		<if test="param.alarmLevel==1 or param.alarmLevel==2 or param.alarmLevel==3"><!-- 故障级别分类 1-人身安全级，2-设备安全级，3-告警提示级，4全部 -->
+			AND alarm_level = #{param.alarmLevel}
+		</if>
+		GROUP BY alarm_type,statistical_day
+		ORDER BY statistical_day ASC
+  </select>
+  <select id="queryFirstLevelWeekAbnormalAlarmData" resultMap="BaseResultMap">
+  	SELECT
+  		alarm_type,
+  		COUNT(alarm_type) AS alarmTypeTimes,
+  		statistical_week AS commonStatisticalTime
+  	FROM  
+  		exc_alarm_info
+  	WHERE
+  		statistical_week BETWEEN #{param.startStatisticalWeek} AND #{param.endStatisticalWeek}
+  		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.alarmType==1 or param.alarmType==2 or param.alarmType==3"><!-- 故障告警类型 1-充电系统故障，2-电池系统故障，3-配电系统故障，4全部 -->
+			AND alarm_type = #{param.alarmType}
+		</if>
+		<if test="param.alarmLevel==1 or param.alarmLevel==2 or param.alarmLevel==3"><!-- 故障级别分类 1-人身安全级，2-设备安全级，3-告警提示级，4全部 -->
+			AND alarm_level = #{param.alarmLevel}
+		</if>
+		GROUP BY alarm_type,statistical_week
+		ORDER BY statistical_week ASC
+  </select>
+  <select id="queryFirstLevelMonthAbnormalAlarmData" resultMap="BaseResultMap">
+  	SELECT
+  		alarm_type,
+  		COUNT(alarm_type) AS alarmTypeTimes,
+  		statistical_month AS commonStatisticalTime
+  	FROM  
+  		exc_alarm_info
+  	WHERE
+  		statistical_month BETWEEN #{param.startStatisticalMonth} AND #{param.endStatisticalMonth}
+  		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.alarmType==1 or param.alarmType==2 or param.alarmType==3"><!-- 故障告警类型 1-充电系统故障，2-电池系统故障，3-配电系统故障，4全部 -->
+			AND alarm_type = #{param.alarmType}
+		</if>
+		<if test="param.alarmLevel==1 or param.alarmLevel==2 or param.alarmLevel==3"><!-- 故障级别分类 1-人身安全级，2-设备安全级，3-告警提示级，4全部 -->
+			AND alarm_level = #{param.alarmLevel}
+		</if>
+		GROUP BY alarm_type,statistical_month
+		ORDER BY statistical_month ASC
+  </select>
+  <select id="queryFirstLevelSeasonAbnormalAlarmData" resultMap="BaseResultMap">
+  	SELECT
+  		alarm_type,
+  		COUNT(alarm_type) AS alarmTypeTimes,
+  		statistical_season AS commonStatisticalTime
+  	FROM  
+  		exc_alarm_info
+  	WHERE
+  		statistical_season BETWEEN #{param.startStatisticalSeason} AND #{param.endStatisticalSeason}
+  		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.alarmType==1 or param.alarmType==2 or param.alarmType==3"><!-- 故障告警类型 1-充电系统故障，2-电池系统故障，3-配电系统故障，4全部 -->
+			AND alarm_type = #{param.alarmType}
+		</if>
+		<if test="param.alarmLevel==1 or param.alarmLevel==2 or param.alarmLevel==3"><!-- 故障级别分类 1-人身安全级，2-设备安全级，3-告警提示级，4全部 -->
+			AND alarm_level = #{param.alarmLevel}
+		</if>
+		GROUP BY alarm_type,statistical_season
+		ORDER BY statistical_season ASC
+  </select>
+    
+  <select id="querySecondLevelAbnormalAlarmData" resultMap="BaseResultMap">
+  	SELECT
+  		alarm_level,
+  		COUNT(alarm_level) AS alarmLevelTimes
+  	FROM  
+  		exc_alarm_info
+  	WHERE
+  			alarm_type = #{param.alarmType}
+  		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.timeGranularity == 1">
+       		AND DATE_FORMAT(alarm_time, '%Y-%m-%d %H') = #{param.commonStatisticalTime}
+     	</if>
+		<if test="param.timeGranularity == 2">
+       		AND statistical_day = #{param.commonStatisticalTime}
+     		</if>
+		<if test="param.timeGranularity == 3">
+       		AND statistical_week = #{param.commonStatisticalTime}
+     		</if>
+		<if test="param.timeGranularity == 4">
+       		AND statistical_month = #{param.commonStatisticalTime}
+     		</if>
+		<if test="param.timeGranularity == 5">
+       		AND statistical_season = #{param.commonStatisticalTime}
+     	</if>
+       		GROUP BY alarm_level
+       		ORDER BY alarm_level ASC
+  </select>
+  
+  <select id="queryThirdLevelAbnormalAlarmData" resultMap="BaseResultMap">
+  	SELECT
+  		id,
+  		operator_id,
+	    station_id,
+	    equipment_id,
+	    connector_id,
+	    alarm_status,
+	    alarm_type,
+	    alarm_level,
+	    alarm_time,
+	    note_string,
+	    bms_code
+  	FROM  
+  		exc_alarm_info
+  	WHERE
+  			alarm_level = #{param.alarmLevel}
+  		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.alarmStatus==0 or param.alarmStatus==1"><!-- 告警状态 0-恢复,1-发生,2-全部 -->
+			AND alarm_status = #{param.alarmStatus}
+		</if>
+		<if test="param.timeGranularity == 1">
+       		AND DATE_FORMAT(alarm_time, '%Y-%m-%d %H') = #{param.commonStatisticalTime}
+     	</if>
+		<if test="param.timeGranularity == 2">
+       		AND statistical_day = #{param.commonStatisticalTime}
+     		</if>
+		<if test="param.timeGranularity == 3">
+       		AND statistical_week = #{param.commonStatisticalTime}
+     		</if>
+		<if test="param.timeGranularity == 4">
+       		AND statistical_month = #{param.commonStatisticalTime}
+     		</if>
+		<if test="param.timeGranularity == 5">
+       		AND statistical_season = #{param.commonStatisticalTime}
+     	</if>
+     	ORDER BY received_time DESC
+  </select>
+</mapper>

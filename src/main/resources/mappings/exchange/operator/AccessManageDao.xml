@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.AccessManageDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.AccessManage" >
+    <id column="operator_id" property="operatorID" jdbcType="VARCHAR" />
+    <result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+    <result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+    <result column="secret_key_address" property="secretKeyAddress" jdbcType="VARCHAR" />
+    <result column="secret_certificate" property="secretCertificate" jdbcType="VARCHAR" />
+    <result column="secret_cert_name" property="secretCertName" jdbcType="VARCHAR" />
+    <result column="authen_way" property="authenWay" jdbcType="INTEGER" />
+    <result column="if_access" property="ifAccess" jdbcType="INTEGER" />
+    <result column="opera_date" property="operaDate" jdbcType="TIMESTAMP"/>
+  </resultMap>
+  
+  <resultMap id="ResultMapWithOperatorName" type="com.cpit.cpmt.dto.exchange.operator.AccessManage" extends="BaseResultMap" >
+    <result column="operator_name" property="operatorName" jdbcType="VARCHAR" />
+    <result column="operator_key" property="operatorKey" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    operator_id, area_code,  secret_key, secret_key_address, secret_certificate, secret_cert_name, authen_way, if_access, opera_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_access_management
+    where operator_id = #{operatorID,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from exc_access_management
+    where operator_id = #{operatorID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.operator.AccessManage" >
+    insert into exc_access_management (operator_id, area_code,
+      secret_key, secret_key_address, authen_way, 
+      if_access, secret_certificate,secret_cert_name, opera_date)
+    values (#{operatorID,jdbcType=VARCHAR}, #{areaCode,jdbcType=VARCHAR}, 
+      #{secretKey,jdbcType=VARCHAR}, #{secretKeyAddress,jdbcType=VARCHAR}, #{authenWay,jdbcType=INTEGER}, 
+      #{ifAccess,jdbcType=INTEGER}, #{secretCertificate,jdbcType=VARCHAR},#{secretCertName,jdbcType=VARCHAR}, now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.AccessManage" >
+    insert into exc_access_management
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      opera_date,
+      <if test="operatorID != null" >
+        operator_id,
+      </if>
+      <if test="areaCode != null" >
+        area_code,
+      </if>
+      <if test="secretKey != null" >
+        secret_key,
+      </if>
+      <if test="secretKeyAddress != null" >
+        secret_key_address,
+      </if>
+      <if test="authenWay != null" >
+        authen_way,
+      </if>
+      <if test="ifAccess != null" >
+        if_access,
+      </if>
+      <if test="secretCertificate != null" >
+        secret_certificate,
+      </if>
+      <if test="secretCertName != null" >
+        secret_cert_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      now(),
+      <if test="operatorID != null" >
+        #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null" >
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKeyAddress != null" >
+        #{secretKeyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="authenWay != null" >
+        #{authenWay,jdbcType=INTEGER},
+      </if>
+      <if test="ifAccess != null" >
+        #{ifAccess,jdbcType=INTEGER},
+      </if>
+      <if test="secretCertificate != null" >
+        #{secretCertificate,jdbcType=VARCHAR},
+      </if>
+      <if test="secretCertName != null" >
+        #{secretCertName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.AccessManage" >
+    update exc_access_management
+    <set >
+         opera_date = now(),
+      <if test="areaCode != null" >
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKeyAddress != null" >
+        secret_key_address = #{secretKeyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="authenWay != null" >
+        authen_way = #{authenWay,jdbcType=INTEGER},
+      </if>
+      <if test="ifAccess != null" >
+        if_access = #{ifAccess,jdbcType=INTEGER},
+      </if>
+      <if test="secretCertificate != null" >
+        secret_certificate = #{secretCertificate,jdbcType=VARCHAR},
+      </if>
+      <if test="secretCertName != null" >
+        secret_cert_name = #{secretCertName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where operator_id = #{operatorID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cpit.cpmt.dto.exchange.operator.AccessManage" >
+    update exc_access_management
+    set area_code = #{areaCode,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      secret_key_address = #{secretKeyAddress,jdbcType=VARCHAR},
+      authen_way = #{authenWay,jdbcType=INTEGER},
+      if_access = #{ifAccess,jdbcType=INTEGER},
+      secret_certificate = #{secretCertificate,jdbcType=VARCHAR},
+      secret_cert_name = #{secretCertName,jdbcType=VARCHAR},
+      opera_date = now()
+    where operator_id = #{operatorID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.operator.AccessManage" >
+    update exc_access_management
+    set area_code = #{areaCode,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      secret_key_address = #{secretKeyAddress,jdbcType=VARCHAR},
+      secret_certificate = #{secretCertificate,jdbcType=VARCHAR},
+      secret_cert_name = #{secretCertName,jdbcType=VARCHAR},
+      authen_way = #{authenWay,jdbcType=INTEGER},
+      if_access = #{ifAccess,jdbcType=INTEGER},
+      opera_date = now()
+    where operator_id = #{operatorID,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="getAccessManageList" parameterType="com.cpit.cpmt.dto.exchange.operator.AccessManage" resultMap="ResultMapWithOperatorName">
+    select 
+    a.operator_id, a.area_code,
+    a.secret_key, a.secret_key_address,a.secret_certificate,a.secret_cert_name, a.authen_way, a.if_access, a.opera_date, o.operator_name,o.secret_key as operator_key from exc_access_management a 
+    left join exc_operator_info o on a.operator_id = o.operator_id
+	where 1=1
+	  <if test="operatorID != null and operatorID != ''">
+	      and a.operator_id = #{operatorID,jdbcType=VARCHAR}
+	  </if>
+	  <if test="areaCode != null and areaCode != ''">
+	      and a.area_code = #{areaCode,jdbcType=VARCHAR}
+	  </if>
+	  <if test="operatorName != null and operatorName != ''">
+	      and o.operator_name like CONCAT('%', #{operatorName}, '%')
+	  </if>
+	  <if test="areaList != null and areaList.size()>0"> 
+		and o.area_code in
+		<foreach collection="areaList" item="area" index="index" open="(" close=")" separator=",">
+			#{area.areaCode}
+		</foreach>
+	  </if>
+  </select>
+</mapper>

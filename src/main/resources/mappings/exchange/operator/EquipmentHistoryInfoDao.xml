@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.EquipmentHistoryInfoDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo">
+    <id column="eid" jdbcType="VARCHAR" property="eID" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentID" />
+    <result column="sid" jdbcType="VARCHAR" property="sID" />
+    <result column="operator_his_id" jdbcType="INTEGER" property="operatorHisID" />
+    <result column="his_sid" jdbcType="VARCHAR" property="hisSID" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
+    <result column="manufacturer_id" jdbcType="VARCHAR" property="manufacturerID" />
+    <result column="manufacturer_name" jdbcType="VARCHAR" property="manufacturerName" />
+    <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="equipment_add_time" jdbcType="TIMESTAMP" property="equipmentAddTime" />
+    <result column="equipment_type" jdbcType="INTEGER" property="equipmentType" />
+    <result column="equipment_lng" jdbcType="DOUBLE" property="equipmentLng" />
+    <result column="equipment_lat" jdbcType="DOUBLE" property="equipmentLat" />
+    <result column="power" jdbcType="DOUBLE" property="power" />
+    <result column="equipment_status" jdbcType="INTEGER" property="equipmentStatus" />
+    <result column="equipment_power" jdbcType="DOUBLE" property="equipmentPower" />
+    <result column="new_national_standard" jdbcType="INTEGER" property="newNationalStandard" />
+    <result column="allowance_status" jdbcType="VARCHAR" property="allowanceStatus" />
+    <result column="allowance_price" jdbcType="VARCHAR" property="allowancePrice" />
+    <result column="period_use" jdbcType="INTEGER" property="periodUse" />
+    <result column="checkout_status" jdbcType="VARCHAR" property="checkoutStatus" />
+    <result column="rated_in_voltage" jdbcType="VARCHAR" property="ratedInVoltage" />
+    <result column="rated_out_voltage" jdbcType="VARCHAR" property="ratedOutVoltage" />
+    <result column="rated_power" jdbcType="VARCHAR" property="ratedPower" />
+    <result column="feed_num" jdbcType="INTEGER" property="feedNum" />
+    <result column="gun_sum" jdbcType="INTEGER" property="gunSum" />
+    <result column="allowance_date" jdbcType="TIMESTAMP" property="allowanceDate" />
+    <result column="in_date" jdbcType="TIMESTAMP" property="inDate" />
+    <result column="worth_date" jdbcType="TIMESTAMP" property="worthDate" />
+    <result column="user_id" jdbcType="VARCHAR" property="userID" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="operate" jdbcType="VARCHAR" property="operate" />
+    <result column="check_date" jdbcType="TIMESTAMP" property="checkDate" />
+    <result column="operate_type" jdbcType="INTEGER" property="operateType" />
+    <result column="change_method" jdbcType="INTEGER" property="changeMethod" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+
+  <resultMap id="mixedResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo" extends="BaseResultMap">
+    <association property="operatorInfo" column="operator_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.selectByPrimaryKey"/>
+    <association property="operatorChangeHis" column="operator_his_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorChangeHisDao.selectByPrimaryKey"/>
+    <association property="stationInfo" column="sid" select="com.cpit.cpmt.biz.dao.exchange.operator.StationInfoDAO.selectById"/>
+    <association property="stationHistory" column="his_sid" select="com.cpit.cpmt.biz.dao.exchange.operator.StationHistoryInfoDAO.selectByPrimaryKey"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    eid, equipment_id, sid, operator_his_id, his_sid, station_id, operator_id, equipment_name,
+    manufacturer_id, manufacturer_name, equipment_model, production_date, equipment_add_time, 
+    equipment_type, equipment_lng, equipment_lat, power, equipment_status, equipment_power, 
+    new_national_standard, allowance_status, allowance_price, checkout_status, rated_in_voltage, 
+    rated_out_voltage, rated_power, feed_num, gun_sum, allowance_date, in_date, user_id, 
+    user_name, operate, check_date, operate_type,change_method,  reason, note,period_use,worth_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_equipment_history_info
+    where eid = #{eID}
+  </select>
+
+  <select id="selectEquipmentHistoryInfo" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo"  resultMap="mixedResultMap">
+    select equipment.*
+    from exc_equipment_history_info equipment inner join exc_station_info station
+    on equipment.operator_id=station.operator_id and equipment.station_id=station.station_id
+    where 1=1
+    <if test="stationId != null">
+      and equipment.station_id=#{stationId}
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and station.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="operatorID != null">
+      and equipment.operator_id=#{operatorID}
+    </if>
+    <if test="equipmentID != null">
+      and equipment.equipment_id=#{equipmentID}
+    </if>
+    <if test="beginTime != null">
+      <![CDATA[ and equipment.check_date >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and equipment.check_date <= #{endTime} ]]>
+    </if>
+    <if test="allowanceStatusList != null and allowanceStatusList.size()>0 ">
+      and equipment.allowance_status in
+      <foreach collection="allowanceStatusList" item="allowanceStatus" index="index" open="(" close=")" separator=",">
+        #{allowanceStatus}
+      </foreach>
+
+      and equipment.user_id!='0'
+    </if>
+    ORDER BY eid desc
+  </select>
+
+  <select id="selectEquNewestOne"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_equipment_history_info
+    where equipment_id = #{equipmentID} and operator_id = #{operatorID}
+    ORDER BY check_date desc limit 1;
+  </select>
+
+  <select id="selectEquipmentHisOneInfo" resultMap="BaseResultMap">
+    select check_date
+    from exc_equipment_history_info
+    where 1=1
+    <if test="equipmentID != null">
+      and equipment_id = #{equipmentID}
+    </if>
+    <if test="operatorID != null">
+      and operator_id = #{operatorID}
+    </if>
+    <if test="equipmentStatus != null">
+      and equipment_status = #{equipmentStatus}
+    </if>
+    order by check_date desc limit 1;
+  </select>
+
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo">
+    insert into exc_equipment_history_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eID != null">
+        eid,
+      </if>
+      <if test="equipmentID != null">
+        equipment_id,
+      </if>
+      <if test="sID != null">
+        sid,
+      </if>
+      <if test="operatorHisID != null">
+        operator_his_id,
+      </if>
+      <if test="hisSID != null">
+        his_sid,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="equipmentName != null">
+        equipment_name,
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id,
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name,
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model,
+      </if>
+      <if test="productionDate != null">
+        production_date,
+      </if>
+      <if test="equipmentAddTime != null">
+        equipment_add_time,
+      </if>
+      <if test="equipmentType != null">
+        equipment_type,
+      </if>
+      <if test="equipmentLng != null">
+        equipment_lng,
+      </if>
+      <if test="equipmentLat != null">
+        equipment_lat,
+      </if>
+      <if test="power != null">
+        power,
+      </if>
+      <if test="equipmentStatus != null">
+        equipment_status,
+      </if>
+      <if test="equipmentPower != null">
+        equipment_power,
+      </if>
+      <if test="newNationalStandard != null">
+        new_national_standard,
+      </if>
+      <if test="allowanceStatus != null">
+        allowance_status,
+      </if>
+      <if test="allowancePrice != null">
+        allowance_price,
+      </if>
+      <if test="checkoutStatus != null">
+        checkout_status,
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage,
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage,
+      </if>
+      <if test="ratedPower != null">
+        rated_power,
+      </if>
+      <if test="feedNum != null">
+        feed_num,
+      </if>
+      <if test="gunSum != null">
+        gun_sum,
+      </if>
+      <if test="allowanceDate != null">
+        allowance_date,
+      </if>
+      <if test="inDate != null">
+        in_date,
+      </if>
+      <if test="userID != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="operate != null">
+        operate,
+      </if>
+      <if test="checkDate != null">
+        check_date,
+      </if>
+      <if test="operateType != null">
+        operate_type,
+      </if>
+      <if test="changeMethod != null">
+        change_method,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="periodUse != null">
+        period_use,
+      </if>
+      <if test="worthDate != null">
+        worth_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eID != null">
+        #{eID},
+      </if>
+      <if test="equipmentID != null">
+        #{equipmentID},
+      </if>
+      <if test="sID != null">
+        #{sID},
+      </if>
+      <if test="operatorHisID != null">
+        #{operatorHisID},
+      </if>
+      <if test="hisSID != null">
+        #{hisSID},
+      </if>
+      <if test="stationId != null">
+        #{stationId},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID},
+      </if>
+      <if test="equipmentName != null">
+        #{equipmentName},
+      </if>
+      <if test="manufacturerID != null">
+        #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        #{productionDate},
+      </if>
+      <if test="equipmentAddTime != null">
+        #{equipmentAddTime},
+      </if>
+      <if test="equipmentType != null">
+        #{equipmentType},
+      </if>
+      <if test="equipmentLng != null">
+        #{equipmentLng},
+      </if>
+      <if test="equipmentLat != null">
+        #{equipmentLat},
+      </if>
+      <if test="power != null">
+        #{power},
+      </if>
+      <if test="equipmentStatus != null">
+        #{equipmentStatus},
+      </if>
+      <if test="equipmentPower != null">
+        #{equipmentPower},
+      </if>
+      <if test="newNationalStandard != null">
+        #{newNationalStandard},
+      </if>
+      <if test="allowanceStatus != null">
+        #{allowanceStatus},
+      </if>
+      <if test="allowancePrice != null">
+        #{allowancePrice},
+      </if>
+      <if test="checkoutStatus != null">
+        #{checkoutStatus},
+      </if>
+      <if test="ratedInVoltage != null">
+        #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        #{feedNum},
+      </if>
+      <if test="gunSum != null">
+        #{gunSum},
+      </if>
+      <if test="allowanceDate != null">
+        #{allowanceDate},
+      </if>
+      <if test="inDate != null">
+        #{inDate},
+      </if>
+      <if test="userID != null">
+        #{userID},
+      </if>
+      <if test="userName != null">
+        #{userName},
+      </if>
+      <if test="operate != null">
+        #{operate},
+      </if>
+      <if test="checkDate != null">
+        #{checkDate},
+      </if>
+      <if test="operateType != null">
+        #{operateType},
+      </if>
+      <if test="changeMethod != null">
+        #{changeMethod},
+      </if>
+      <if test="reason != null">
+        #{reason},
+      </if>
+      <if test="note != null">
+        #{note},
+      </if>
+      <if test="periodUse != null">
+        #{periodUse},
+      </if>
+      <if test="worthDate != null">
+        #{worthDate},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentHistoryInfo">
+    update exc_equipment_history_info
+    <set>
+      <if test="equipmentID != null">
+        equipment_id = #{equipmentID},
+      </if>
+      <if test="sID != null">
+        sid = #{sID},
+      </if>
+      <if test="operatorHisID != null">
+        operator_his_id = #{operatorHisID},
+      </if>
+      <if test="hisSID != null">
+        his_sid = #{hisSID},
+      </if>
+      <if test="stationId != null">
+        station_id = #{stationId},
+      </if>
+      <if test="operatorID != null">
+        operator_id = #{operatorID},
+      </if>
+      <if test="equipmentName != null">
+        equipment_name = #{equipmentName},
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id = #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name = #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model = #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        production_date = #{productionDate},
+      </if>
+      <if test="equipmentAddTime != null">
+        equipment_add_time = #{equipmentAddTime},
+      </if>
+      <if test="equipmentType != null">
+        equipment_type = #{equipmentType},
+      </if>
+      <if test="equipmentLng != null">
+        equipment_lng = #{equipmentLng},
+      </if>
+      <if test="equipmentLat != null">
+        equipment_lat = #{equipmentLat},
+      </if>
+      <if test="power != null">
+        power = #{power},
+      </if>
+      <if test="equipmentStatus != null">
+        equipment_status = #{equipmentStatus},
+      </if>
+      <if test="equipmentPower != null">
+        equipment_power = #{equipmentPower},
+      </if>
+      <if test="newNationalStandard != null">
+        new_national_standard = #{newNationalStandard},
+      </if>
+      <if test="allowanceStatus != null">
+        allowance_status = #{allowanceStatus},
+      </if>
+      <if test="allowancePrice != null">
+        allowance_price = #{allowancePrice},
+      </if>
+      <if test="checkoutStatus != null">
+        checkout_status = #{checkoutStatus},
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage = #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage = #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        rated_power = #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        feed_num = #{feedNum},
+      </if>
+      <if test="gunSum != null">
+        gun_sum = #{gunSum},
+      </if>
+      <if test="allowanceDate != null">
+        allowance_date = #{allowanceDate},
+      </if>
+      <if test="inDate != null">
+        in_date = #{inDate},
+      </if>
+      <if test="userID != null">
+        user_id = #{userID},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName},
+      </if>
+      <if test="operate != null">
+        operate = #{operate},
+      </if>
+      <if test="checkDate != null">
+        check_date = #{checkDate},
+      </if>
+      <if test="reason != null">
+        reason = #{reason},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+      <if test="periodUse != null">
+        period_use = #{periodUse},
+      </if>
+      <if test="worthDate != null">
+        worth_date = #{worthDate},
+      </if>
+    </set>
+    where eid = #{eID}
+  </update>
+</mapper>

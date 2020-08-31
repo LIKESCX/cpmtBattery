@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.ExcOperFlowMapper">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow">
+    <id column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="status_cd" jdbcType="TINYINT" property="statusCd" />
+    <result column="uptdate" jdbcType="TIMESTAMP" property="uptdate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    operator_id, status_cd, uptdate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_oper_flow
+    where operator_id = #{operatorId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from exc_oper_flow
+    where operator_id = #{operatorId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow">
+    insert into exc_oper_flow (operator_id, status_cd, uptdate
+      )
+    values (#{operatorId,jdbcType=VARCHAR}, #{statusCd,jdbcType=TINYINT}, #{uptdate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow">
+    insert into exc_oper_flow
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="statusCd != null">
+        status_cd,
+      </if>
+      <if test="uptdate != null">
+        uptdate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="statusCd != null">
+        #{statusCd,jdbcType=TINYINT},
+      </if>
+      <if test="uptdate != null">
+        #{uptdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow">
+    update exc_oper_flow
+    <set>
+      <if test="statusCd != null">
+        status_cd = #{statusCd,jdbcType=TINYINT},
+      </if>
+      <if test="uptdate != null">
+        uptdate = #{uptdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where operator_id = #{operatorId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow">
+    update exc_oper_flow
+    set status_cd = #{statusCd,jdbcType=TINYINT},
+      uptdate = #{uptdate,jdbcType=TIMESTAMP}
+    where operator_id = #{operatorId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <sql id="flowOpe_Column_List">
+    a.operator_id, a.status_cd, a.uptdate, b.operator_name
+  </sql>
+  <resultMap id="flowOpeResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow">
+    <id column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="status_cd" jdbcType="TINYINT" property="statusCd" />
+    <result column="uptdate" jdbcType="TIMESTAMP" property="uptdate" />
+	<result column="operator_name" jdbcType="VARCHAR" property="operatorName" />
+  </resultMap>
+  <select id="getOperFlowByParam" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcOperFlow" resultMap="flowOpeResultMap">
+  	SELECT
+		<include refid="flowOpe_Column_List"/>
+	FROM
+		exc_oper_flow a
+	LEFT JOIN exc_operator_info b ON a.operator_id = b.operator_id
+	WHERE b.status_cd = 1
+	  <if test="operatorId != null and operatorId != ''">
+        and a.operator_id = #{operatorId,jdbcType=VARCHAR}
+      </if>
+      <if test="operatorName != null and operatorName != ''">
+        and b.operator_name like CONCAT('%', #{operatorName}, '%')
+      </if>
+    ORDER BY operator_id DESC
+  </select>
+  
+</mapper>

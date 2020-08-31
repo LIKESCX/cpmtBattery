@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.security.MessageNoticeDao">
+    <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.security.MessageNotice">
+        <id column="notice_id" jdbcType="INTEGER" property="noticeId"/>
+        <result column="notice_type" jdbcType="INTEGER" property="noticeLevel"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="notice_receiver" jdbcType="LONGVARCHAR" property="noticeReceiver"/>
+        <result column="notice_time" jdbcType="TIMESTAMP" property="noticeTime"/>
+        <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
+        <result column="level_name" jdbcType="VARCHAR" property="levelName"/>
+        <result column="notice_name" jdbcType="VARCHAR" property="noticeName"/>
+        <result column="operator_id" jdbcType="VARCHAR" property="operatorId"/>
+        <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        notice_id, notice_type, sms_content, notice_receiver, notice_time,level_code,level_name,notice_name,operator_id,operator_name
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sec_message_notice
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from sec_message_notice
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.security.MessageNotice">
+        insert into sec_message_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                notice_id,
+            </if>
+            <if test="noticeLevel != null">
+                notice_type,
+            </if>
+            <if test="smsContent != null and smsContent != ''">
+                sms_content,
+            </if>
+            <if test="noticeReceiver != null and noticeReceiver != ''">
+                notice_receiver,
+            </if>
+            <if test="noticeTime != null">
+                notice_time,
+            </if>
+            <if test="levelCode != null and levelCode != ''">
+                level_code,
+            </if>
+            <if test="levelName != null and levelName != ''">
+                level_name,
+            </if>
+            <if test="noticeName != null and noticeName != ''">
+                notice_name,
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                operator_id,
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                operator_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                #{noticeId,jdbcType=INTEGER},
+            </if>
+            <if test="noticeLevel != null">
+                #{noticeLevel,jdbcType=INTEGER},
+            </if>
+            <if test="smsContent != null and smsContent != ''">
+                #{smsContent,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeReceiver != null and noticeReceiver != ''">
+                #{noticeReceiver,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="noticeTime != null">
+                #{noticeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="levelCode != null and levelCode != ''">
+                #{levelCode,jdbcType=VARCHAR},
+            </if>
+            <if test="levelName != null and levelName != ''">
+                #{levelName,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeName != null and noticeName != ''">
+                #{noticeName,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                #{operatorName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.security.MessageNotice">
+        update sec_message_notice
+        <set>
+            <if test="noticeLevel != null">
+                notice_type = #{noticeLevel,jdbcType=INTEGER},
+            </if>
+            <if test="smsContent != null and smsContent != ''">
+                sms_content = #{smsContent,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeReceiver != null and noticeReceiver != ''">
+                notice_receiver = #{noticeReceiver,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="noticeTime != null">
+                notice_time = #{noticeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="levelCode != null and levelCode != ''">
+                level_code= #{levelCode,jdbcType=VARCHAR},
+            </if>
+            <if test="levelName != null and levelName != ''">
+                level_name= #{levelName,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeName != null and noticeName != ''">
+                notice_name = #{noticeName,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                operator_id = #{operatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                operator_name=#{operatorName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </update>
+
+    <select id="getMessageNoticeList" parameterType="com.cpit.cpmt.dto.security.MessageNotice"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sec_message_notice
+        <trim prefix="where" suffixOverrides="and">
+            <if test="noticeLevel != null">
+                notice_type = #{noticeLevel,jdbcType=INTEGER} and
+            </if>
+            <if test="smsContent != null and smsContent != ''">
+                sms_content = #{smsContent,jdbcType=VARCHAR} and
+            </if>
+            <if test="noticeReceiver != null and noticeReceiver != ''">
+                notice_receiver = #{noticeReceiver,jdbcType=LONGVARCHAR} and
+            </if>
+            <if test="noticeTime != null">
+                notice_time = #{noticeTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="startTime != null">
+                notice_time  <![CDATA[ >= ]]>  #{startTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="endTime != null">
+                notice_time <![CDATA[ <= ]]>  #{endTime,jdbcType=TIMESTAMP} and
+            </if>
+            <if test="areaList != null and areaList.size() != 0">
+                level_code in
+                <foreach collection="areaList" item="area" separator="," close=")" open="(" index="index">
+                    #{area.levelCode}
+                </foreach>
+                and
+            </if>
+            <if test="levelCode != null and levelCode != ''">
+                level_code= #{levelCode,jdbcType=VARCHAR} and
+            </if>
+            <if test="levelName != null and levelName != ''">
+                level_name= #{levelName,jdbcType=VARCHAR} and
+            </if>
+            <if test="noticeName != null and noticeName != ''">
+                notice_name like concat('%',#{noticeName,jdbcType=VARCHAR},'%') and
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                operator_Id = #{operatorId,jdbcType=VARCHAR} and
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                operator_name=#{operatorName,jdbcType=VARCHAR} and
+            </if>
+        </trim>
+        order by notice_time desc
+    </select>
+
+    <insert id="batchInsertMessageNotice" parameterType="list">
+        insert into sec_message_notice ( notice_id, notice_type, sms_content, notice_receiver,
+        notice_time,level_code,level_name,notice_name,operator_id,operator_name)
+        values
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.noticeId,jdbcType=INTEGER}, #{item.noticeLevel,jdbcType=INTEGER},
+            #{item.smsContent,jdbcType=VARCHAR},
+            #{item.noticeReceiver,jdbcType=LONGVARCHAR}, #{item.noticeTime,jdbcType=TIMESTAMP},
+            #{item.levelCode,jdbcType=VARCHAR}, #{item.levelName,jdbcType=VARCHAR,},
+            #{item.noticeName,jdbcType=VARCHAR},
+            #{item.operatorId,jdbcType=VARCHAR},
+            #{item.operatorName,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

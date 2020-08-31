@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.DisEquipmentInfoDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.DisEquipmentInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationID" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="disequipment_id" jdbcType="VARCHAR" property="disequipmentID" />
+    <result column="manufacturer_id" jdbcType="VARCHAR" property="manufacturerID" />
+    <result column="manufacturer_name" jdbcType="VARCHAR" property="manufacturerName" />
+    <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="rated_in_voltage" jdbcType="DOUBLE" property="ratedInVoltage" />
+    <result column="rated_out_voltage" jdbcType="DOUBLE" property="ratedOutVoltage" />
+    <result column="rated_power" jdbcType="DOUBLE" property="ratedPower" />
+    <result column="feed_num" jdbcType="INTEGER" property="feedNum" />
+    <result column="received_time" jdbcType="TIMESTAMP" property="receivedTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, station_id,operator_id, disequipment_id, manufacturer_id, manufacturer_name, equipment_model,
+    production_date, rated_in_voltage, rated_out_voltage, rated_power, feed_num, received_time, status,
+    in_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_dis_equipment_info
+    where id = #{id}
+  </select>
+
+  <select id="selectByDisEquipmentId"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_dis_equipment_info
+    where disequipment_id = #{disequipmentID} and operator_id=#{operatorID}
+  </select>
+
+  <select id="selectByCondition" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_dis_equipment_info
+    where 1=1
+    <if test="stationID != null">
+      and station_id = #{stationID}
+    </if>
+    <if test="operatorID != null">
+    and operator_id=#{operatorID}
+    </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_dis_equipment_info
+    where id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentInfo">
+    insert into exc_dis_equipment_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="stationID != null">
+        station_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="disequipmentID != null">
+        disequipment_id,
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id,
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name,
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model,
+      </if>
+      <if test="productionDate != null">
+        production_date,
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage,
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage,
+      </if>
+      <if test="ratedPower != null">
+        rated_power,
+      </if>
+      <if test="feedNum != null">
+        feed_num,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id},
+      </if>
+      <if test="stationID != null">
+        #{stationID},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID},
+      </if>
+      <if test="disequipmentID != null">
+        #{disequipmentID},
+      </if>
+      <if test="manufacturerID != null">
+        #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        #{productionDate},
+      </if>
+      <if test="ratedInVoltage != null">
+        #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        #{feedNum},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="inTime != null">
+        #{inTime},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentInfo">
+    update exc_dis_equipment_info
+    <set>
+      <if test="stationID != null">
+        station_id = #{stationID},
+      </if>
+      <if test="operatorID != null">
+        operator_id = #{operatorID},
+      </if>
+      <if test="disequipmentID != null">
+        disequipment_id = #{disequipmentID},
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id = #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name = #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model = #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        production_date = #{productionDate},
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage = #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage = #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        rated_power = #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        feed_num = #{feedNum},
+      </if>
+      <if test="receivedTime != null">
+        received_time = #{receivedTime},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentInfo">
+    update exc_dis_equipment_info
+    set operator_id = #{operatorID},
+      disequipment_id = #{disequipmentID},
+      manufacturer_id = #{manufacturerID},
+      manufacturer_name = #{manufacturerName},
+      equipment_model = #{equipmentModel},
+      production_date = #{productionDate},
+      rated_in_voltage = #{ratedInVoltage},
+      rated_out_voltage = #{ratedOutVoltage},
+      rated_power = #{ratedPower},
+      feed_num = #{feedNum},
+      received_time = #{receivedTime},
+      in_time = #{inTime}
+    where id = #{id}
+  </update>
+</mapper>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.BasicReportMsgInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.BasicReportMsgInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="operator_id" property="operatorId" jdbcType="VARCHAR" />
+    <result column="inf_version" property="infVersion" jdbcType="VARCHAR" />
+    <result column="inf_type" property="infType" jdbcType="VARCHAR" />
+    <result column="inf_name" property="infName" jdbcType="VARCHAR" />
+    <result column="rec_time" property="recTime" jdbcType="TIMESTAMP" />
+    <result column="validate_result" property="validateResult" jdbcType="VARCHAR" />
+    <result column="validate_fail_detail" property="validateFailDetail" jdbcType="VARCHAR" />
+    <result column="store_result" property="storeResult" jdbcType="VARCHAR" />
+    <result column="store_fail_detail" property="storeFailDetail" jdbcType="VARCHAR" />
+    <result column="in_time" property="inTime" jdbcType="TIMESTAMP" />
+    <result column="remarks_1" property="remarks1" jdbcType="VARCHAR" />
+    <result column="remarks_2" property="remarks2" jdbcType="VARCHAR" />
+    <result column="time_stamp" property="timeStamp" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, operator_id, inf_version, inf_type, inf_name, rec_time, validate_result, validate_fail_detail, 
+    store_result, store_fail_detail, in_time, remarks_1, remarks_2, time_stamp
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_basic_report_msg_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from exc_basic_report_msg_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.BasicReportMsgInfo" >
+    insert into exc_basic_report_msg_info (operator_id, inf_version,
+      inf_type, inf_name, rec_time, 
+      validate_result, validate_fail_detail, store_result, 
+      store_fail_detail, in_time, remarks_1, 
+      remarks_2, time_stamp)
+    values (#{operatorId,jdbcType=VARCHAR}, #{infVersion,jdbcType=VARCHAR},
+      #{infType,jdbcType=VARCHAR}, #{infName,jdbcType=VARCHAR}, #{recTime,jdbcType=TIMESTAMP}, 
+      #{validateResult,jdbcType=VARCHAR}, #{validateFailDetail,jdbcType=VARCHAR}, #{storeResult,jdbcType=VARCHAR}, 
+      #{storeFailDetail,jdbcType=VARCHAR}, #{inTime,jdbcType=TIMESTAMP}, #{remarks1,jdbcType=VARCHAR}, 
+      #{remarks2,jdbcType=VARCHAR}, #{timeStamp,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.BasicReportMsgInfo" >
+    insert into exc_basic_report_msg_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operatorId != null" >
+        operator_id,
+      </if>
+      <if test="infVersion != null" >
+        inf_version,
+      </if>
+      <if test="infType != null" >
+        inf_type,
+      </if>
+      <if test="infName != null" >
+        inf_name,
+      </if>
+      <if test="recTime != null" >
+        rec_time,
+      </if>
+      <if test="validateResult != null" >
+        validate_result,
+      </if>
+      <if test="validateFailDetail != null" >
+        validate_fail_detail,
+      </if>
+      <if test="storeResult != null" >
+        store_result,
+      </if>
+      <if test="storeFailDetail != null" >
+        store_fail_detail,
+      </if>
+      <if test="inTime != null" >
+        in_time,
+      </if>
+      <if test="remarks1 != null" >
+        remarks_1,
+      </if>
+      <if test="remarks2 != null" >
+        remarks_2,
+      </if>
+      <if test="timeStamp != null" >
+        time_stamp,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+       <if test="operatorId != null" >
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="infVersion != null" >
+        #{infVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="infType != null" >
+        #{infType,jdbcType=VARCHAR},
+      </if>
+      <if test="infName != null" >
+        #{infName,jdbcType=VARCHAR},
+      </if>
+      <if test="recTime != null" >
+        #{recTime,jdbcType=VARCHAR},
+      </if>
+      <if test="validateResult != null" >
+        #{validateResult,jdbcType=VARCHAR},
+      </if>
+      <if test="validateFailDetail != null" >
+        #{validateFailDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="storeResult != null" >
+        #{storeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="storeFailDetail != null" >
+        #{storeFailDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null" >
+        #{inTime,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks1 != null" >
+        #{remarks1,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks2 != null" >
+        #{remarks2,jdbcType=VARCHAR},
+      </if>
+      <if test="timeStamp != null" >
+        #{timeStamp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.BasicReportMsgInfo" >
+    update exc_basic_report_msg_info
+    <set >
+      <if test="operatorId != null" >
+        operator_id = #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="infVersion != null" >
+        inf_version = #{infVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="infType != null" >
+        inf_type = #{infType,jdbcType=VARCHAR},
+      </if>
+      <if test="infName != null" >
+        inf_name = #{infName,jdbcType=VARCHAR},
+      </if>
+      <if test="recTime != null" >
+        rec_time = #{recTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validateResult != null" >
+        validate_result = #{validateResult,jdbcType=VARCHAR},
+      </if>
+      <if test="validateFailDetail != null" >
+        validate_fail_detail = #{validateFailDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="storeResult != null" >
+        store_result = #{storeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="storeFailDetail != null" >
+        store_fail_detail = #{storeFailDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null" >
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks1 != null" >
+        remarks_1 = #{remarks1,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks2 != null" >
+        remarks_2 = #{remarks2,jdbcType=VARCHAR},
+      </if>
+      <if test="timeStamp != null" >
+        time_stamp = #{timeStamp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.BasicReportMsgInfo" >
+    update exc_basic_report_msg_info
+    set operator_id = #{operatorId,jdbcType=VARCHAR},
+      inf_version = #{infVersion,jdbcType=VARCHAR},
+      inf_type = #{infType,jdbcType=VARCHAR},
+      inf_name = #{infName,jdbcType=VARCHAR},
+      rec_time = #{recTime,jdbcType=TIMESTAMP},
+      validate_result = #{validateResult,jdbcType=VARCHAR},
+      validate_fail_detail = #{validateFailDetail,jdbcType=VARCHAR},
+      store_result = #{storeResult,jdbcType=VARCHAR},
+      store_fail_detail = #{storeFailDetail,jdbcType=VARCHAR},
+      in_time = #{inTime,jdbcType=TIMESTAMP},
+      remarks_1 = #{remarks1,jdbcType=VARCHAR},
+      remarks_2 = #{remarks2,jdbcType=VARCHAR},
+      time_stamp = #{timeStamp,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getBasicReportMsgByOperatorIDAndFixedCycle" resultMap="BaseResultMap">
+  		SELECT 
+  		<include refid="Base_Column_List" /> 
+  		FROM exc_basic_report_msg_info
+		WHERE
+			operator_id = #{operatorID,jdbcType=VARCHAR} and
+			in_time BETWEEN #{now,jdbcType=VARCHAR} and #{fixedTime,jdbcType=VARCHAR}
+			group by in_time
+  </select>
+  
+  <delete id = "deleteByTime" parameterType ="String">
+       delete from exc_basic_report_msg_info where in_time &lt;= #{time}
+  </delete>
+</mapper>

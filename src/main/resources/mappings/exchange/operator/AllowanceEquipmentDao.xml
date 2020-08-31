@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.AllowanceEquipmentDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.AllowanceEquipment">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="batch_id" jdbcType="VARCHAR" property="batchId" />
+    <result column="sid" jdbcType="VARCHAR" property="sid" />
+    <result column="eid" jdbcType="VARCHAR" property="eid" />
+    <result column="if_reduced" jdbcType="INTEGER" property="ifReduced" />
+    <result column="reduced_type" jdbcType="INTEGER" property="reducedType" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="in_date" jdbcType="TIMESTAMP" property="inDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, batch_id, sid, eid, if_reduced, reduced_type, update_date, in_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_allowance_equipment
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectBySelect" parameterType="com.cpit.cpmt.dto.exchange.operator.AllowanceEquipment" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_allowance_equipment
+    where 1=1
+    <if test="id != null">
+      and id =#{id,jdbcType=VARCHAR}
+    </if>
+    <if test="batchId != null">
+      and batch_id=#{batchId,jdbcType=VARCHAR}
+    </if>
+    <if test="sid != null">
+      and sid=#{sid,jdbcType=VARCHAR}
+    </if>
+    <if test="eid != null">
+      and eid=#{eid,jdbcType=VARCHAR}
+    </if>
+    <if test="ifReduced != null">
+      and if_reduced=#{ifReduced,jdbcType=INTEGER}
+    </if>
+    <if test="reducedType != null">
+      and reduced_type=#{reducedType,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <select id="getStationByBatchId" parameterType="java.lang.String" resultType="java.lang.String">
+    select distinct sid
+    from exc_allowance_equipment
+    where if_reduced=1 and batch_id = #{batchId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getEidListByBatchId" parameterType="java.lang.String" resultType="java.lang.String">
+    select distinct eid
+    from exc_allowance_equipment
+    where if_reduced=1 and batch_id = #{batchId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectChargeNum" parameterType="java.lang.String" resultType="java.lang.Double">
+    select sum(c.charging_capacity)
+    from exc_allowance_equipment a left join exc_station_info b on a.sid=b.sid
+    left join exc_station_statistics_day c on c.station_id=b.station_id and c.operator_id=b.operator_id
+    where a.if_reduced=1 and a.batch_id = #{batchId}
+  </select>
+
+  <select id="selectallowanceTypeByEid" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select COUNT(0)
+  from exc_allowance_equipment allowance_equipment LEFT JOIN exc_batch_allowance batch_allowance
+  on allowance_equipment.batch_id=batch_allowance.batch_id
+  where batch_allowance.allowance_type=0 and allowance_equipment.eid=#{eid}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from exc_allowance_equipment
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.AllowanceEquipment">
+    insert into exc_allowance_equipment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="batchId != null">
+        batch_id,
+      </if>
+      <if test="sid != null">
+        sid,
+      </if>
+      <if test="eid != null">
+        eid,
+      </if>
+      <if test="ifReduced != null">
+        if_reduced,
+      </if>
+      <if test="reducedType != null">
+        reduced_type,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="inDate != null">
+        in_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="batchId != null">
+        #{batchId,jdbcType=VARCHAR},
+      </if>
+      <if test="sid != null">
+        #{sid,jdbcType=VARCHAR},
+      </if>
+      <if test="eid != null">
+        #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="ifReduced != null">
+        #{ifReduced,jdbcType=INTEGER},
+      </if>
+      <if test="reducedType != null">
+        #{reducedType,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inDate != null">
+        #{inDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.AllowanceEquipment">
+    update exc_allowance_equipment
+    <set>
+      <if test="batchId != null">
+        batch_id = #{batchId,jdbcType=VARCHAR},
+      </if>
+      <if test="sid != null">
+        sid = #{sid,jdbcType=VARCHAR},
+      </if>
+      <if test="eid != null">
+        eid = #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="ifReduced != null">
+        if_reduced = #{ifReduced,jdbcType=INTEGER},
+      </if>
+      <if test="reducedType != null">
+        reduced_type = #{reducedType,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inDate != null">
+        in_date = #{inDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

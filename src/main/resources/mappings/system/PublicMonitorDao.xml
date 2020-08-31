@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.PublicMonitorDao">
+  
+  <resultMap id="ResultMap" type="com.cpit.cpmt.dto.system.PublicMonitor">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="net_name" jdbcType="VARCHAR" property="netName" />
+    <result column="net_type" jdbcType="INTEGER" property="netType" />
+    <result column="net_status" jdbcType="INTEGER" property="netStatus" />
+    <result column="in_date" jdbcType="TIMESTAMP" property="inDate" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id,net_name,net_type,net_status,in_date
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_public_monitor
+    where id = #{id}
+  </select>
+
+  <select id="selectPublicMonitorByPage" parameterType="com.cpit.cpmt.dto.system.PublicMonitor" resultMap="ResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_public_monitor
+    where  net_status=1
+    <if test="netName !=null">
+      and net_name like "%"#{netName}"%"
+    </if>
+    <if test="netType !=null">
+      and net_type=#{netType}
+    </if>
+  </select>
+
+  <update id="updateSelective" parameterType="com.cpit.cpmt.dto.system.PublicMonitor">
+    update sys_public_monitor
+    <set>
+      <if test="netName != null">
+        net_name = #{netName},
+      </if>
+      <if test="netType != null">
+        net_type = #{netType},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.PublicMonitor">
+    insert into sys_public_monitor
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="netName != null">
+        net_name,
+      </if>
+      <if test="netType != null">
+        net_type,
+      </if>
+      <if test="netStatus != null">
+        net_status,
+      </if>
+      <if test="inDate != null">
+        in_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id},
+      </if>
+      <if test="netName != null">
+        #{netName},
+      </if>
+      <if test="netType != null">
+        #{netType},
+      </if>
+      <if test="netStatus != null">
+        #{netStatus},
+      </if>
+      <if test="inDate != null">
+        #{inDate},
+      </if>
+    </trim>
+  </insert>
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_public_monitor
+    where id = #{id,jdbcType=VARCHAR}
+  </delete> 
+
+</mapper>

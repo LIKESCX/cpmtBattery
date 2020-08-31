@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.ConnectorDischargeStatsInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.ConnectorDischargeStatsInfo" >
+    <id column="connector_id" property="connectorID" jdbcType="VARCHAR" />
+    <result column="station_order" property="stationOrder" jdbcType="VARCHAR" />
+    <result column="equipment_id" property="equipmentID" jdbcType="VARCHAR" />
+    <result column="connector_discharge_electricity" property="connectorDischargeElectricity" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    connector_id, station_order, equipment_id, connector_discharge_electricity
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_connector_discharge_stats_info
+    where connector_id = #{connectorID,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectConnectDisCharge" parameterType="java.lang.String" resultType="java.lang.Double" >
+    select IFNULL(sum(connector_discharge_electricity),0.0)
+    from exc_connector_discharge_stats_info
+    where connector_id = #{connectorId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from exc_connector_discharge_stats_info
+    where connector_id = #{connectorID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorDischargeStatsInfo" >
+    insert into exc_connector_discharge_stats_info (connector_id, station_order, equipment_id, 
+      connector_discharge_electricity)
+    values (#{connectorID,jdbcType=VARCHAR}, #{stationOrder,jdbcType=VARCHAR}, #{equipmentID,jdbcType=VARCHAR}, 
+      #{connectorDischargeElectricity,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorDischargeStatsInfo" >
+    insert into exc_connector_discharge_stats_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="connectorID != null" >
+        connector_id,
+      </if>
+      <if test="stationOrder != null" >
+        station_order,
+      </if>
+      <if test="equipmentID != null" >
+        equipment_id,
+      </if>
+      <if test="connectorDischargeElectricity != null" >
+        connector_discharge_electricity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="connectorID != null" >
+        #{connectorID,jdbcType=VARCHAR},
+      </if>
+      <if test="stationOrder != null" >
+        #{stationOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentID != null" >
+        #{equipmentID,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorDischargeElectricity != null" >
+        #{connectorDischargeElectricity,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorDischargeStatsInfo" >
+    update exc_connector_discharge_stats_info
+    <set >
+      <if test="stationOrder != null" >
+        station_order = #{stationOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentID != null" >
+        equipment_id = #{equipmentID,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorDischargeElectricity != null" >
+        connector_discharge_electricity = #{connectorDischargeElectricity,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where connector_id = #{connectorID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.ConnectorDischargeStatsInfo" >
+    update exc_connector_discharge_stats_info
+    set station_order = #{stationOrder,jdbcType=VARCHAR},
+      equipment_id = #{equipmentID,jdbcType=VARCHAR},
+      connector_discharge_electricity = #{connectorDischargeElectricity,jdbcType=VARCHAR}
+    where connector_id = #{connectorID,jdbcType=VARCHAR}
+  </update>
+</mapper>

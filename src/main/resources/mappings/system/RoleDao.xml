@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.RoleDao">
+   <resultMap id="ListResultMap" type="com.cpit.cpmt.dto.system.Role">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+   </resultMap>
+  
+  <resultMap id="BaseResultMap" extends="ListResultMap" type="com.cpit.cpmt.dto.system.Role">
+     <collection property="powers" select="com.cpit.cpmt.biz.dao.system.PowerDao.getPowersOfRole" column="id"/> 
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, `name`, description
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <select id="selectByCondition" parameterType="com.cpit.cpmt.dto.system.Role" resultMap="ListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role
+    where 
+    1=1
+      <if test="name != null">
+        and `name` like concat('%',#{name},'%')
+      </if>
+    order by id desc
+  </select>
+  
+ 
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_role
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.Role">
+    insert into sys_role (id, `name`, description)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.Role">
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.system.Role">
+    update sys_role
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.Role">
+    update sys_role
+    set `name` = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.ChargeFileDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.ChargeFile">
+    <id column="file_id" jdbcType="INTEGER" property="fileId" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="file_size" jdbcType="VARCHAR" property="fileSize" />
+    <result column="file_kind" jdbcType="INTEGER" property="fileKind" />
+    <result column="file_class" jdbcType="INTEGER" property="fileClass" />
+    <result column="file_upload_status" jdbcType="INTEGER" property="fileUploadStatus" />
+    <result column="file_classification" jdbcType="INTEGER" property="fileClassification" />
+    <result column="file_type" jdbcType="INTEGER" property="fileType" />
+    <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate" />
+    <result column="preview_url" jdbcType="VARCHAR" property="priviewUrl" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    file_id, operator_id, station_id, equipment_id, file_name, file_url, file_size, file_kind, 
+    file_class, file_upload_status,file_classification, file_type, upload_date,preview_url
+  </sql>
+  <select id="getChargeFileList" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFile" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_charge_file
+    <where>
+      <if test="fileId != null">
+        file_id=#{fileId}
+      </if>
+      <if test="operatorId != null">
+        and operator_id=#{operatorId}
+      </if>
+      <if test="stationId != null">
+        and station_id=#{stationId}
+      </if>
+      <if test="fileClass != null">
+        and file_class=#{fileClass}
+      </if>
+      <if test="fileClassification != null">
+        and file_classification=#{fileClassification}
+      </if>
+      <if test="equipmentId != null">
+        and equipment_id=#{equipmentId}
+      </if>
+    </where>
+    order by upload_date desc
+  </select>
+
+  <select id="getSecurityChargeFileList" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFile" resultMap="BaseResultMap">
+    SELECT * from
+    (
+      select * from exc_charge_file where file_type in (7,9)
+      <if test="operatorId != null">
+        and operator_id=#{operatorId}
+      </if>
+      <if test="equipmentId != null">
+        and equipment_id=#{equipmentId}
+      </if>
+    union all
+      select * from exc_charge_file where file_type=20
+      <if test="operatorId != null">
+        and operator_id=#{operatorId}
+      </if>
+      <if test="stationId != null">
+        and station_id=#{stationId}
+      </if>
+    ) a ORDER BY upload_date desc
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_charge_file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+  <select id="getStationPictureList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_charge_file
+    where file_type=32 and station_id=#{stationId} and operator_id=#{operatorId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_charge_file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFile">
+    insert into exc_charge_file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="fileKind != null">
+        file_kind,
+      </if>
+      <if test="fileClass != null">
+        file_class,
+      </if>
+      <if test="fileUploadStatus != null">
+        file_upload_status,
+      </if>
+      <if test="fileClassification != null">
+        file_classification,
+      </if>
+      <if test="fileType != null">
+        file_type,
+      </if>
+      <if test="uploadDate != null">
+        upload_date,
+      </if>
+      <if test="priviewUrl != null">
+        preview_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=VARCHAR},
+      </if>
+      <if test="fileKind != null">
+        #{fileKind,jdbcType=INTEGER},
+      </if>
+      <if test="fileClass != null">
+        #{fileClass,jdbcType=INTEGER},
+      </if>
+      <if test="fileUploadStatus != null">
+        #{fileUploadStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fileClassification != null">
+        #{fileClassification,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="uploadDate != null">
+        #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="priviewUrl != null">
+        #{priviewUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFile">
+    update exc_charge_file
+    <set>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=VARCHAR},
+      </if>
+      <if test="fileKind != null">
+        file_kind = #{fileKind,jdbcType=INTEGER},
+      </if>
+      <if test="fileClass != null">
+        file_class = #{fileClass,jdbcType=INTEGER},
+      </if>
+      <if test="fileUploadStatus != null">
+        file_upload_status = #{fileUploadStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fileClassification != null">
+        file_classification = #{fileClassification,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        file_type = #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="uploadDate != null">
+        upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <!-- getChargeFileByFileUrl -->
+  <select id="getChargeFileByFileUrl" parameterType="com.cpit.cpmt.dto.exchange.operator.ChargeFile" resultMap="BaseResultMap">
+    select
+    	file_id
+    from 
+    	exc_charge_file
+    where
+    	file_url = #{fileUrl,jdbcType=VARCHAR}
+    and operator_id = #{operatorId,jdbcType=VARCHAR}
+    and station_id = #{stationId,jdbcType=VARCHAR}
+  </select>
+</mapper>

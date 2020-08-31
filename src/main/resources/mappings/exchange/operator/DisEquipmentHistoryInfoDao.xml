@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.DisEquipmentHistoryInfoDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.DisEquipmentHistoryInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="operator_his_id" jdbcType="INTEGER" property="operatorHisID" />
+    <result column="his_sid" jdbcType="VARCHAR" property="hisSID" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationID" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="disequipment_id" jdbcType="VARCHAR" property="disequipmentID" />
+    <result column="manufacturer_id" jdbcType="VARCHAR" property="manufacturerID" />
+    <result column="manufacturer_name" jdbcType="VARCHAR" property="manufacturerName" />
+    <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="rated_in_voltage" jdbcType="DOUBLE" property="ratedInVoltage" />
+    <result column="rated_out_voltage" jdbcType="DOUBLE" property="ratedOutVoltage" />
+    <result column="rated_power" jdbcType="DOUBLE" property="ratedPower" />
+    <result column="feed_num" jdbcType="INTEGER" property="feedNum" />
+    <result column="received_time" jdbcType="TIMESTAMP" property="receivedTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="user_id" jdbcType="VARCHAR" property="userID" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="operate" jdbcType="VARCHAR" property="operate" />
+    <result column="check_date" jdbcType="TIMESTAMP" property="checkDate" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+
+  <resultMap id="mixedResultMap" type="com.cpit.cpmt.dto.exchange.operator.DisEquipmentHistoryInfo" extends="BaseResultMap">
+    <association property="operatorInfo" column="operator_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.selectByPrimaryKey"/>
+    <association property="operatorChangeHis" column="operator_his_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorChangeHisDao.selectByPrimaryKey"/>
+    <association property="stationInfo" select="com.cpit.cpmt.biz.dao.exchange.operator.StationInfoDAO.selectByStationId" column="{operatorId=operator_id,stationId=station_id}"/>
+    <association property="stationHistory" column="his_sid" select="com.cpit.cpmt.biz.dao.exchange.operator.StationHistoryInfoDAO.selectByPrimaryKey"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, operator_his_id, his_sid, station_id, operator_id, disequipment_id, manufacturer_id, 
+    manufacturer_name, equipment_model, production_date, rated_in_voltage, rated_out_voltage, 
+    rated_power, feed_num, received_time, in_time, status, user_id, user_name, operate, 
+    check_date, note
+  </sql>
+  <select id="selectDisEquipmentHistory" parameterType="com.cpit.cpmt.dto.exchange.operator.DisEquipmentHistoryInfo" resultMap="mixedResultMap">
+    select disEquipment.*
+    from exc_dis_equipment_history_info disEquipment inner join exc_station_info station
+    on disEquipment.operator_id=station.operator_id and disEquipment.station_id=station.station_id
+    where 1=1
+    <if test="stationID != null">
+      and disEquipment.station_id=#{stationID}
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and station.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="operatorID != null">
+      and disEquipment.operator_id=#{operatorID}
+    </if>
+    <if test="disequipmentID != null">
+      and disEquipment.disequipment_id=#{disequipmentID}
+    </if>
+    <if test="beginTime != null">
+      <![CDATA[ and disEquipment.check_date >= #{beginTime} ]]>
+    </if>
+    <if test="endTime != null">
+      <![CDATA[ and disEquipment.check_date <= #{endTime} ]]>
+    </if>
+    order by disEquipment.id desc
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_dis_equipment_history_info
+    where id = #{id}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_dis_equipment_history_info
+    where id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.DisEquipmentHistoryInfo">
+    insert into exc_dis_equipment_history_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="operatorHisID != null">
+        operator_his_id,
+      </if>
+      <if test="hisSID != null">
+        his_sid,
+      </if>
+      <if test="stationID != null">
+        station_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="disequipmentID != null">
+        disequipment_id,
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id,
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name,
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model,
+      </if>
+      <if test="productionDate != null">
+        production_date,
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage,
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage,
+      </if>
+      <if test="ratedPower != null">
+        rated_power,
+      </if>
+      <if test="feedNum != null">
+        feed_num,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="userID != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="operate != null">
+        operate,
+      </if>
+      <if test="checkDate != null">
+        check_date,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id},
+      </if>
+      <if test="operatorHisID != null">
+        #{operatorHisID},
+      </if>
+      <if test="hisSID != null">
+        #{hisSID},
+      </if>
+      <if test="stationID != null">
+        #{stationID},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID},
+      </if>
+      <if test="disequipmentID != null">
+        #{disequipmentID},
+      </if>
+      <if test="manufacturerID != null">
+        #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        #{productionDate},
+      </if>
+      <if test="ratedInVoltage != null">
+        #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        #{feedNum},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime},
+      </if>
+      <if test="inTime != null">
+        #{inTime},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="userID != null">
+        #{userID},
+      </if>
+      <if test="userName != null">
+        #{userName},
+      </if>
+      <if test="operate != null">
+        #{operate},
+      </if>
+      <if test="checkDate != null">
+        #{checkDate},
+      </if>
+      <if test="note != null">
+        #{note},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.DisEquipmentHistoryInfo">
+    update exc_dis_equipment_history_info
+    <set>
+      <if test="operatorHisID != null">
+        operator_his_id = #{operatorHisID},
+      </if>
+      <if test="hisSID != null">
+        his_sid = #{hisSID},
+      </if>
+      <if test="stationID != null">
+        station_id = #{stationID},
+      </if>
+      <if test="operatorID != null">
+        operator_id = #{operatorID},
+      </if>
+      <if test="disequipmentID != null">
+        disequipment_id = #{disequipmentID},
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id = #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name = #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model = #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        production_date = #{productionDate},
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage = #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage = #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        rated_power = #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        feed_num = #{feedNum},
+      </if>
+      <if test="receivedTime != null">
+        received_time = #{receivedTime},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="userID != null">
+        user_id = #{userID},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName},
+      </if>
+      <if test="operate != null">
+        operate = #{operate},
+      </if>
+      <if test="checkDate != null">
+        check_date = #{checkDate},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

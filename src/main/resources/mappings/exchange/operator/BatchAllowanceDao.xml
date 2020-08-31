@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.BatchAllowanceDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.BatchAllowance">
+    <id column="batch_id" jdbcType="VARCHAR" property="batchId" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="allowance_type" jdbcType="INTEGER" property="allowanceType" />
+    <result column="charge_electricity" jdbcType="DOUBLE" property="chargeElectricity" />
+    <result column="allowance_status" jdbcType="INTEGER" property="allowanceStatus" />
+    <result column="allowance_price" jdbcType="DOUBLE" property="allowancePrice" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="status_date" jdbcType="TIMESTAMP" property="statusDate" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+  </resultMap>
+  <resultMap id="mixedOperatResultMap" type="com.cpit.cpmt.dto.exchange.operator.BatchAllowance" extends="BaseResultMap">
+    <association property="operatorInfo"  column="operator_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.selectByPrimaryKey"/>
+  </resultMap>
+
+  <resultMap id="mixedEquListResultMap" type="com.cpit.cpmt.dto.exchange.operator.BatchAllowance" extends="mixedOperatResultMap">
+    <collection property="sidList"   column="batch_id" select="com.cpit.cpmt.biz.dao.exchange.operator.AllowanceEquipmentDAO.getStationByBatchId"/>
+    <collection property="eidList"   column="batch_id" select="com.cpit.cpmt.biz.dao.exchange.operator.AllowanceEquipmentDAO.getEidListByBatchId"/>
+    <collection property="policiesList"   column="batch_id" select="com.cpit.cpmt.biz.dao.exchange.operator.AllowancePolicyDAO.selectPolicyList"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    batch_id, batch_code, operator_id, allowance_type, charge_electricity, allowance_status, 
+    allowance_price, reason, status_date,in_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="mixedEquListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_batch_allowance
+    where batch_id = #{batchId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAllowanceInfo" parameterType="com.cpit.cpmt.dto.exchange.operator.BatchAllowance" resultMap="mixedOperatResultMap">
+    select a.*
+    from exc_batch_allowance a inner join
+      (select distinct batch_id from exc_allowance_equipment a,exc_station_info b where a.sid=b.sid
+      <if test="sid != null and sid !=''">
+        and a.sid=#{sid}
+      </if>
+      <if test="eid != null and eid !=''">
+        and a.eid=#{eid}
+      </if>
+      <if test="areaCodeList != null and areaCodeList.size()>0 ">
+        and b.area_code in
+        <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+          #{areaCode}
+        </foreach>
+      </if>
+      ) b on a.batch_id = b.batch_id
+    where a.allowance_status!=0
+    <if test="batchCode != null and batchCode != ''">
+      and a.batch_code=#{batchCode}
+    </if>
+    <if test="allowanceType != null">
+      and a.allowance_type=#{allowanceType}
+    </if>
+    <if test="operatorId != null">
+      and a.operator_id=#{operatorId}
+    </if>
+    <if test="allowanceStatus != null">
+      and a.allowance_status=#{allowanceStatus}
+    </if>
+    <if test="startDate != null">
+      <![CDATA[ and a.status_date >= #{startDate} ]]>
+    </if>
+    <if test="endDate != null">
+      <![CDATA[ and a.status_date <= #{endDate} ]]>
+    </if>
+    order by a.in_time desc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from exc_batch_allowance
+    where batch_id = #{batchId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.BatchAllowance">
+    insert into exc_batch_allowance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="batchId != null">
+        batch_id,
+      </if>
+      <if test="batchCode != null">
+        batch_code,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="allowanceType != null">
+        allowance_type,
+      </if>
+      <if test="chargeElectricity != null">
+        charge_electricity,
+      </if>
+      <if test="allowanceStatus != null">
+        allowance_status,
+      </if>
+      <if test="allowancePrice != null">
+        allowance_price,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="statusDate != null">
+        status_date,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="batchId != null">
+        #{batchId,jdbcType=VARCHAR},
+      </if>
+      <if test="batchCode != null">
+        #{batchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="allowanceType != null">
+        #{allowanceType,jdbcType=INTEGER},
+      </if>
+      <if test="chargeElectricity != null">
+        #{chargeElectricity,jdbcType=DOUBLE},
+      </if>
+      <if test="allowanceStatus != null">
+        #{allowanceStatus,jdbcType=INTEGER},
+      </if>
+      <if test="allowancePrice != null">
+        #{allowancePrice,jdbcType=DOUBLE},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="statusDate != null">
+        #{statusDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.BatchAllowance">
+    update exc_batch_allowance
+    <set>
+      <if test="batchCode != null">
+        batch_code = #{batchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="allowanceType != null">
+        allowance_type = #{allowanceType,jdbcType=INTEGER},
+      </if>
+      <if test="chargeElectricity != null">
+        charge_electricity = #{chargeElectricity,jdbcType=DOUBLE},
+      </if>
+      <if test="allowanceStatus != null">
+        allowance_status = #{allowanceStatus,jdbcType=INTEGER},
+      </if>
+      <if test="allowancePrice != null">
+        allowance_price = #{allowancePrice,jdbcType=DOUBLE},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="statusDate != null">
+        status_date = #{statusDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where batch_id = #{batchId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.monitor.BmsThresholdRangeDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.monitor.BmsThresholdRange">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="ave_id" jdbcType="VARCHAR" property="aveId" />
+    <result column="risk_level" jdbcType="INTEGER" property="riskLevel" />
+    <result column="tatal_voltage_range" jdbcType="VARCHAR" property="tatalVoltageRange" />
+    <result column="total_current_range" jdbcType="VARCHAR" property="totalCurrentRange" />
+    <result column="soc_range" jdbcType="VARCHAR" property="socRange" />
+    <result column="voltage_h_min" jdbcType="VARCHAR" property="voltageHMin" />
+    <result column="voltage_h_max" jdbcType="VARCHAR" property="voltageHMax" />
+    <result column="voltage_l_min" jdbcType="VARCHAR" property="voltageLMin" />
+    <result column="voltage_l_max" jdbcType="VARCHAR" property="voltageLMax" />
+    <result column="tempture_h_min" jdbcType="VARCHAR" property="temptureHMin" />
+    <result column="tempture_h_max" jdbcType="VARCHAR" property="temptureHMax" />
+    <result column="tempture_l_min" jdbcType="VARCHAR" property="temptureLMin" />
+    <result column="tempture_l_max" jdbcType="VARCHAR" property="temptureLMax" />
+    <result column="fault_rate_min" jdbcType="VARCHAR" property="faultRateMin" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ave_id, risk_level, tatal_voltage_range, total_current_range, soc_range, voltage_h_min, 
+    voltage_h_max, voltage_l_min, voltage_l_max, tempture_h_min, tempture_h_max, tempture_l_min, 
+    tempture_l_max, fault_rate_min, in_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mon_bms_threshold_ranage
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectBmsThresholdRangeAveLastest" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mon_bms_threshold_ranage where ave_id='1'
+    ORDER BY id desc limit 4;
+  </select>
+
+  <select id="selectBmsThresholdRangeAveLastestUnEffect" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mon_bms_threshold_ranage where ave_id is NULL
+    ORDER BY id desc limit 4;
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from mon_bms_threshold_ranage
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.monitor.BmsThresholdRange">
+    insert into mon_bms_threshold_ranage
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="aveId != null">
+        ave_id,
+      </if>
+      <if test="riskLevel != null">
+        risk_level,
+      </if>
+      <if test="tatalVoltageRange != null">
+        tatal_voltage_range,
+      </if>
+      <if test="totalCurrentRange != null">
+        total_current_range,
+      </if>
+      <if test="socRange != null">
+        soc_range,
+      </if>
+      <if test="voltageHMin != null">
+        voltage_h_min,
+      </if>
+      <if test="voltageHMax != null">
+        voltage_h_max,
+      </if>
+      <if test="voltageLMin != null">
+        voltage_l_min,
+      </if>
+      <if test="voltageLMax != null">
+        voltage_l_max,
+      </if>
+      <if test="temptureHMin != null">
+        tempture_h_min,
+      </if>
+      <if test="temptureHMax != null">
+        tempture_h_max,
+      </if>
+      <if test="temptureLMin != null">
+        tempture_l_min,
+      </if>
+      <if test="temptureLMax != null">
+        tempture_l_max,
+      </if>
+      <if test="faultRateMin != null">
+        fault_rate_min,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="aveId != null">
+        #{aveId,jdbcType=VARCHAR},
+      </if>
+      <if test="riskLevel != null">
+        #{riskLevel,jdbcType=INTEGER},
+      </if>
+      <if test="tatalVoltageRange != null">
+        #{tatalVoltageRange,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCurrentRange != null">
+        #{totalCurrentRange,jdbcType=VARCHAR},
+      </if>
+      <if test="socRange != null">
+        #{socRange,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageHMin != null">
+        #{voltageHMin,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageHMax != null">
+        #{voltageHMax,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageLMin != null">
+        #{voltageLMin,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageLMax != null">
+        #{voltageLMax,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureHMin != null">
+        #{temptureHMin,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureHMax != null">
+        #{temptureHMax,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureLMin != null">
+        #{temptureLMin,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureLMax != null">
+        #{temptureLMax,jdbcType=VARCHAR},
+      </if>
+      <if test="faultRateMin != null">
+        #{faultRateMin,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.monitor.BmsThresholdRange">
+    update mon_bms_threshold_ranage
+    <set>
+      <if test="aveId != null">
+        ave_id = #{aveId,jdbcType=VARCHAR},
+      </if>
+      <if test="riskLevel != null">
+        risk_level = #{riskLevel,jdbcType=INTEGER},
+      </if>
+      <if test="tatalVoltageRange != null">
+        tatal_voltage_range = #{tatalVoltageRange,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCurrentRange != null">
+        total_current_range = #{totalCurrentRange,jdbcType=VARCHAR},
+      </if>
+      <if test="socRange != null">
+        soc_range = #{socRange,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageHMin != null">
+        voltage_h_min = #{voltageHMin,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageHMax != null">
+        voltage_h_max = #{voltageHMax,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageLMin != null">
+        voltage_l_min = #{voltageLMin,jdbcType=VARCHAR},
+      </if>
+      <if test="voltageLMax != null">
+        voltage_l_max = #{voltageLMax,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureHMin != null">
+        tempture_h_min = #{temptureHMin,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureHMax != null">
+        tempture_h_max = #{temptureHMax,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureLMin != null">
+        tempture_l_min = #{temptureLMin,jdbcType=VARCHAR},
+      </if>
+      <if test="temptureLMax != null">
+        tempture_l_max = #{temptureLMax,jdbcType=VARCHAR},
+      </if>
+      <if test="faultRateMin != null">
+        fault_rate_min = #{faultRateMin,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

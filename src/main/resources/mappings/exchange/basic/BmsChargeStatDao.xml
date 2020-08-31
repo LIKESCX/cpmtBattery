@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.BmsChargeStatDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.biz.dto.BmsChargeStatDto" >
+   
+    <result column="bms_code" property="bmsCode" jdbcType="VARCHAR" />
+    <result column="last_bms_charging_time" property="lastBMSChargingTime" jdbcType="VARCHAR" />
+    <result column="charge_times" property="chargeTimes" jdbcType="VARCHAR" />
+ 
+  </resultMap>
+  
+  <insert id="addDto" parameterType = "com.cpit.cpmt.biz.dto.BmsChargeStatDto" >
+  insert into exc_bms_charging_times 
+  (bms_code,last_bms_charging_time,charge_times)
+  values
+  (#{bmsCode,jdbcType=VARCHAR},
+  #{lastBMSChargingTime,jdbcType=VARCHAR},
+  #{chargeTimes,jdbcType=VARCHAR})
+  </insert>
+  <select id="getByBmsCode" parameterType = "String" resultMap = "BaseResultMap">
+  select * from exc_bms_charging_times 
+  where bms_code = #{bmsCode}
+  </select>
+  <update id="updateByBmsCode" parameterType = "com.cpit.cpmt.biz.dto.BmsChargeStatDto" >
+  update exc_bms_charging_times 
+  <trim prefix="set" suffixOverrides=",">  
+   <if test="lastBMSChargingTime != null">
+        last_bms_charging_time = #{lastBMSChargingTime,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeTimes != null">
+        charge_times = #{chargeTimes,jdbcType=VARCHAR},
+      </if>
+ 
+      </trim>
+      WHERE
+      bms_code = #{bmsCode}
+  </update>
+   <resultMap id="bmsCodeResult" type="java.lang.String" >
+        <result column="bms_code" property="bmsCode" jdbcType="VARCHAR" />
+ </resultMap>
+  <select id="getBmsCodeListByFirstFourDigits" parameterType="String" resultMap="bmsCodeResult">
+  	SELECT
+		bms_code
+	FROM
+		exc_bms_charging_times
+	WHERE
+		bms_code LIKE TRIM(REPLACE(CONCAT('',#{subCode},'%'),' ',''))
+	ORDER BY
+		charge_times DESC,
+		last_bms_charging_time DESC
+  </select>
+
+    <select id="queryBmsCodeLastestList"  resultType="java.lang.String">
+  	SELECT
+		bms_code
+	FROM
+		exc_bms_charging_times
+
+	ORDER BY
+		charge_times DESC,
+		last_bms_charging_time DESC
+	 LIMIT 10
+  </select>
+  </mapper>

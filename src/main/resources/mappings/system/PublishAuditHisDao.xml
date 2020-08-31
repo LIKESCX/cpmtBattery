@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.system.PublishAuditHisDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.system.PublishAuditHis" >
+    <id column="policy_his_id" property="policyHisId" jdbcType="INTEGER" />
+    <result column="process_id" property="processId" jdbcType="INTEGER" />
+    <result column="audit_person" property="auditPerson" jdbcType="VARCHAR" />
+    <result column="audit_status" property="auditStatus" jdbcType="INTEGER" />
+    <result column="audit_date" property="auditDate" jdbcType="TIMESTAMP" />
+    <result column="audit_note" property="auditNote" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    policy_his_id, process_id, audit_person, audit_status, audit_date, audit_note
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_publish_audit_his
+    where policy_his_id = #{policyHisId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from exc_publish_audit_his
+    where policy_his_id = #{policyHisId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.PublishAuditHis" >
+    insert into exc_publish_audit_his (policy_his_id, process_id, audit_person, 
+      audit_status, audit_date, audit_note
+      )
+    values (#{policyHisId,jdbcType=INTEGER}, #{processId,jdbcType=INTEGER}, #{auditPerson,jdbcType=VARCHAR}, 
+      #{auditStatus,jdbcType=INTEGER}, #{auditDate,jdbcType=TIMESTAMP}, #{auditNote,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.PublishAuditHis" >
+    insert into exc_publish_audit_his
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="policyHisId != null" >
+        policy_his_id,
+      </if>
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="auditPerson != null" >
+        audit_person,
+      </if>
+      <if test="auditStatus != null" >
+        audit_status,
+      </if>
+      <if test="auditDate != null" >
+        audit_date,
+      </if>
+      <if test="auditNote != null" >
+        audit_note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="policyHisId != null" >
+        #{policyHisId,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="auditPerson != null" >
+        #{auditPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        #{auditStatus,jdbcType=INTEGER},
+      </if>
+      <if test="auditDate != null" >
+        #{auditDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditNote != null" >
+        #{auditNote,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.system.PublishAuditHis" >
+    update exc_publish_audit_his
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="auditPerson != null" >
+        audit_person = #{auditPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        audit_status = #{auditStatus,jdbcType=INTEGER},
+      </if>
+      <if test="auditDate != null" >
+        audit_date = #{auditDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditNote != null" >
+        audit_note = #{auditNote,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where policy_his_id = #{policyHisId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.PublishAuditHis" >
+    update exc_publish_audit_his
+    set process_id = #{processId,jdbcType=INTEGER},
+      audit_person = #{auditPerson,jdbcType=VARCHAR},
+      audit_status = #{auditStatus,jdbcType=INTEGER},
+      audit_date = #{auditDate,jdbcType=TIMESTAMP},
+      audit_note = #{auditNote,jdbcType=VARCHAR}
+    where policy_his_id = #{policyHisId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getPolicyAuditHisList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from exc_publish_audit_his
+    where process_id = #{processId,jdbcType=INTEGER}
+    order by audit_date desc
+  </select>
+</mapper>

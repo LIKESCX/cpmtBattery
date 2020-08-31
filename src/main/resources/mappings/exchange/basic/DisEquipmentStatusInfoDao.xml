@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.DisEquipmentStatusInfoDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationID" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="disequipment_id" jdbcType="VARCHAR" property="disequipmentID" />
+    <result column="fo_p_energy" jdbcType="DOUBLE" property="foPEnergy" />
+    <result column="re_p_energy" jdbcType="DOUBLE" property="rePEnergy" />
+    <result column="fo_q_energy" jdbcType="DOUBLE" property="foQEnergy" />
+    <result column="re_q_energy" jdbcType="DOUBLE" property="reQEnergy" />
+    <result column="a_voltage" jdbcType="DOUBLE" property="aVoltage" />
+    <result column="b_voltage" jdbcType="DOUBLE" property="bVoltage" />
+    <result column="c_voltage" jdbcType="DOUBLE" property="cVoltage" />
+    <result column="a_current" jdbcType="DOUBLE" property="aCurrent" />
+    <result column="b_current" jdbcType="DOUBLE" property="bCurrent" />
+    <result column="c_current" jdbcType="DOUBLE" property="cCurrent" />
+    <result column="cur_p_power" jdbcType="DOUBLE" property="curPPower" />
+    <result column="cur_q_power" jdbcType="DOUBLE" property="curQPower" />
+    <result column="factor" jdbcType="DOUBLE" property="factor" />
+    <result column="cur_s_power" jdbcType="DOUBLE" property="curSPower" />
+    <result column="frequency" jdbcType="DOUBLE" property="frequency" />
+    <result column="feed_state" jdbcType="VARCHAR" property="feedState" />
+    <result column="env_temp1" jdbcType="INTEGER" property="envTemp1" />
+    <result column="env_temp2" jdbcType="INTEGER" property="envTemp2" />
+    <result column="env_humi1" jdbcType="INTEGER" property="envHumi1" />
+    <result column="env_humi2" jdbcType="INTEGER" property="envHumi2" />
+    <result column="smok_alam1" jdbcType="INTEGER" property="smokAlam1" />
+    <result column="smok_alam2" jdbcType="INTEGER" property="smokAlam2" />
+    <result column="tran_over_tem_alam" jdbcType="INTEGER" property="tranOverTemAlam" />
+    <result column="received_time" jdbcType="TIMESTAMP" property="receivedTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, station_id, operator_id, disequipment_id, fo_p_energy, re_p_energy, fo_q_energy, 
+    re_q_energy, a_voltage, b_voltage, c_voltage, a_current, b_current, c_current, cur_p_power, 
+    cur_q_power, factor, cur_s_power, frequency, feed_state, env_temp1, env_temp2, env_humi1, 
+    env_humi2, smok_alam1, smok_alam2, tran_over_tem_alam, received_time, in_time
+  </sql>
+  <!-- <select id="selectByExample" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from exc_dis_equipment_status_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select> -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_dis_equipment_status_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_dis_equipment_status_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!-- <delete id="deleteByExample" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfoExample">
+    delete from exc_dis_equipment_status_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete> -->
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exc_dis_equipment_status_info (station_id, operator_id, disequipment_id, 
+      fo_p_energy, re_p_energy, fo_q_energy, 
+      re_q_energy, a_voltage, b_voltage, 
+      c_voltage, a_current, b_current, 
+      c_current, cur_p_power, cur_q_power, 
+      factor, cur_s_power, frequency, 
+      feed_state, env_temp1, env_temp2, 
+      env_humi1, env_humi2, smok_alam1, 
+      smok_alam2, tran_over_tem_alam, received_time, 
+      in_time)
+    values (#{stationId,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, #{disequipmentId,jdbcType=VARCHAR}, 
+      #{foPEnergy,jdbcType=DOUBLE}, #{rePEnergy,jdbcType=DOUBLE}, #{foQEnergy,jdbcType=DOUBLE}, 
+      #{reQEnergy,jdbcType=DOUBLE}, #{aVoltage,jdbcType=DOUBLE}, #{bVoltage,jdbcType=DOUBLE}, 
+      #{cVoltage,jdbcType=DOUBLE}, #{aCurrent,jdbcType=DOUBLE}, #{bCurrent,jdbcType=DOUBLE}, 
+      #{cCurrent,jdbcType=DOUBLE}, #{curPPower,jdbcType=DOUBLE}, #{curQPower,jdbcType=DOUBLE}, 
+      #{factor,jdbcType=DOUBLE}, #{curSPower,jdbcType=DOUBLE}, #{frequency,jdbcType=DOUBLE}, 
+      #{feedState,jdbcType=VARCHAR}, #{envTemp1,jdbcType=INTEGER}, #{envTemp2,jdbcType=INTEGER}, 
+      #{envHumi1,jdbcType=INTEGER}, #{envHumi2,jdbcType=INTEGER}, #{smokAlam1,jdbcType=INTEGER}, 
+      #{smokAlam2,jdbcType=INTEGER}, #{tranOverTemAlam,jdbcType=INTEGER}, #{receivedTime,jdbcType=TIMESTAMP}, 
+      #{inTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfo">
+    <!-- <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey> -->
+    insert into exc_dis_equipment_status_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="stationID != null">
+        station_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="disequipmentID != null">
+        disequipment_id,
+      </if>
+      <if test="foPEnergy != null">
+        fo_p_energy,
+      </if>
+      <if test="rePEnergy != null">
+        re_p_energy,
+      </if>
+      <if test="foQEnergy != null">
+        fo_q_energy,
+      </if>
+      <if test="reQEnergy != null">
+        re_q_energy,
+      </if>
+      <if test="aVoltage != null">
+        a_voltage,
+      </if>
+      <if test="bVoltage != null">
+        b_voltage,
+      </if>
+      <if test="cVoltage != null">
+        c_voltage,
+      </if>
+      <if test="aCurrent != null">
+        a_current,
+      </if>
+      <if test="bCurrent != null">
+        b_current,
+      </if>
+      <if test="cCurrent != null">
+        c_current,
+      </if>
+      <if test="curPPower != null">
+        cur_p_power,
+      </if>
+      <if test="curQPower != null">
+        cur_q_power,
+      </if>
+      <if test="factor != null">
+        factor,
+      </if>
+      <if test="curSPower != null">
+        cur_s_power,
+      </if>
+      <if test="frequency != null">
+        frequency,
+      </if>
+      <if test="feedState != null">
+        feed_state,
+      </if>
+      <if test="envTemp1 != null">
+        env_temp1,
+      </if>
+      <if test="envTemp2 != null">
+        env_temp2,
+      </if>
+      <if test="envHumi1 != null">
+        env_humi1,
+      </if>
+      <if test="envHumi2 != null">
+        env_humi2,
+      </if>
+      <if test="smokAlam1 != null">
+        smok_alam1,
+      </if>
+      <if test="smokAlam2 != null">
+        smok_alam2,
+      </if>
+      <if test="tranOverTemAlam != null">
+        tran_over_tem_alam,
+      </if>
+      <if test="receivedTime != null">
+        received_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="stationID != null">
+        #{stationID,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="disequipmentID != null">
+        #{disequipmentID,jdbcType=VARCHAR},
+      </if>
+      <if test="foPEnergy != null">
+        #{foPEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="rePEnergy != null">
+        #{rePEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="foQEnergy != null">
+        #{foQEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="reQEnergy != null">
+        #{reQEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="aVoltage != null">
+        #{aVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="bVoltage != null">
+        #{bVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="cVoltage != null">
+        #{cVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="aCurrent != null">
+        #{aCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="bCurrent != null">
+        #{bCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="cCurrent != null">
+        #{cCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="curPPower != null">
+        #{curPPower,jdbcType=DOUBLE},
+      </if>
+      <if test="curQPower != null">
+        #{curQPower,jdbcType=DOUBLE},
+      </if>
+      <if test="factor != null">
+        #{factor,jdbcType=DOUBLE},
+      </if>
+      <if test="curSPower != null">
+        #{curSPower,jdbcType=DOUBLE},
+      </if>
+      <if test="frequency != null">
+        #{frequency,jdbcType=DOUBLE},
+      </if>
+      <if test="feedState != null">
+        #{feedState,jdbcType=VARCHAR},
+      </if>
+      <if test="envTemp1 != null">
+        #{envTemp1,jdbcType=INTEGER},
+      </if>
+      <if test="envTemp2 != null">
+        #{envTemp2,jdbcType=INTEGER},
+      </if>
+      <if test="envHumi1 != null">
+        #{envHumi1,jdbcType=INTEGER},
+      </if>
+      <if test="envHumi2 != null">
+        #{envHumi2,jdbcType=INTEGER},
+      </if>
+      <if test="smokAlam1 != null">
+        #{smokAlam1,jdbcType=INTEGER},
+      </if>
+      <if test="smokAlam2 != null">
+        #{smokAlam2,jdbcType=INTEGER},
+      </if>
+      <if test="tranOverTemAlam != null">
+        #{tranOverTemAlam,jdbcType=INTEGER},
+      </if>
+      <if test="receivedTime != null">
+        #{receivedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- <select id="countByExample" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfoExample" resultType="java.lang.Long">
+    select count(*) from exc_dis_equipment_status_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select> -->
+  <!-- <update id="updateByExampleSelective" parameterType="map">
+    update exc_dis_equipment_status_info
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.stationId != null">
+        station_id = #{record.stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operatorId != null">
+        operator_id = #{record.operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.disequipmentId != null">
+        disequipment_id = #{record.disequipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.foPEnergy != null">
+        fo_p_energy = #{record.foPEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="record.rePEnergy != null">
+        re_p_energy = #{record.rePEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="record.foQEnergy != null">
+        fo_q_energy = #{record.foQEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="record.reQEnergy != null">
+        re_q_energy = #{record.reQEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="record.aVoltage != null">
+        a_voltage = #{record.aVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.bVoltage != null">
+        b_voltage = #{record.bVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.cVoltage != null">
+        c_voltage = #{record.cVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.aCurrent != null">
+        a_current = #{record.aCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="record.bCurrent != null">
+        b_current = #{record.bCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="record.cCurrent != null">
+        c_current = #{record.cCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="record.curPPower != null">
+        cur_p_power = #{record.curPPower,jdbcType=DOUBLE},
+      </if>
+      <if test="record.curQPower != null">
+        cur_q_power = #{record.curQPower,jdbcType=DOUBLE},
+      </if>
+      <if test="record.factor != null">
+        factor = #{record.factor,jdbcType=DOUBLE},
+      </if>
+      <if test="record.curSPower != null">
+        cur_s_power = #{record.curSPower,jdbcType=DOUBLE},
+      </if>
+      <if test="record.frequency != null">
+        frequency = #{record.frequency,jdbcType=DOUBLE},
+      </if>
+      <if test="record.feedState != null">
+        feed_state = #{record.feedState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.envTemp1 != null">
+        env_temp1 = #{record.envTemp1,jdbcType=INTEGER},
+      </if>
+      <if test="record.envTemp2 != null">
+        env_temp2 = #{record.envTemp2,jdbcType=INTEGER},
+      </if>
+      <if test="record.envHumi1 != null">
+        env_humi1 = #{record.envHumi1,jdbcType=INTEGER},
+      </if>
+      <if test="record.envHumi2 != null">
+        env_humi2 = #{record.envHumi2,jdbcType=INTEGER},
+      </if>
+      <if test="record.smokAlam1 != null">
+        smok_alam1 = #{record.smokAlam1,jdbcType=INTEGER},
+      </if>
+      <if test="record.smokAlam2 != null">
+        smok_alam2 = #{record.smokAlam2,jdbcType=INTEGER},
+      </if>
+      <if test="record.tranOverTemAlam != null">
+        tran_over_tem_alam = #{record.tranOverTemAlam,jdbcType=INTEGER},
+      </if>
+      <if test="record.receivedTime != null">
+        received_time = #{record.receivedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.inTime != null">
+        in_time = #{record.inTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update> -->
+  <!-- <update id="updateByExample" parameterType="map">
+    update exc_dis_equipment_status_info
+    set id = #{record.id,jdbcType=INTEGER},
+      station_id = #{record.stationId,jdbcType=VARCHAR},
+      operator_id = #{record.operatorId,jdbcType=VARCHAR},
+      disequipment_id = #{record.disequipmentId,jdbcType=VARCHAR},
+      fo_p_energy = #{record.foPEnergy,jdbcType=DOUBLE},
+      re_p_energy = #{record.rePEnergy,jdbcType=DOUBLE},
+      fo_q_energy = #{record.foQEnergy,jdbcType=DOUBLE},
+      re_q_energy = #{record.reQEnergy,jdbcType=DOUBLE},
+      a_voltage = #{record.aVoltage,jdbcType=DOUBLE},
+      b_voltage = #{record.bVoltage,jdbcType=DOUBLE},
+      c_voltage = #{record.cVoltage,jdbcType=DOUBLE},
+      a_current = #{record.aCurrent,jdbcType=DOUBLE},
+      b_current = #{record.bCurrent,jdbcType=DOUBLE},
+      c_current = #{record.cCurrent,jdbcType=DOUBLE},
+      cur_p_power = #{record.curPPower,jdbcType=DOUBLE},
+      cur_q_power = #{record.curQPower,jdbcType=DOUBLE},
+      factor = #{record.factor,jdbcType=DOUBLE},
+      cur_s_power = #{record.curSPower,jdbcType=DOUBLE},
+      frequency = #{record.frequency,jdbcType=DOUBLE},
+      feed_state = #{record.feedState,jdbcType=VARCHAR},
+      env_temp1 = #{record.envTemp1,jdbcType=INTEGER},
+      env_temp2 = #{record.envTemp2,jdbcType=INTEGER},
+      env_humi1 = #{record.envHumi1,jdbcType=INTEGER},
+      env_humi2 = #{record.envHumi2,jdbcType=INTEGER},
+      smok_alam1 = #{record.smokAlam1,jdbcType=INTEGER},
+      smok_alam2 = #{record.smokAlam2,jdbcType=INTEGER},
+      tran_over_tem_alam = #{record.tranOverTemAlam,jdbcType=INTEGER},
+      received_time = #{record.receivedTime,jdbcType=VARCHAR},
+      in_time = #{record.inTime,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update> -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfo">
+    update exc_dis_equipment_status_info
+    <set>
+      <!-- <if test="stationID != null">
+        station_id = #{stationID,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorID != null">
+        operator_id = #{operatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="disequipmentID != null">
+        disequipment_id = #{disequipmentID,jdbcType=VARCHAR},
+      </if> -->
+      <if test="foPEnergy != null">
+        fo_p_energy = #{foPEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="rePEnergy != null">
+        re_p_energy = #{rePEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="foQEnergy != null">
+        fo_q_energy = #{foQEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="reQEnergy != null">
+        re_q_energy = #{reQEnergy,jdbcType=DOUBLE},
+      </if>
+      <if test="aVoltage != null">
+        a_voltage = #{aVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="bVoltage != null">
+        b_voltage = #{bVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="cVoltage != null">
+        c_voltage = #{cVoltage,jdbcType=DOUBLE},
+      </if>
+      <if test="aCurrent != null">
+        a_current = #{aCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="bCurrent != null">
+        b_current = #{bCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="cCurrent != null">
+        c_current = #{cCurrent,jdbcType=DOUBLE},
+      </if>
+      <if test="curPPower != null">
+        cur_p_power = #{curPPower,jdbcType=DOUBLE},
+      </if>
+      <if test="curQPower != null">
+        cur_q_power = #{curQPower,jdbcType=DOUBLE},
+      </if>
+      <if test="factor != null">
+        factor = #{factor,jdbcType=DOUBLE},
+      </if>
+      <if test="curSPower != null">
+        cur_s_power = #{curSPower,jdbcType=DOUBLE},
+      </if>
+      <if test="frequency != null">
+        frequency = #{frequency,jdbcType=DOUBLE},
+      </if>
+      <if test="feedState != null">
+        feed_state = #{feedState,jdbcType=VARCHAR},
+      </if>
+      <if test="envTemp1 != null">
+        env_temp1 = #{envTemp1,jdbcType=INTEGER},
+      </if>
+      <if test="envTemp2 != null">
+        env_temp2 = #{envTemp2,jdbcType=INTEGER},
+      </if>
+      <if test="envHumi1 != null">
+        env_humi1 = #{envHumi1,jdbcType=INTEGER},
+      </if>
+      <if test="envHumi2 != null">
+        env_humi2 = #{envHumi2,jdbcType=INTEGER},
+      </if>
+      <if test="smokAlam1 != null">
+        smok_alam1 = #{smokAlam1,jdbcType=INTEGER},
+      </if>
+      <if test="smokAlam2 != null">
+        smok_alam2 = #{smokAlam2,jdbcType=INTEGER},
+      </if>
+      <if test="tranOverTemAlam != null">
+        tran_over_tem_alam = #{tranOverTemAlam,jdbcType=INTEGER},
+      </if>
+      <if test="receivedTime != null">
+        received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.DisEquipmentStatusInfo">
+    update exc_dis_equipment_status_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      operator_id = #{operatorId,jdbcType=VARCHAR},
+      disequipment_id = #{disequipmentId,jdbcType=VARCHAR},
+      fo_p_energy = #{foPEnergy,jdbcType=DOUBLE},
+      re_p_energy = #{rePEnergy,jdbcType=DOUBLE},
+      fo_q_energy = #{foQEnergy,jdbcType=DOUBLE},
+      re_q_energy = #{reQEnergy,jdbcType=DOUBLE},
+      a_voltage = #{aVoltage,jdbcType=DOUBLE},
+      b_voltage = #{bVoltage,jdbcType=DOUBLE},
+      c_voltage = #{cVoltage,jdbcType=DOUBLE},
+      a_current = #{aCurrent,jdbcType=DOUBLE},
+      b_current = #{bCurrent,jdbcType=DOUBLE},
+      c_current = #{cCurrent,jdbcType=DOUBLE},
+      cur_p_power = #{curPPower,jdbcType=DOUBLE},
+      cur_q_power = #{curQPower,jdbcType=DOUBLE},
+      factor = #{factor,jdbcType=DOUBLE},
+      cur_s_power = #{curSPower,jdbcType=DOUBLE},
+      frequency = #{frequency,jdbcType=DOUBLE},
+      feed_state = #{feedState,jdbcType=VARCHAR},
+      env_temp1 = #{envTemp1,jdbcType=INTEGER},
+      env_temp2 = #{envTemp2,jdbcType=INTEGER},
+      env_humi1 = #{envHumi1,jdbcType=INTEGER},
+      env_humi2 = #{envHumi2,jdbcType=INTEGER},
+      smok_alam1 = #{smokAlam1,jdbcType=INTEGER},
+      smok_alam2 = #{smokAlam2,jdbcType=INTEGER},
+      tran_over_tem_alam = #{tranOverTemAlam,jdbcType=INTEGER},
+      received_time = #{receivedTime,jdbcType=TIMESTAMP},
+      in_time = #{inTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+   <!-- selectDisequipmentstatusInfoByConditons -->
+  <select id="selectDisequipmentstatusInfoByConditons" resultMap="BaseResultMap">
+  	select 
+  	 	id,
+  		station_id,
+  		operator_id,
+  		disequipment_id
+  	from exc_dis_equipment_status_info where disequipment_id= #{disequipmentID} and operator_id = #{operatorID}
+  </select>
+</mapper>

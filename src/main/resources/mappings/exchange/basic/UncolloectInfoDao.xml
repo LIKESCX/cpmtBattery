@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.basic.UncolloectInfoDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.basic.UncolloectInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationID" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentID" />
+    <result column="inf_name" jdbcType="VARCHAR" property="infName" />
+    <result column="version_num" jdbcType="VARCHAR" property="versionNum" />
+    <result column="time_stamp" jdbcType="VARCHAR" property="timeStamp" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="if_colloected" jdbcType="INTEGER" property="ifColloected" />
+    <result column="if_success" jdbcType="INTEGER" property="ifSuccess" />
+    <result column="sum_count" jdbcType="INTEGER" property="sumCount" />
+    <result column="colletced_time" jdbcType="INTEGER" property="colletcedTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, station_id, operator_id, equipment_id, inf_name, version_num, time_stamp, reason, 
+    if_colloected, if_success, sum_count, colletced_time
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_uncolloect_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.basic.UncolloectInfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exc_uncolloect_info (station_id, operator_id, equipment_id, 
+      inf_name, version_num, time_stamp, 
+      reason, if_colloected, if_success, 
+      sum_count, colletced_time)
+    values (#{stationId,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, #{equipmentId,jdbcType=VARCHAR}, 
+      #{infName,jdbcType=VARCHAR}, #{versionNum,jdbcType=VARCHAR}, #{timeStamp,jdbcType=VARCHAR}, 
+      #{reason,jdbcType=VARCHAR}, #{ifColloected,jdbcType=INTEGER}, #{ifSuccess,jdbcType=INTEGER}, 
+      #{sumCount,jdbcType=INTEGER}, #{colletcedTime,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.basic.UncolloectInfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exc_uncolloect_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="infName != null">
+        inf_name,
+      </if>
+      <if test="versionNum != null">
+        version_num,
+      </if>
+      <if test="timeStamp != null">
+        time_stamp,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="ifColloected != null">
+        if_colloected,
+      </if>
+      <if test="ifSuccess != null">
+        if_success,
+      </if>
+      <if test="sumCount != null">
+        sum_count,
+      </if>
+      <if test="colletcedTime != null">
+        colletced_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="infName != null">
+        #{infName,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNum != null">
+        #{versionNum,jdbcType=VARCHAR},
+      </if>
+      <if test="timeStamp != null">
+        #{timeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="ifColloected != null">
+        #{ifColloected,jdbcType=INTEGER},
+      </if>
+      <if test="ifSuccess != null">
+        #{ifSuccess,jdbcType=INTEGER},
+      </if>
+      <if test="sumCount != null">
+        #{sumCount,jdbcType=INTEGER},
+      </if>
+      <if test="colletcedTime != null">
+        #{colletcedTime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.basic.UncolloectInfo">
+    update exc_uncolloect_info
+    <set>
+      <if test="stationId != null">
+        station_id = #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="infName != null">
+        inf_name = #{infName,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNum != null">
+        version_num = #{versionNum,jdbcType=VARCHAR},
+      </if>
+      <if test="timeStamp != null">
+        time_stamp = #{timeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="ifColloected != null">
+        if_colloected = #{ifColloected,jdbcType=INTEGER},
+      </if>
+      <if test="ifSuccess != null">
+        if_success = #{ifSuccess,jdbcType=INTEGER},
+      </if>
+      <if test="sumCount != null">
+        sum_count = #{sumCount,jdbcType=INTEGER},
+      </if>
+      <if test="colletcedTime != null">
+        colletced_time = #{colletcedTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.basic.UncolloectInfo">
+    update exc_uncolloect_info
+    set station_id = #{stationId,jdbcType=VARCHAR},
+      operator_id = #{operatorId,jdbcType=VARCHAR},
+      equipment_id = #{equipmentId,jdbcType=VARCHAR},
+      inf_name = #{infName,jdbcType=VARCHAR},
+      version_num = #{versionNum,jdbcType=VARCHAR},
+      time_stamp = #{timeStamp,jdbcType=VARCHAR},
+      reason = #{reason,jdbcType=VARCHAR},
+      if_colloected = #{ifColloected,jdbcType=INTEGER},
+      if_success = #{ifSuccess,jdbcType=INTEGER},
+      sum_count = #{sumCount,jdbcType=INTEGER},
+      colletced_time = #{colletcedTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 数据补采查询列表信息 -->
+  <select id="selectUncollectInfos" parameterType="com.cpit.cpmt.dto.exchange.basic.SupplyCollect" resultMap="BaseResultMap" >
+  	select 
+  		<include refid="Base_Column_List"/>
+  	 from exc_uncolloect_info
+  	 where
+	  <if test="stationID != null and stationID !=''">
+        station_id = #{stationID,jdbcType=VARCHAR}
+      </if>
+      <if test="operatorID != null and operatorID !=''">
+         and operator_id = #{operatorID,jdbcType=VARCHAR}
+      </if>
+      <if test="equipmentID != null and equipmentID !=''">
+         and equipment_id = #{equipmentID,jdbcType=VARCHAR}
+      </if> 	 
+      <if test="interfaceName != null and interfaceName !=''">
+         and inf_name = #{interfaceName,jdbcType=VARCHAR}
+      </if> 	 
+      <if test="startTime != null and startTime !=''">
+         and DATE_FORMAT(time_stamp,'%Y-%m-%d %H:%i:%s') &gt;= #{startTime,jdbcType=VARCHAR}
+      </if> 	 
+      <if test="endTime != null and endTime !=''">
+         and DATE_FORMAT(time_stamp,'%Y-%m-%d %H:%i:%s') &gt;= #{endTime,jdbcType=VARCHAR}
+      </if>	 
+  </select>
+</mapper>

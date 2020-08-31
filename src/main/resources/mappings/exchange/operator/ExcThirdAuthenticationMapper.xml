@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.ExcThirdAuthenticationMapper">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcThirdAuthentication">
+    <id column="auth_id" jdbcType="INTEGER" property="authId" />
+    <result column="third_ip" jdbcType="VARCHAR" property="thirdIp" />
+    <result column="third_port" jdbcType="VARCHAR" property="thirdPort" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
+    <result column="secret_certificate" jdbcType="VARCHAR" property="secretCertificate" />
+    <result column="auth_method" jdbcType="TINYINT" property="authMethod" />
+    <result column="auth_desc" jdbcType="VARCHAR" property="authDesc" />
+    <result column="uptdate" jdbcType="TIMESTAMP" property="uptdate" />
+    <result column="status_cd" jdbcType="TIMESTAMP" property="statusCd" />
+    <!-- <collection property="exInteractionList" column="{auth_id=auth_id}" javaType="ArrayList"  ofType="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive" select="getInterfaceList" /> -->
+  </resultMap>
+  <!-- 获取权限接口 -->
+  <resultMap id="InterfaceResultMap" type="com.cpit.cpmt.dto.exchange.operator.ExcThirdInteractive">
+    <id column="interactive_id" jdbcType="BIGINT" property="interactiveId" />
+    <result column="auth_id" jdbcType="INTEGER" property="authId" />
+    <result column="interface_id" jdbcType="INTEGER" property="interfaceId" />
+    <result column="trans_cycle" jdbcType="INTEGER" property="transCycle" />
+    <result column="status_cd" jdbcType="TINYINT" property="statusCd" />
+    <result column="interface_url" jdbcType="VARCHAR" property="interfaceUrl" />
+    <result column="interface_desc" jdbcType="VARCHAR" property="interfaceDesc" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    auth_id, third_ip, third_port, secret_key, secret_certificate, auth_method, auth_desc, 
+    uptdate,status_cd
+  </sql>
+  <!-- 获取权限接口 -->
+  <sql id="Interface_Column_List">
+  	a.interactive_id, a.auth_id, a.interface_id, a.trans_cycle, a.status_cd, b.interface_url, b.interface_desc
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_third_authentication
+    where auth_id = #{authId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exc_third_authentication
+    where auth_id = #{authId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdAuthentication">
+    insert into exc_third_authentication (auth_id, third_ip, third_port, 
+      secret_key, secret_certificate, auth_method, 
+      auth_desc, uptdate, status_cd)
+    values (#{authId,jdbcType=INTEGER}, #{thirdIp,jdbcType=VARCHAR}, #{thirdPort,jdbcType=VARCHAR}, 
+      #{secretKey,jdbcType=VARCHAR}, #{secretCertificate,jdbcType=VARCHAR}, #{authMethod,jdbcType=TINYINT}, 
+      #{authDesc,jdbcType=VARCHAR}, #{uptdate,jdbcType=TIMESTAMP}, #{statusCd,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdAuthentication">
+    insert into exc_third_authentication
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="authId != null">
+        auth_id,
+      </if>
+      <if test="thirdIp != null">
+        third_ip,
+      </if>
+      <if test="thirdPort != null">
+        third_port,
+      </if>
+      <if test="secretKey != null">
+        secret_key,
+      </if>
+      <if test="secretCertificate != null">
+        secret_certificate,
+      </if>
+      <if test="authMethod != null">
+        auth_method,
+      </if>
+      <if test="authDesc != null">
+        auth_desc,
+      </if>
+      <if test="uptdate != null">
+        uptdate,
+      </if>
+      <if test="statusCd != null">
+        status_cd,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="authId != null">
+        #{authId,jdbcType=INTEGER},
+      </if>
+      <if test="thirdIp != null">
+        #{thirdIp,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdPort != null">
+        #{thirdPort,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null">
+        #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretCertificate != null">
+        #{secretCertificate,jdbcType=VARCHAR},
+      </if>
+      <if test="authMethod != null">
+        #{authMethod,jdbcType=TINYINT},
+      </if>
+      <if test="authDesc != null">
+        #{authDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="uptdate != null">
+        #{uptdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusCd != null">
+        #{statusCd,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdAuthentication">
+    update exc_third_authentication
+    <set>
+      <if test="thirdIp != null">
+        third_ip = #{thirdIp,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdPort != null">
+        third_port = #{thirdPort,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null">
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretCertificate != null">
+        secret_certificate = #{secretCertificate,jdbcType=VARCHAR},
+      </if>
+      <if test="authMethod != null">
+        auth_method = #{authMethod,jdbcType=TINYINT},
+      </if>
+      <if test="authDesc != null">
+        auth_desc = #{authDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="uptdate != null">
+        uptdate = #{uptdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusCd != null">
+        status_cd = #{statusCd,jdbcType=TINYINT},
+      </if>
+    </set>
+    where auth_id = #{authId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdAuthentication">
+    update exc_third_authentication
+    set third_ip = #{thirdIp,jdbcType=VARCHAR},
+      third_port = #{thirdPort,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      secret_certificate = #{secretCertificate,jdbcType=VARCHAR},
+      auth_method = #{authMethod,jdbcType=TINYINT},
+      auth_desc = #{authDesc,jdbcType=VARCHAR},
+      uptdate = #{uptdate,jdbcType=TIMESTAMP},
+      status_cd = #{statusCd,jdbcType=TINYINT}
+    where auth_id = #{authId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据条件查询第三方接口权限和基本信息 -->
+  <select id="selectByParam"  parameterType="com.cpit.cpmt.dto.exchange.operator.ExcThirdAuthentication"  resultMap="BaseResultMap">
+	   select 
+	    	<include refid="Base_Column_List" />
+	   from exc_third_authentication
+	    	where 1=1
+	    	<if test="authId != null">
+		    	and auth_id = #{authId}
+	    	</if>
+	    	<if test="thirdIp != null and thirdIp != ''">
+		    	and third_ip = #{thirdIp}
+	    	</if>
+	    	<if test="thirdPort != null and thirdPort != ''">
+		    	and third_port = #{thirdPort}
+	    	</if>
+	    	<if test="secretKey != null and secretKey != ''">
+		    	and secret_key = #{secretKey}
+	    	</if>
+	    	<if test="secretCertificate != null and secretCertificate != ''">
+		    	and secret_certificate = #{secretCertificate}
+	    	</if>
+	    	<if test="authMethod != null">
+		    	and auth_method = #{authMethod}
+	    	</if>
+	    	<if test="authDesc != null and authDesc != ''">
+		    	and auth_desc = #{authDesc}
+	    	</if>
+	    	<if test="statusCd != null">
+		    	and status_cd = #{statusCd}
+	    	</if>
+	    	<if test="startDate != null">
+		    	and uptdate &gt;= #{startDate}
+	    	</if>
+	    	<if test="endDate != null">
+		    	and uptdate &lt;= #{endDate}
+	    	</if>
+	    	ORDER BY auth_id DESC
+  </select>
+  
+  <!-- 获取第三方权限接口 -->
+  <select id="getInterfaceList"  parameterType="java.util.Map" resultMap="InterfaceResultMap">
+    SELECT
+		<include refid="Interface_Column_List"/>
+  	FROM 
+		exc_third_interactive a LEFT JOIN exc_third_interface b ON a.interface_id = b.`interface_id`
+	WHERE a.auth_id = #{auth_id}
+  </select>
+  
+</mapper>

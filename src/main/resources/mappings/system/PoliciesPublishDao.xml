@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.system.PoliciesPublishDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    <id column="policy_id" property="policyId" jdbcType="INTEGER" />
+    <result column="policy_name" property="policyName" jdbcType="VARCHAR" />
+    <result column="policy_type" property="policyType" jdbcType="INTEGER" />
+    <result column="policy_level" property="policyLevel" jdbcType="INTEGER" />
+    <result column="pro_capital" property="proCapital" jdbcType="INTEGER" />
+    <result column="city_code" property="cityCode" jdbcType="INTEGER" />
+    <result column="status_cd" property="statusCd" jdbcType="INTEGER" />
+    <result column="audit_note" property="auditNote" jdbcType="VARCHAR" />
+    <result column="policy_person" property="policyPerson" jdbcType="VARCHAR" />
+    <result column="accept_way" property="acceptWay" jdbcType="INTEGER" />
+    <result column="in_time" property="inTime" jdbcType="TIMESTAMP" />
+    <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
+    <result column="status_date" property="statusDate" jdbcType="TIMESTAMP" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="source_name" property="sourceName" jdbcType="VARCHAR" />
+    <result column="source_url" property="sourceUrl" jdbcType="VARCHAR" />
+    <result column="publish_type" property="publishType" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cpit.cpmt.dto.system.PoliciesPublish" extends="BaseResultMap" >
+    <result column="policy_content" property="policyContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    policy_id, policy_name, policy_type, policy_level, pro_capital, city_code, status_cd, 
+    audit_note, policy_person, accept_way, in_time, publish_time,status_date,source_name,source_url,
+    publish_type
+  </sql>
+  <sql id="Blob_Column_List" >
+    policy_content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from exc_policies_publish
+    where policy_id = #{policyId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from exc_policies_publish
+    where policy_id = #{policyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    insert into exc_policies_publish (policy_id, policy_name, policy_type, 
+      policy_level, pro_capital, city_code, 
+      status_cd, audit_note, policy_person, accept_way,
+      in_time, publish_time,status_date, policy_content,
+      publish_type
+      )
+    values (#{policyId,jdbcType=INTEGER}, #{policyName,jdbcType=VARCHAR}, #{policyType,jdbcType=INTEGER}, 
+      #{policyLevel,jdbcType=INTEGER}, #{proCapital,jdbcType=INTEGER}, #{cityCode,jdbcType=INTEGER}, 
+      #{statusCd,jdbcType=INTEGER}, #{auditNote,jdbcType=VARCHAR}, #{policyPerson,jdbcType=VARCHAR}, #{acceptWay,jdbcType=INTEGER},
+      #{inTime,jdbcType=TIMESTAMP}, #{publishTime,jdbcType=TIMESTAMP}, #{statusDate,jdbcType=TIMESTAMP}, #{policyContent,jdbcType=LONGVARCHAR},
+      #{publishType}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    insert into exc_policies_publish
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="policyId != null" >
+        policy_id,
+      </if>
+      <if test="policyName != null" >
+        policy_name,
+      </if>
+      <if test="policyType != null" >
+        policy_type,
+      </if>
+      <if test="policyLevel != null" >
+        policy_level,
+      </if>
+      <if test="proCapital != null" >
+        pro_capital,
+      </if>
+      <if test="cityCode != null" >
+        city_code,
+      </if>
+      <if test="statusCd != null" >
+        status_cd,
+      </if>
+      <if test="auditNote != null" >
+        audit_note,
+      </if>
+      <if test="policyPerson != null" >
+        policy_person,
+      </if>
+      <if test="acceptWay != null" >
+        accept_way,
+      </if>
+      <if test="inTime != null" >
+        in_time,
+      </if>
+      <if test="publishTime != null" >
+        publish_time,
+      </if>
+      <if test="statusDate != null" >
+        status_date,
+      </if>
+      <if test="policyContent != null" >
+        policy_content,
+      </if>
+      <if test="sourceName !=null">
+        source_name,
+      </if>
+      <if test="sourceUrl !=null">
+        source_url,
+      </if>
+      <if test="publishType !=null">
+        publish_type,
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="policyId != null" >
+        #{policyId,jdbcType=INTEGER},
+      </if>
+      <if test="policyName != null" >
+        #{policyName,jdbcType=VARCHAR},
+      </if>
+      <if test="policyType != null" >
+        #{policyType,jdbcType=INTEGER},
+      </if>
+      <if test="policyLevel != null" >
+        #{policyLevel,jdbcType=INTEGER},
+      </if>
+      <if test="proCapital != null" >
+        #{proCapital,jdbcType=INTEGER},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=INTEGER},
+      </if>
+      <if test="statusCd != null" >
+        #{statusCd,jdbcType=INTEGER},
+      </if>
+      <if test="auditNote != null" >
+        #{auditNote,jdbcType=VARCHAR},
+      </if>
+      <if test="policyPerson != null" >
+        #{policyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptWay != null" >
+        #{acceptWay,jdbcType=INTEGER},
+      </if>
+      <if test="inTime != null" >
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="publishTime != null" >
+        #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusDate != null" >
+        #{statusDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="policyContent != null" >
+        #{policyContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sourceName !=null">
+        #{sourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceUrl !=null">
+        #{sourceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="publishType !=null">
+        #{publishType,jdbcType=INTEGER},
+      </if>      
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    update exc_policies_publish
+    <set >
+      <if test="policyName != null" >
+        policy_name = #{policyName,jdbcType=VARCHAR},
+      </if>
+      <if test="policyType != null" >
+        policy_type = #{policyType,jdbcType=INTEGER},
+      </if>
+      <if test="policyLevel != null" >
+        policy_level = #{policyLevel,jdbcType=INTEGER},
+      </if>
+      <if test="proCapital != null" >
+        pro_capital = #{proCapital,jdbcType=INTEGER},
+      </if>
+      <if test="cityCode != null" >
+        city_code = #{cityCode,jdbcType=INTEGER},
+      </if>
+      <if test="statusCd != null" >
+        status_cd = #{statusCd,jdbcType=INTEGER},
+      </if>
+      <if test="auditNote != null" >
+        audit_note = #{auditNote,jdbcType=VARCHAR},
+      </if>
+      <if test="policyPerson != null" >
+        policy_person = #{policyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptWay != null" >
+        accept_way = #{acceptWay,jdbcType=INTEGER},
+      </if>
+      <if test="sourceName !=null">
+        source_name = #{sourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceUrl !=null">
+        source_url = #{sourceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="inTime != null" >
+        in_time = #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="publishTime != null" >
+        publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusDate != null" >
+        status_date = #{statusDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="policyContent != null" >
+        policy_content = #{policyContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="publishType !=null">
+        publish_type = #{publishType,jdbcType=INTEGER},
+      </if>       
+    </set>
+    where policy_id = #{policyId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    update exc_policies_publish
+    set policy_name = #{policyName,jdbcType=VARCHAR},
+      policy_type = #{policyType,jdbcType=INTEGER},
+      policy_level = #{policyLevel,jdbcType=INTEGER},
+      pro_capital = #{proCapital,jdbcType=INTEGER},
+      city_code = #{cityCode,jdbcType=INTEGER},
+      status_cd = #{statusCd,jdbcType=INTEGER},
+      audit_note = #{auditNote,jdbcType=VARCHAR},
+      policy_person = #{policyPerson,jdbcType=VARCHAR},
+      source_name = #{sourceName,jdbcType=VARCHAR},
+      source_url = #{sourceUrl,jdbcType=VARCHAR},
+      accept_way = #{acceptWay,jdbcType=INTEGER},
+      in_time = #{inTime,jdbcType=TIMESTAMP},
+      publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      status_date = #{statusDate,jdbcType=TIMESTAMP},
+      policy_content = #{policyContent,jdbcType=LONGVARCHAR},
+      publish_type = #{publishType,jdbcType=INTEGER}
+      
+    where policy_id = #{policyId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    update exc_policies_publish
+    set policy_name = #{policyName,jdbcType=VARCHAR},
+      policy_type = #{policyType,jdbcType=INTEGER},
+      policy_level = #{policyLevel,jdbcType=INTEGER},
+      pro_capital = #{proCapital,jdbcType=INTEGER},
+      city_code = #{cityCode,jdbcType=INTEGER},
+      status_cd = #{statusCd,jdbcType=INTEGER},
+      audit_note = #{auditNote,jdbcType=VARCHAR},
+      policy_person = #{policyPerson,jdbcType=VARCHAR},
+      accept_way = #{acceptWay,jdbcType=INTEGER},
+      in_time = #{inTime,jdbcType=TIMESTAMP},
+      publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      status_date = #{statusDate,jdbcType=TIMESTAMP},
+      publish_type = #{publishType,jdbcType=INTEGER}
+    where policy_id = #{policyId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getPoliciesPublishList" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    select a.*,p.province_name,c.city_name 
+    from exc_policies_publish a 
+    left join sys_province p on a.pro_capital = p.province_id 
+    left join sys_city c on a.city_code = c.city_id 
+    <where>
+      <if test="policyId != null">
+        and a.policy_id = #{policyId}
+      </if>
+      <if test="policyName != null and policyName != ''">
+        and a.policy_name like CONCAT('%', #{policyName}, '%')
+      </if>
+      <if test="policyType != null">
+        and a.policy_type = #{policyType}
+      </if>
+      <if test="policyLevel != null">
+        and a.policy_level = #{policyLevel}
+      </if>
+      <if test="publishType != null">
+        and a.publish_type = #{publishType}
+      </if>      
+      <if test="proCapital != null">
+        and a.pro_capital = #{proCapital}
+      </if>
+      <if test="cityCode != null">
+        and a.city_code = #{cityCode}
+      </if>
+      <if test="statusCd != null">
+        and a.status_cd = #{statusCd}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and a.publish_time BETWEEN #{startTime} and #{endTime}
+      </if>
+      <if test="policyTypeList != null and policyTypeList.size()>0 ">
+        and a.policy_type in
+        <foreach collection="policyTypeList" item="policyType" index="index" open="(" close=")" separator=",">
+          #{policyType}
+        </foreach>
+      </if>
+      </where>
+      order by a.in_time desc
+  </select>
+
+  <select id="getPoliciesPublishesByType" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.system.PoliciesPublish" >
+    select a.*,p.province_name,c.city_name
+    from exc_policies_publish a
+    left join sys_province p on a.pro_capital = p.province_id
+    left join sys_city c on a.city_code = c.city_id
+    <where>
+      a.status_cd=3
+      <if test="policyId != null">
+        and a.policy_id = #{policyId}
+      </if>
+      <if test="policyName != null and policyName != ''">
+        and a.policy_name like CONCAT('%', #{policyName}, '%')
+      </if>
+      <if test="policyType != null">
+        and a.policy_type = #{policyType}
+      </if>
+      <if test="policyLevel != null">
+        and a.policy_level = #{policyLevel}
+      </if>
+      <if test="publishType != null">
+        and a.publish_type = #{publishType}
+      </if>
+      <if test="proCapital != null">
+        and a.pro_capital = #{proCapital}
+      </if>
+      <if test="cityCode != null">
+        and a.city_code = #{cityCode}
+      </if>
+      <if test="statusCd != null">
+        and a.status_cd = #{statusCd}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and a.publish_time BETWEEN #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by a.in_time desc
+  </select>
+
+</mapper>

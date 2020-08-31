@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.RolePowerDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.system.RolePower">
+    <id column="role_id" jdbcType="VARCHAR" property="roleId" />
+    <id column="power_id" jdbcType="INTEGER" property="powerId" />
+    <result column="has_add" jdbcType="INTEGER" property="hasAdd" />
+    <result column="has_del" jdbcType="INTEGER" property="hasDel" />
+    <result column="has_update" jdbcType="INTEGER" property="hasUpdate" />
+    <result column="has_query" jdbcType="INTEGER" property="hasQuery" />
+    <result column="has_check" jdbcType="INTEGER" property="hasCheck" />
+    <result column="has_other" jdbcType="INTEGER" property="hasOther" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.RolePower">
+    delete from sys_role_power
+    where role_id = #{roleId,jdbcType=VARCHAR}
+      and power_id = #{powerId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByRoleId" parameterType="java.lang.String">
+    delete from sys_role_power
+    where 
+      role_id = #{roleId}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.RolePower">
+    insert into sys_role_power 
+    (
+    role_id, power_id,
+    has_add, has_del, has_update,
+      has_query,has_check,has_other
+    )
+    values (
+    #{roleId,jdbcType=VARCHAR}, #{powerId,jdbcType=INTEGER},
+      #{hasAdd,jdbcType=INTEGER},
+      #{hasDel,jdbcType=INTEGER},
+      #{hasUpdate,jdbcType=INTEGER},
+      #{hasQuery,jdbcType=INTEGER},
+      #{hasCheck,jdbcType=INTEGER},
+      #{hasOther,jdbcType=INTEGER}
+    )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.RolePower">
+    insert into sys_role_power
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="powerId != null">
+        power_id,
+      </if>
+      <if test="hasAdd != null">
+        has_add,
+      </if>
+      <if test="hasDel != null">
+        has_del,
+      </if>
+      <if test="hasUpdate != null">
+        has_update,
+      </if>
+      <if test="hasQuery != null">
+        has_query,
+      </if>      
+      <if test="hasCheck != null">
+        has_check,
+      </if>      
+      <if test="hasOther != null">
+        has_other,
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="powerId != null">
+        #{powerId,jdbcType=INTEGER},
+      </if>
+      <if test="hasAdd != null">
+        #{hasAdd,jdbcType=INTEGER},
+      </if>      
+      <if test="hasDel != null">
+        #{hasDel,jdbcType=INTEGER},
+      </if>      
+      <if test="hasUpdate != null">
+        #{hasUpdate,jdbcType=INTEGER},
+      </if>      
+      <if test="hasQuery != null">
+        #{hasQuery,jdbcType=INTEGER},
+      </if>      
+      <if test="hasCheck != null">
+        #{hasCheck,jdbcType=INTEGER},
+      </if>      
+      <if test="hasOther != null">
+        #{hasOther,jdbcType=INTEGER},
+      </if>        
+    </trim>
+  </insert>
+</mapper>

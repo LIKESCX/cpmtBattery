@@ -1,0 +1,1247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.operator.EquipmentInfoDAO">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    <id column="eid" jdbcType="VARCHAR" property="eid" />
+    <result column="sid" jdbcType="VARCHAR" property="sid" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentID" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorID" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
+    <result column="manufacturer_id" jdbcType="VARCHAR" property="manufacturerID" />
+    <result column="manufacturer_name" jdbcType="VARCHAR" property="manufacturerName" />
+    <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="equipment_add_time" jdbcType="TIMESTAMP" property="equipmentAddTime" />
+    <result column="equipment_type" jdbcType="INTEGER" property="equipmentType" />
+    <result column="equipment_lng" jdbcType="DOUBLE" property="equipmentLng" />
+    <result column="equipment_lat" jdbcType="DOUBLE" property="equipmentLat" />
+    <result column="power" jdbcType="DOUBLE" property="power" />
+    <result column="equipment_status" jdbcType="INTEGER" property="equipmentStatus" />
+    <result column="equipment_power" jdbcType="DOUBLE" property="equipmentPower" />
+    <result column="new_national_standard" jdbcType="INTEGER" property="newNationalStandard" />
+    <result column="allowance_status" jdbcType="VARCHAR" property="allowanceStatus" />
+    <result column="allowance_price" jdbcType="VARCHAR" property="allowancePrice" />
+    <result column="checkout_status" jdbcType="VARCHAR" property="checkoutStatus" />
+    <result column="rated_in_voltage" jdbcType="VARCHAR" property="ratedInVoltage" />
+    <result column="rated_out_voltage" jdbcType="VARCHAR" property="ratedOutVoltage" />
+    <result column="rated_power" jdbcType="VARCHAR" property="ratedPower" />
+    <result column="feed_num" jdbcType="INTEGER" property="feedNum" />
+    <result column="gun_sum" jdbcType="INTEGER" property="gunSum" />
+    <result column="allowance_date" jdbcType="TIMESTAMP" property="allowanceDate" />
+    <result column="period_use" jdbcType="INTEGER" property="periodUse" />
+    <result column="in_date" jdbcType="TIMESTAMP" property="inDate" />
+    <result column="worth_date" jdbcType="TIMESTAMP" property="worthDate" />
+    <result column="chargTimes" jdbcType="VARCHAR" property="chargTimes" />
+    <result column="chargeErrorTimes" jdbcType="VARCHAR" property="chargeErrorTimes" />
+    <result column="chargeElecticSum" jdbcType="VARCHAR" property="chargeElecticSum" />
+    <result column="disChargeEleticsSum" jdbcType="VARCHAR" property="disChargeEleticsSum" />
+    <result column="numbers" jdbcType="INTEGER" property="numbers" />
+    <result column="ifFree" jdbcType="VARCHAR" property="ifFree" />
+    <association property="operatorInfo"  column="operator_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.selectByPrimaryKey"/>
+  </resultMap>
+
+  <resultMap id="mixedConnListResultMap" extends="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    <collection property="connectorShowInfos" select="com.cpit.cpmt.biz.dao.exchange.operator.ConnectorInfoDAO.getConnectorList" column="{operatorId=operator_id,equipmentId=equipment_id}" ofType="com.cpit.cpmt.dto.exchange.basic.ConnectorInfo"/>
+  </resultMap>
+
+
+  <resultMap id="mixedStationResultMap" extends="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    <association property="stationInfo" select="com.cpit.cpmt.biz.dao.exchange.operator.StationInfoDAO.selectByStationId" column="{operatorId=operator_id,stationId=station_id}"/>
+  </resultMap>
+
+
+  <resultMap id="mixedDynamicResult" extends="mixedConnListResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    <!--<association property="chargTimes" select="getAllChargeNum" column="equipment_id"/>-->
+    <association property="chargeErrorTimes" select="getAllChargeErrorNum" column="{operatorId=operator_id,equipmentId=equipment_id}"/>
+  </resultMap>
+
+  <resultMap id="allowanceResult" extends="BaseResultMap" type="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    <association property="allowanceEquipment" javaType="com.cpit.cpmt.dto.exchange.operator.AllowanceEquipment">
+      <id column="id" jdbcType="VARCHAR" property="id" />
+      <result column="if_reduced" jdbcType="INTEGER" property="ifReduced" />
+      <result column="reduced_type" jdbcType="INTEGER" property="reducedType" />
+      <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    eid,sid,equipment_id, operator_id, station_id, equipment_name, manufacturer_id, manufacturer_name,
+    equipment_model, production_date, equipment_add_time, equipment_type, equipment_lng, 
+    equipment_lat, power, equipment_status, equipment_power, new_national_standard, allowance_status, allowance_price,
+    checkout_status, rated_in_voltage, rated_out_voltage, rated_power, feed_num, gun_sum,allowance_date,in_date,period_use,worth_date
+  </sql>
+
+  <!--故障次数-->
+  <select id="getAllChargeErrorNum" resultType="java.lang.Integer">
+    SELECT count(DISTINCT id) as chargeErrorTimes
+    from  exc_alarm_info
+    where equipment_id=#{equipmentId} and operator_id = #{operatorId}
+  </select>
+
+  <!--地图首页 交直流桩数-->
+  <select id="selectEquipmentType" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+      select COUNT(equipmentInfo.equipment_id) numbers
+      from exc_equipment_info equipmentInfo , exc_station_info stationInfo
+      <where>
+        equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+        <if test="stationId != null">
+          and equipmentInfo.station_id=#{stationId}
+        </if>
+        <if test="operatorID != null">
+          and equipmentInfo.operator_id = #{operatorID}
+        </if>
+        <if test="equipmentType != null">
+          and equipmentInfo.equipment_type = #{equipmentType}
+        </if>
+        <if test="operatorIdList != null and operatorIdList.size()>0 ">
+          and equipmentInfo.operator_id in
+          <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+            #{operatorID}
+          </foreach>
+        </if>
+        <if test="areaCodeList != null and areaCodeList.size()>0 ">
+          and stationInfo.area_code in
+          <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+            #{areaCode}
+          </foreach>
+        </if>
+        <if test="chargeIdList != null and chargeIdList.size()>0 ">
+          and  equipmentInfo.equipment_id in
+          <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+            #{equipmentID}
+          </foreach>
+        </if>
+      </where>
+       /*GROUP BY equipmentInfo.equipment_type
+       ORDER BY equipmentInfo.equipment_type;*/
+  </select>
+
+  <!--地图首页 正常 故障 桩-->
+  <select id="selectEquipmentStatus" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+    SELECT IFNULL(COUNT(  DISTINCT  equipmentInfo.equipment_id),0) as numbers
+    from exc_connector_status_info connectorStatus , exc_connector_info connector,exc_equipment_info equipmentInfo,exc_station_info stationInfo
+    where connectorStatus.connector_id = connector.connector_id and connectorStatus.operator_id = connector.operator_id
+    and equipmentInfo.equipment_id = connector.equipment_id and equipmentInfo.operator_id = connector.operator_id
+    and equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+      <if test="stationId != null">
+        and equipmentInfo.station_id=#{stationId}
+      </if>
+      <if test="operatorID != null">
+        and equipmentInfo.operator_id = #{operatorID}
+      </if>
+      <if test="statusList != null and statusList.size()>0 ">
+        and connectorStatus.`status` in
+        <foreach collection="statusList" item="status" index="index" open="(" close=")" separator=",">
+          #{status}
+        </foreach>
+      </if>
+
+      <if test="operatorIdList != null and operatorIdList.size()>0 ">
+        and equipmentInfo.operator_id in
+        <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+          #{operatorID}
+        </foreach>
+      </if>
+      <if test="areaCodeList != null and areaCodeList.size()>0 ">
+        and stationInfo.area_code in
+        <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+          #{areaCode}
+        </foreach>
+      </if>
+      <if test="chargeIdList != null and chargeIdList.size()>0 ">
+        and equipmentInfo.equipment_id in
+        <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+          #{equipmentID}
+        </foreach>
+      </if>
+  </select>
+
+  <select id="getAllUseRate" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultType="java.lang.String">
+    select CONCAT(IFNULL(ROUND(
+    (
+    select IFNULL((ten.cc-twenty.cc),0.0) cc from
+    (
+    select DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:00') back_time, IFNULL(sum(connectorPower.charge_electricity),0.0) cc from
+    exc_connector_history_power_info connectorPower, exc_station_info stationInfo
+    where  connectorPower.station_id = stationInfo.station_id and connectorPower.operator_id = stationInfo.operator_id
+    and connectorPower.in_time >=CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
+    <if test="stationID != null">
+      and stationInfo.station_id=#{stationID}
+    </if>
+    <if test="operatorID != null">
+      and stationInfo.operator_id = #{operatorID}
+    </if>
+    <if test="equipmentOwnerID != null">
+      and connectorStatus.equipment_id = #{equipmentOwnerID}
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and stationInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    ) ten
+    LEFT JOIN
+    (
+    select DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:00') back_time, IFNULL(sum(connectorPower.charge_electricity),0.0) cc from
+    exc_connector_history_power_info connectorPower, exc_station_info stationInfo
+    where  connectorPower.station_id = stationInfo.station_id and connectorPower.operator_id = stationInfo.operator_id
+    and connectorPower.in_time BETWEEN DATE_ADD(NOW(), INTERVAL -20 MINUTE)  and DATE_ADD(NOW(), INTERVAL -10 MINUTE)
+    <if test="stationID != null">
+      and stationInfo.station_id=#{stationID}
+    </if>
+    <if test="operatorID != null">
+      and stationInfo.operator_id = #{operatorID}
+    </if>
+    <if test="equipmentOwnerID != null">
+      and connectorStatus.equipment_id = #{equipmentOwnerID}
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and stationInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    ) twenty on ten.back_time=twenty.back_time
+
+    )
+    /
+    (
+    select  IFNULL(sum(equipment.equipment_power),0.0)*1.667 cc from
+    (
+      select  connectorPower.equipment_id,connectorPower.operator_id  from
+      exc_connector_history_power_info connectorPower, exc_station_info stationInfo
+      where  connectorPower.station_id = stationInfo.station_id and connectorPower.operator_id = stationInfo.operator_id
+      and in_time >=CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
+        <if test="stationID != null">
+          and stationInfo.station_id=#{stationID}
+        </if>
+        <if test="operatorID != null">
+          and stationInfo.operator_id = #{operatorID}
+        </if>
+        <if test="equipmentOwnerID != null">
+          and connectorStatus.equipment_id = #{equipmentOwnerID}
+        </if>
+        <if test="operatorIdList != null and operatorIdList.size()>0 ">
+          and stationInfo.operator_id in
+          <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+            #{operatorID}
+          </foreach>
+        </if>
+        <if test="areaCodeList != null and areaCodeList.size()>0 ">
+          and stationInfo.area_code in
+          <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+            #{areaCode}
+          </foreach>
+        </if>
+      GROUP BY connectorPower.connector_id,connectorPower.operator_id
+    ) pow
+    INNER JOIN exc_equipment_info equipment on pow.equipment_id=equipment.equipment_id
+    and pow.operator_id=equipment.operator_id
+    )
+    * 100,2),0),'%') charge_electic_sum
+
+  </select>
+
+  <select id="getOneUseRate" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.String">
+    SELECT   CONCAT(IFNULL(ROUND(
+    (SELECT  sum(connectorStatus.charging_duration) as numbers
+    from exc_equipment_total_statistics connectorStatus , exc_station_info stationInfo ,exc_equipment_info equipmentInfo
+    where  connectorStatus.station_id = stationInfo.station_id and connectorStatus.operator_id = stationInfo.operator_id
+    and connectorStatus.equipment_id = equipmentInfo.equipment_id and connectorStatus.operator_id = equipmentInfo.operator_id
+    <if test="stationId != null">
+      and stationInfo.station_id=#{stationId}
+    </if>
+    <if test="operatorID != null">
+      and stationInfo.operator_id = #{operatorID}
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and stationInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="stationTypeList != null and stationTypeList.size()>0 ">
+      and stationInfo.station_type in
+      <foreach collection="stationTypeList" item="stationType" index="index" open="(" close=")" separator=",">
+        #{stationType}
+      </foreach>
+    </if>
+    <if test="chargeIdList != null and chargeIdList.size()>0 ">
+      and equipmentInfo.equipment_id in
+      <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+        #{equipmentID}
+      </foreach>
+    </if>
+    <if test="equipmentType != null">
+      and equipmentInfo.equipment_type = #{equipmentType}
+    </if>
+    )
+    /
+    (SELECT sum(timestampdiff(MINUTE,equipmentInfo.equipment_add_time,SYSDATE())) as numbers
+    from  exc_station_info stationInfo LEFT JOIN exc_equipment_info equipmentInfo
+    on equipmentInfo.station_id = stationInfo.station_id and equipmentInfo.operator_id = stationInfo.operator_id
+    where 1=1
+    <if test="stationId != null">
+      and stationInfo.station_id=#{stationId}
+    </if>
+    <if test="operatorID != null">
+      and stationInfo.operator_id = #{operatorID}
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and stationInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="stationTypeList != null and stationTypeList.size()>0 ">
+      and stationInfo.station_type in
+      <foreach collection="stationTypeList" item="stationType" index="index" open="(" close=")" separator=",">
+        #{stationType}
+      </foreach>
+    </if>
+    <if test="chargeIdList != null and chargeIdList.size()>0 ">
+      and equipmentInfo.equipment_id in
+      <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+        #{equipmentID}
+      </foreach>
+    </if>
+    <if test="equipmentType != null">
+      and equipmentInfo.equipment_type = #{equipmentType}
+    </if>
+    )
+    * 100,2),0),'%') charge_electic_sum
+  </select>
+
+
+  <!--地图首页 公共，个人，专用桩数-->
+  <select id="selectStationType" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+    SELECT COUNT(equipmentInfo.equipment_id) as numbers
+      from exc_equipment_info equipmentInfo , exc_station_info stationInfo
+    where equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+    <if test="stationId != null">
+      and equipmentInfo.station_id=#{stationId}
+    </if>
+    <if test="operatorID != null">
+      and equipmentInfo.operator_id = #{operatorID}
+    </if>
+    <if test="stationTypeList != null and stationTypeList.size()>0 ">
+      and stationInfo.station_type in
+      <foreach collection="stationTypeList" item="stationType" index="index" open="(" close=")" separator=",">
+        #{stationType}
+      </foreach>
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and equipmentInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="chargeIdList != null and chargeIdList.size()>0 ">
+      and equipmentInfo.equipment_id in
+      <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+        #{equipmentID}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectUnStationType" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+    SELECT COUNT(equipmentInfo.equipment_id) as numbers
+    from exc_equipment_info equipmentInfo , exc_station_info stationInfo
+    where equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+    and stationInfo.station_type not in (100,101,102,103)
+    <if test="stationId != null">
+      and equipmentInfo.station_id=#{stationId}
+    </if>
+    <if test="operatorID != null">
+      and equipmentInfo.operator_id = #{operatorID}
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and equipmentInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="chargeIdList != null and chargeIdList.size()>0 ">
+      and equipmentInfo.equipment_id in
+      <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+        #{equipmentID}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectStationTypeOnLine" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+    SELECT COUNT(equipmentInfo.equipment_id) as numbers
+    from exc_connector_status_info connectorStatus LEFT JOIN exc_connector_info connector
+    on connectorStatus.connector_id = connector.connector_id and connectorStatus.operator_id = connector.operator_id
+    LEFT JOIN exc_equipment_info equipmentInfo
+    on equipmentInfo.equipment_id = connector.equipment_id and equipmentInfo.operator_id = connector.operator_id
+    LEFT JOIN exc_station_info stationInfo
+    on equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+    where connectorStatus.`status`!=0
+    <if test="stationId != null">
+      and equipmentInfo.station_id=#{stationId}
+    </if>
+    <if test="operatorID != null">
+      and equipmentInfo.operator_id = #{operatorID}
+    </if>
+    <if test="stationTypeList != null and stationTypeList.size()>0 ">
+      and stationInfo.station_type in
+      <foreach collection="stationTypeList" item="stationType" index="index" open="(" close=")" separator=",">
+        #{stationType}
+      </foreach>
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and equipmentInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="chargeIdList != null and chargeIdList.size()>0 ">
+      and equipmentInfo.equipment_id in
+      <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+        #{equipmentID}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectEquipmentTypeOnline" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+    select COUNT(equipmentInfo.equipment_id) numbers
+    from exc_connector_status_info connectorStatus LEFT JOIN exc_connector_info connector
+    on connectorStatus.connector_id = connector.connector_id and connectorStatus.operator_id = connector.operator_id
+    LEFT JOIN exc_equipment_info equipmentInfo
+    on equipmentInfo.equipment_id = connector.equipment_id and equipmentInfo.operator_id = connector.operator_id
+    LEFT JOIN exc_station_info stationInfo
+    on equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+    where connectorStatus.`status`!=0
+    <if test="equipmentType != null">
+      and equipmentInfo.equipment_type = #{equipmentType}
+    </if>
+    <if test="stationId != null">
+      and equipmentInfo.station_id=#{stationId}
+    </if>
+    <if test="operatorID != null">
+      and equipmentInfo.operator_id = #{operatorID}
+    </if>
+    <if test="operatorIdList != null and operatorIdList.size()>0 ">
+      and equipmentInfo.operator_id in
+      <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+        #{operatorID}
+      </foreach>
+    </if>
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="chargeIdList != null and chargeIdList.size()>0 ">
+      and equipmentInfo.equipment_id in
+      <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+        #{equipmentID}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectEquipmentWithIfFree" resultMap="BaseResultMap">
+    select c.*,IF(d.`status` =1,'是','否') ifFree from
+    exc_equipment_info c left JOIN
+    ( SELECT DISTINCT b.equipment_id,b.operator_id ,a.`status` from
+    exc_connector_status_info a
+    inner JOIN exc_connector_info b on a.connector_id=b.connector_id and a.operator_id=b.operator_id
+    ) d
+    on c.equipment_id=d.equipment_id and c.operator_id=d.operator_id
+    where c.station_id=#{stationId} and c.operator_id=#{operatorId}
+  </select>
+
+  <select id="getEquipmentWithIfFreeNumber" resultType="java.lang.Integer">
+    SELECT count(0) from
+    exc_equipment_info c inner JOIN
+    ( SELECT DISTINCT b.equipment_id,b.operator_id  from
+    exc_connector_status_info a
+    inner JOIN exc_connector_info b on a.connector_id=b.connector_id and a.operator_id=b.operator_id
+    where a.`status`=1
+    ) d
+    on c.equipment_id=d.equipment_id and c.operator_id=d.operator_id
+    where c.station_id=#{stationId} and c.operator_id=#{operatorId}
+  </select>
+
+  <select id="getEquipmentWithChargingNumber" resultType="java.lang.Integer">
+    SELECT count(0) from
+    exc_equipment_info c inner JOIN
+    ( SELECT DISTINCT b.equipment_id,b.operator_id  from
+    exc_connector_status_info a
+    inner JOIN exc_connector_info b on a.connector_id=b.connector_id and a.operator_id=b.operator_id
+    where a.`status`=3
+    ) d
+    on c.equipment_id=d.equipment_id and c.operator_id=d.operator_id
+    where c.station_id=#{stationId} and c.operator_id=#{operatorId}
+  </select>
+
+  <select id="selectEquipmentByCondition" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="mixedStationResultMap">
+    select equipmentInfo.*
+    from
+    exc_equipment_info equipmentInfo , exc_station_info stationInfo
+    <where>
+      equipmentInfo.station_id=stationInfo.station_id and equipmentInfo.operator_id=stationInfo.operator_id
+      <if test="statusList != null and statusList.size()>0 ">
+        and equipmentInfo.allowance_status in
+        <foreach collection="statusList" item="allowanceStatus" index="index" open="(" close=")" separator=",">
+          #{allowanceStatus}
+        </foreach>
+      </if>
+      <if test="sidList != null and sidList.size()>0 ">
+        and equipmentInfo.sid in
+        <foreach collection="sidList" item="sid" index="index" open="(" close=")" separator=",">
+          #{sid}
+        </foreach>
+      </if>
+      <if test="operatorIdList != null and operatorIdList.size()>0 ">
+        and equipmentInfo.operator_id in
+        <foreach collection="operatorIdList" item="operatorID" index="index" open="(" close=")" separator=",">
+          #{operatorID}
+        </foreach>
+      </if>
+      <if test="equipmentStatus==100">
+        and equipmentInfo.equipment_status not in (5,7)
+      </if>
+      <if test="areaCodeList != null and areaCodeList.size()>0 ">
+        and stationInfo.area_code in
+        <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+          #{areaCode}
+        </foreach>
+      </if>
+      <if test="chargeIdList != null and chargeIdList.size()>0 ">
+        and equipmentInfo.equipment_id in
+        <foreach collection="chargeIdList" item="equipmentID" index="index" open="(" close=")" separator=",">
+          #{equipmentID}
+        </foreach>
+      </if>
+      <if test="eid != null">
+        and equipmentInfo.eid = #{eid}
+      </if>
+      <if test="sid != null">
+        and equipmentInfo.sid = #{sid}
+      </if>
+      <if test="equipmentID != null and equipmentID !=''">
+        and equipmentInfo.equipment_id = #{equipmentID}
+      </if>
+      <if test="operatorID != null and operatorID !=''">
+        and equipmentInfo.operator_id = #{operatorID}
+      </if>
+      <if test="stationId != null and stationId !=''">
+        and equipmentInfo.station_id = #{stationId}
+      </if>
+      <if test="equipmentName != null">
+        and equipmentInfo.equipment_name like contact ('%',#{equipmentName},'%')
+      </if>
+      <if test="areaCode != null">
+        and stationInfo.area_code = #{areaCode}
+      </if>
+      <if test="allowanceStatus != null">
+        and equipmentInfo.allowance_status = #{allowanceStatus}
+      </if>
+    </where>
+    order by equipmentInfo.eid desc
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    SELECT  IFNULL(sum(equChargeStats.charging_capacity),0) chargeElecticSum ,IFNULL(sum(equChargeStats.dis_charging_capacity),0) disChargeEleticsSum ,IFNULL(equChargeStats.charging_num,0) chargTimes
+    from exc_equipment_info equInfo inner join exc_equipment_total_statistics equChargeStats
+			on equChargeStats.equipment_id=equInfo.equipment_id and equChargeStats.operator_id=equInfo.operator_id
+    where  equInfo.equipment_id = #{equipmentId} and equInfo.operator_id = #{operatorId}
+  </select>
+
+  <select id="getChargeAndTimes" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultMap="BaseResultMap">
+    SELECT  equInfo.equipment_id,equInfo.equipment_name,equInfo.equipment_status,
+    IFNULL(sum(equChargeStats.charging_capacity),0) chargeElecticSum,IFNULL(equChargeStats.charging_num,0) chargTimes
+    from exc_equipment_info equInfo left join exc_equipment_total_statistics equChargeStats
+			on equChargeStats.equipment_id=equInfo.equipment_id and  equChargeStats.operator_id=equInfo.operator_id
+    where equInfo.station_id = #{stationID} and equInfo.operator_id = #{operatorID}
+    GROUP BY equInfo.equipment_id,equInfo.operator_id
+  </select>
+
+  <select id="selectEquDynamicCharge" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultType="java.lang.Double">
+    select IFNULL(sum(charge_elec),0) chargeElecticSum
+    from exc_connector_charge_info
+    where charge_end_time &gt;=#{startDate} and charge_end_time &lt;=#{endDate}
+    <if test="hours!=null">
+      and DATE_FORMAT(charge_end_time, '%Y-%m-%d %H')=#{hours}
+    </if>
+    <if test="stationID!=null">
+      and equipment_id=#{stationID}
+    </if>
+    <if test="operatorID!=null">
+      and operator_id=#{operatorID}
+    </if>
+  </select>
+
+
+  <select id="selectEquDynamicChargeNum" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultType="java.lang.Integer">
+    select COUNT(id) checkout_status
+    from exc_connector_charge_info
+    where charge_end_time &gt;=#{startDate} and charge_end_time &lt;=#{endDate}
+    <if test="hours!=null">
+      and DATE_FORMAT(charge_end_time, '%Y-%m-%d %H')=#{hours}
+    </if>
+    <if test="operatorID!=null">
+      and operator_id=#{operatorID}
+    </if>
+    <if test="stationID!=null">
+      and equipment_id=#{stationID}
+    </if>
+  </select>
+
+  <select id="selectDischargeByEquId" resultType="java.lang.String">
+    SELECT  IFNULL(sum(equDisChargeStats.equipment_discharge_electricity),0) disChargeEleticsSum
+    from exc_equipment_info equInfo inner join exc_equipment_discharge_stats_info equDisChargeStats
+			on equDisChargeStats.equipment_id=equInfo.equipment_id
+    where equInfo.equipment_id = #{equipmentId} and equInfo.operator_id = #{operatorId}
+  </select>
+
+  <select id="selectByEquipId"  resultMap="mixedConnListResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exc_equipment_info
+    where equipment_id = #{equipmentId} and operator_id = #{operatorId}
+  </select>
+
+  <select id="selectEquipmentNumList" resultMap="BaseResultMap">
+     select equipment_type,gun_sum,equipment_power,count(*) numbers
+    from exc_equipment_info where equipment_type in (1,2)
+    and station_id = #{stationId} and operator_id = #{operatorId}  GROUP BY equipment_power,gun_sum ORDER BY equipment_type
+  </select>
+
+  <select id="selectEquipmentList" resultMap="BaseResultMap">
+    select
+    equipment_id, operator_id, station_id, equipment_name, manufacturer_id, manufacturer_name,
+    equipment_model, production_date, equipment_add_time, equipment_type, equipment_lng,
+    equipment_lat, power, equipment_status, equipment_power, new_national_standard
+    from exc_equipment_info
+    where station_id = #{stationId} and operator_id = #{operatorId}
+  </select>
+
+  <select id="selectEquipmentListByObject" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="BaseResultMap">
+    select
+    equipment_id, operator_id, station_id, equipment_name, manufacturer_id, manufacturer_name,
+    equipment_model, production_date, equipment_add_time, equipment_type, equipment_lng,
+    equipment_lat, power, equipment_status, equipment_power, new_national_standard
+    from exc_equipment_info
+    where 1=1
+      <if test="stationId != null">
+        and station_id = #{stationId}
+      </if>
+      <if test="operatorID != null">
+        and operator_id = #{operatorID}
+      </if>
+  </select>
+
+  <select id="selectEquipmentNumber" resultType="java.lang.Integer">
+    select count(0)
+    from exc_equipment_info
+    where station_id = #{stationId} and operator_id = #{operatorId}
+  </select>
+
+  <select id="selectEquipmentListSize" resultType="java.lang.Integer">
+    select count(eid)
+    from exc_equipment_info
+    where station_id = #{stationId} and operator_id = #{operatorId}
+  </select>
+
+  <select id="getEquipmentStatusNumber" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultType="java.lang.Integer">
+    SELECT COUNT( equipmentInfo.equipment_id) as numbers
+    from exc_connector_status_info connectorStatus , exc_connector_info connector,exc_equipment_info equipmentInfo
+    where connectorStatus.connector_id = connector.connector_id and connectorStatus.operator_id = connector.operator_id
+    and equipmentInfo.equipment_id = connector.equipment_id and equipmentInfo.operator_id = connector.operator_id
+    <if test="equipmentID != null">
+      and equipmentInfo.equipment_id=#{equipmentID}
+    </if>
+    <if test="operatorID != null">
+      and equipmentInfo.operator_id = #{operatorID}
+    </if>
+    <if test="allowanceStatus !=null">
+      and connectorStatus.`status` = #{allowanceStatus}
+    </if>
+  </select>
+
+  <select id="selectEquipmentByOperatorId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from exc_equipment_info
+    where operator_id = #{0}
+  </select>
+
+  <select id="selectAllowanceEquipment" parameterType="com.cpit.cpmt.dto.exchange.operator.AllowanceEquipment" resultMap="allowanceResult">
+    select a.*,b.*
+    from exc_allowance_equipment a inner join exc_equipment_info b on a.eid=b.eid
+    where 1=1
+    <if test="sid != null">
+      and a.sid=#{sid}
+    </if>
+    <if test="ifReduced != null">
+      and a.if_reduced=#{ifReduced}
+    </if>
+  </select>
+
+  <select id="getEquipmentWithAllowance" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="allowanceResult">
+    select a.*,b.*
+    from exc_equipment_info b left join exc_allowance_equipment a on a.eid=b.eid
+    where 1=1
+    <if test="stationId != null">
+      and b.station_id = #{stationId}
+    </if>
+    <if test="operatorID != null">
+      and b.operator_id = #{operatorID}
+    </if>
+  </select>
+
+  <select id="selectEquipmentHealthFile" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow" resultMap="mixedStationResultMap">
+      SELECT equipmentInfo.* from
+    (
+        select b.*
+        from mon_bms_evaluate_result a ,exc_equipment_info b
+        where a.equipment_id=b.equipment_id and a.operator_id=b.operator_id
+		  UNION ALL
+      select d.* from exc_charge_file c ,exc_equipment_info d where c.equipment_id=d.equipment_id and c.operator_id=d.operator_id and file_type in (7,9)
+        union all
+      select g.* from exc_charge_file e INNER JOIN exc_station_info f on e.station_id=f.station_id and e.operator_id=e.operator_id
+			LEFT JOIN exc_equipment_info g on  g.station_id=f.station_id and g.operator_id=f.operator_id
+			where e.file_type=20
+
+    ) equipmentInfo inner join exc_station_info stationInfo on stationInfo.station_id=equipmentInfo.station_id and stationInfo.operator_id=equipmentInfo.operator_id
+    where 1=1
+    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      and stationInfo.area_code in
+      <foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+        #{areaCode}
+      </foreach>
+    </if>
+    <if test="equipmentID != null">
+      and equipmentInfo.equipment_id = #{equipmentID}
+    </if>
+    <if test="operatorID != null">
+      and equipmentInfo.operator_id = #{operatorID}
+    </if>
+    <if test="stationId != null">
+      and equipmentInfo.station_id = #{stationId}
+    </if>
+    order by in_date desc
+  </select>
+
+  <delete id="deleteByPrimaryKey">
+    delete from exc_equipment_info
+    where equipment_id = #{equipmentId}and operator_id = #{operatorId}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    insert into exc_equipment_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eid != null">
+        eid,
+      </if>
+      <if test="sid != null">
+        sid,
+      </if>
+      <if test="allowanceDate != null">
+        allowance_date,
+      </if>
+      <if test="inDate != null">
+        in_date,
+      </if>
+      <if test="equipmentID != null">
+        equipment_id,
+      </if>
+      <if test="operatorID != null">
+        operator_id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="equipmentName != null">
+        equipment_name,
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id,
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name,
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model,
+      </if>
+      <if test="productionDate != null">
+        production_date,
+      </if>
+      <if test="equipmentAddTime != null">
+        equipment_add_time,
+      </if>
+      <if test="equipmentType != null">
+        equipment_type,
+      </if>
+      <if test="equipmentLng != null">
+        equipment_lng,
+      </if>
+      <if test="equipmentLat != null">
+        equipment_lat,
+      </if>
+      <if test="power != null">
+        power,
+      </if>
+      <if test="equipmentStatus != null">
+        equipment_status,
+      </if>
+      <if test="equipmentPower != null">
+        equipment_power,
+      </if>
+      <if test="newNationalStandard != null">
+        new_national_standard,
+      </if>
+      <if test="allowanceStatus != null">
+        allowance_status,
+      </if>
+      <if test="allowancePrice != null">
+        allowance_price,
+      </if>
+      <if test="checkoutStatus != null">
+        checkout_status,
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage,
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage,
+      </if>
+      <if test="ratedPower != null">
+        rated_power,
+      </if>
+      <if test="feedNum != null">
+        feed_num,
+      </if>
+      <if test="gunSum != null">
+        gun_sum,
+      </if>
+      <if test="periodUse != null">
+        period_use,
+      </if>
+      <if test="worthDate != null">
+        worth_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eid != null">
+        #{eid},
+      </if>
+      <if test="sid != null">
+        #{sid},
+      </if>
+      <if test="allowanceDate != null">
+        #{allowanceDate},
+      </if>
+      <if test="inDate != null">
+        #{inDate},
+      </if>
+      <if test="equipmentID != null">
+        #{equipmentID},
+      </if>
+      <if test="operatorID != null">
+        #{operatorID},
+      </if>
+      <if test="stationId != null">
+        #{stationId},
+      </if>
+      <if test="equipmentName != null">
+        #{equipmentName},
+      </if>
+      <if test="manufacturerID != null">
+        #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        #{productionDate},
+      </if>
+      <if test="equipmentAddTime != null">
+        #{equipmentAddTime},
+      </if>
+      <if test="equipmentType != null">
+        #{equipmentType},
+      </if>
+      <if test="equipmentLng != null">
+        #{equipmentLng},
+      </if>
+      <if test="equipmentLat != null">
+        #{equipmentLat},
+      </if>
+      <if test="power != null">
+        #{power},
+      </if>
+      <if test="equipmentStatus != null">
+        #{equipmentStatus},
+      </if>
+      <if test="equipmentPower != null">
+        #{equipmentPower},
+      </if>
+      <if test="newNationalStandard != null">
+        #{newNationalStandard},
+      </if>
+      <if test="allowanceStatus != null">
+        #{allowanceStatus},
+      </if>
+      <if test="allowancePrice != null">
+        #{allowancePrice},
+      </if>
+      <if test="checkoutStatus != null">
+        #{checkoutStatus},
+      </if>
+      <if test="ratedInVoltage != null">
+        #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        #{feedNum},
+      </if>
+      <if test="gunSum != null">
+        #{gunSum},
+      </if>
+      <if test="periodUse != null">
+        #{periodUse},
+      </if>
+      <if test="worthDate != null">
+        #{worthDate},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    update exc_equipment_info
+    <set>
+      <if test="eid != null">
+        eid=#{eid},
+      </if>
+      <if test="sid != null">
+        sid=#{sid},
+      </if>
+      <if test="allowanceDate != null">
+        allowance_date=#{allowanceDate},
+      </if>
+      <if test="inDate != null">
+        in_date=#{inDate},
+      </if>
+      <if test="stationId != null">
+        station_id = #{stationId},
+      </if>
+      <if test="equipmentName != null">
+        equipment_name = #{equipmentName},
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id = #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name = #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model = #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        production_date = #{productionDate},
+      </if>
+      <if test="equipmentAddTime != null">
+        equipment_add_time = #{equipmentAddTime},
+      </if>
+      <if test="equipmentType != null">
+        equipment_type = #{equipmentType},
+      </if>
+      <if test="equipmentLng != null">
+        equipment_lng = #{equipmentLng},
+      </if>
+      <if test="equipmentLat != null">
+        equipment_lat = #{equipmentLat},
+      </if>
+      <if test="power != null">
+        power = #{power},
+      </if>
+      <if test="equipmentStatus != null">
+        equipment_status = #{equipmentStatus},
+      </if>
+      <if test="equipmentPower != null">
+        equipment_power = #{equipmentPower},
+      </if>
+      <if test="newNationalStandard != null">
+        new_national_standard = #{newNationalStandard},
+      </if>
+      <if test="allowanceStatus != null">
+        allowance_status = #{allowanceStatus},
+      </if>
+      <if test="allowancePrice != null">
+        allowance_price = #{allowancePrice},
+      </if>
+      <if test="checkoutStatus != null">
+        checkout_status = #{checkoutStatus},
+      </if>
+      <if test="ratedInVoltage != null">
+        rated_in_voltage = #{ratedInVoltage},
+      </if>
+      <if test="ratedOutVoltage != null">
+        rated_out_voltage = #{ratedOutVoltage},
+      </if>
+      <if test="ratedPower != null">
+        rated_power = #{ratedPower},
+      </if>
+      <if test="feedNum != null">
+        feed_num = #{feedNum},
+      </if>
+      <if test="gunSum != null">
+        gun_sum = #{gunSum},
+      </if>
+      <if test="periodUse != null">
+        period_use = #{periodUse},
+      </if>
+      <if test="worthDate != null">
+        worth_date = #{worthDate},
+      </if>
+    </set>
+    where equipment_id = #{equipmentID} and operator_id = #{operatorID}
+  </update>
+
+  <update id="updateEquipemntSelective" parameterType="com.cpit.cpmt.dto.exchange.operator.EquipmentInfoShow">
+    update exc_equipment_info
+    <set>
+      <if test="equipmentName != null">
+        equipment_name = #{equipmentName},
+      </if>
+      <if test="manufacturerID != null">
+        manufacturer_id = #{manufacturerID},
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name = #{manufacturerName},
+      </if>
+      <if test="equipmentModel != null">
+        equipment_model = #{equipmentModel},
+      </if>
+      <if test="productionDate != null">
+        production_date = #{productionDate},
+      </if>
+      <if test="equipmentType != null">
+        equipment_type = #{equipmentType},
+      </if>
+      <if test="equipmentLng != null">
+        equipment_lng = #{equipmentLng},
+      </if>
+      <if test="equipmentLat != null">
+        equipment_lat = #{equipmentLat},
+      </if>
+      <if test="power != null">
+        power = #{power},
+      </if>
+      <if test="equipmentStatus != null">
+        equipment_status = #{equipmentStatus},
+      </if>
+      <if test="equipmentPower != null">
+        equipment_power = #{equipmentPower},
+      </if>
+      <if test="newNationalStandard != null">
+        new_national_standard = #{newNationalStandard},
+      </if>
+    </set>
+    where equipment_id = #{equipmentID} and operator_id = #{operatorID}
+  </update>
+
+
+  <insert id="insertSelective1" parameterType="com.cpit.cpmt.dto.exchange.basic.EquipmentInfo">
+        insert into exc_equipment_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentID != null">
+                equipment_id,
+            </if>
+            <if test="operatorID != null">
+                operator_id,
+            </if>
+            <!-- <if test="stationID != null">
+              station_id,
+            </if> -->
+            <if test="equipmentName != null">
+                equipment_name,
+            </if>
+            <if test="manufacturerID != null">
+                manufacturer_id,
+            </if>
+            <if test="manufacturerName != null">
+                manufacturer_name,
+            </if>
+            <if test="equipmentModel != null">
+                equipment_model,
+            </if>
+            <if test="productionDate != null">
+                production_date,
+            </if>
+            <if test="equipmentAddTime != null">
+                equipment_add_time,
+            </if>
+            <if test="equipmentType != null">
+                equipment_type,
+            </if>
+            <if test="equipmentLng != null">
+                equipment_lng,
+            </if>
+            <if test="equipmentLat != null">
+                equipment_lat,
+            </if>
+            <if test="power != null">
+                power,
+            </if>
+            <if test="equipmentStatus != null">
+                equipment_status,
+            </if>
+            <if test="equipmentPower != null">
+                equipment_power,
+            </if>
+            <!-- <if test="newNationalStandard != null">
+              new_national_standard,
+            </if>
+            <if test="allowanceStatus != null">
+              allowance_status,
+            </if>
+            <if test="allowancePrice != null">
+              allowance_price,
+            </if>
+            <if test="checkoutStatus != null">
+              checkout_status,
+            </if>
+            <if test="ratedInVoltage != null">
+              rated_in_voltage,
+            </if>
+            <if test="ratedOutVoltage != null">
+              rated_out_voltage,
+            </if>
+            <if test="ratedPower != null">
+              rated_power,
+            </if> -->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentID != null">
+                #{equipmentID},
+            </if>
+            <if test="operatorID != null">
+                #{operatorID},
+            </if>
+            <!-- <if test="stationID != null">
+              #{stationID},
+            </if> -->
+            <if test="equipmentName != null">
+                #{equipmentName},
+            </if>
+            <if test="manufacturerID != null">
+                #{manufacturerID},
+            </if>
+            <if test="manufacturerName != null">
+                #{manufacturerName},
+            </if>
+            <if test="equipmentModel != null">
+                #{equipmentModel},
+            </if>
+            <if test="productionDate != null">
+                #{productionDate},
+            </if>
+            <if test="equipmentAddTime != null">
+                #{equipmentAddTime},
+            </if>
+            <if test="equipmentType != null">
+                #{equipmentType},
+            </if>
+            <if test="equipmentLng != null">
+                #{equipmentLng},
+            </if>
+            <if test="equipmentLat != null">
+                #{equipmentLat},
+            </if>
+            <if test="power != null">
+                #{power},
+            </if>
+            <if test="equipmentStatus != null">
+                #{equipmentStatus},
+            </if>
+            <if test="equipmentPower != null">
+                #{equipmentPower},
+            </if>
+            <!--       <if test="newNationalStandard != null">
+                    #{newNationalStandard},
+                  </if>
+                  <if test="allowancePrice != null">
+                    #{allowancePrice},
+                  </if>
+                  <if test="checkoutStatus != null">
+                    #{checkoutStatus},
+                  </if>
+                  <if test="ratedInVoltage != null">
+                    #{ratedInVoltage},
+                  </if>
+                  <if test="ratedOutVoltage != null">
+                    #{ratedOutVoltage},
+                  </if>
+                  <if test="ratedPower != null">
+                    #{ratedPower},
+                  </if> -->
+        </trim>
+    </insert>
+
+  <select id="getEquipmentNum" parameterType="com.cpit.cpmt.dto.exchange.operator.StationInfoShow" resultType="java.lang.Integer">
+    select count(0)
+    from exc_equipment_info a,exc_station_info b
+    where a.station_id=b.station_id and a.operator_id=b.operator_id
+     and DATE_FORMAT(b.connection_time, '%Y-%m')=#{hours}
+     <if test="operatorID != null">
+       and a.operator_id=#{operatorID}
+     </if>
+    <if test="areaCode != null">
+      and b.area_code=#{areaCode}
+    </if>
+  </select>
+</mapper>

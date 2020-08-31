@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.system.ProvinceDao" >
+
+  <resultMap id="ProvinceResultMap" type="com.cpit.cpmt.dto.system.Province" >
+    <id column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="CityResultMap" type="com.cpit.cpmt.dto.system.Province" >
+    <id column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    province_id, province_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ProvinceResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_province
+    where province_id = #{provinceId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_province
+    where province_id = #{provinceId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.Province" >
+    insert into sys_province (province_id, province_name)
+    values (#{provinceId,jdbcType=INTEGER}, #{provinceName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.Province" >
+    insert into sys_province
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+      <if test="provinceName != null" >
+        province_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="provinceId != null" >
+        #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceName != null" >
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.system.Province" >
+    update sys_province
+    <set >
+      <if test="provinceName != null" >
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where province_id = #{provinceId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.Province" >
+    update sys_province
+    set province_name = #{provinceName,jdbcType=VARCHAR}
+    where province_id = #{provinceId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getProvinceList" resultMap="ProvinceResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_province
+  </select>
+  
+  <select id="getCityListByProvinceId" resultMap="CityResultMap" parameterType="java.lang.Integer" >
+    select city_id,city_name,parent_id from sys_city where parent_id = #{parentId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getCityById" resultMap="CityResultMap" parameterType="java.lang.Integer" >
+    select city_id,city_name,parent_id from sys_city where city_id = #{cityId,jdbcType=INTEGER}
+  </select>
+</mapper>

@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.security.battery.normal.BatterySingleChargeDao">
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.dto.security.battery.normal.BatterySingleCharge">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="station_id" jdbcType="VARCHAR" property="stationId" />
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+    <result column="connector_id" jdbcType="VARCHAR" property="connectorId" />
+    <result column="bms_code" jdbcType="VARCHAR" property="bmsCode" />
+    <result column="bms_ver" jdbcType="VARCHAR" property="bmsVer" />
+    <result column="esti_r" jdbcType="INTEGER" property="estiR" />
+    <result column="remain_capacity" jdbcType="INTEGER" property="remainCapacity" />
+    <result column="charge_time" jdbcType="INTEGER" property="chargeTime" />
+    <result column="sOH" jdbcType="INTEGER" property="soh" />
+    <result column="soc" jdbcType="INTEGER" property="soc" />
+    <result column="voltage_h" jdbcType="REAL" property="voltageH" />
+    <result column="voltage_l" jdbcType="REAL" property="voltageL" />
+    <result column="tatal_voltage_h" jdbcType="REAL" property="tatalVoltageH" />
+    <result column="total_current_h" jdbcType="REAL" property="totalCurrentH" />
+    <result column="tempture_h" jdbcType="INTEGER" property="temptureH" />
+    <result column="tempture_l" jdbcType="INTEGER" property="temptureL" />
+    <result column="before_soc" jdbcType="INTEGER" property="beforeSoc" />
+    <result column="after_soc" jdbcType="INTEGER" property="afterSoc" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="rec_time" jdbcType="TIMESTAMP" property="recTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="statisticalTimes" jdbcType="INTEGER" property="statisticalTimes" />
+    <result column="statisticalTime" jdbcType="TIMESTAMP" property="statisticalTime" />
+  </resultMap>
+    
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.security.battery.normal.BatterySingleCharge">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sec_battery_single_charge
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+      <if test="stationId != null">
+        station_id,
+      </if>
+      <if test="equipmentId != null">
+        equipment_id,
+      </if>
+      <if test="connectorId != null">
+        connector_id,
+      </if>
+      <if test="bmsCode != null">
+        bms_code,
+      </if>
+      <if test="bmsVer != null">
+        bms_ver,
+      </if>
+      <if test="estiR != null">
+        esti_r,
+      </if>
+      <if test="remainCapacity != null">
+        remain_capacity,
+      </if>
+      <if test="chargeTime != null">
+        charge_time,
+      </if>
+      <if test="soh != null">
+        sOH,
+      </if>
+      <if test="soc != null">
+        soc,
+      </if>
+      <if test="voltageH != null">
+        voltage_h,
+      </if>
+      <if test="voltageL != null">
+        voltage_l,
+      </if>
+      <if test="tatalVoltageH != null">
+        tatal_voltage_h,
+      </if>
+      <if test="totalCurrentH != null">
+        total_current_h,
+      </if>
+      <if test="temptureH != null">
+        tempture_h,
+      </if>
+      <if test="temptureL != null">
+        tempture_l,
+      </if>
+      <if test="beforeSoc != null">
+        before_soc,
+      </if>
+      <if test="afterSoc != null">
+        after_soc,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="recTime != null">
+        rec_time,
+      </if>
+      <if test="inTime != null">
+        in_time,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="msg != null">
+        msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="stationId != null">
+        #{stationId,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentId != null">
+        #{equipmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="connectorId != null">
+        #{connectorId,jdbcType=VARCHAR},
+      </if>
+      <if test="bmsCode != null">
+        #{bmsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bmsVer != null">
+        #{bmsVer,jdbcType=VARCHAR},
+      </if>
+      <if test="estiR != null">
+        #{estiR,jdbcType=INTEGER},
+      </if>
+      <if test="remainCapacity != null">
+        #{remainCapacity,jdbcType=INTEGER},
+      </if>
+      <if test="chargeTime != null">
+        #{chargeTime,jdbcType=INTEGER},
+      </if>
+      <if test="soh != null">
+        #{soh,jdbcType=INTEGER},
+      </if>
+      <if test="soc != null">
+        #{soc,jdbcType=INTEGER},
+      </if>
+      <if test="voltageH != null">
+        #{voltageH,jdbcType=REAL},
+      </if>
+      <if test="voltageL != null">
+        #{voltageL,jdbcType=REAL},
+      </if>
+      <if test="tatalVoltageH != null">
+        #{tatalVoltageH,jdbcType=REAL},
+      </if>
+      <if test="totalCurrentH != null">
+        #{totalCurrentH,jdbcType=REAL},
+      </if>
+      <if test="temptureH != null">
+        #{temptureH,jdbcType=INTEGER},
+      </if>
+      <if test="temptureL != null">
+        #{temptureL,jdbcType=INTEGER},
+      </if>
+      <if test="beforeSoc != null">
+        #{beforeSoc,jdbcType=INTEGER},
+      </if>
+      <if test="afterSoc != null">
+        #{afterSoc,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recTime != null">
+        #{recTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inTime != null">
+        #{inTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=INTEGER},
+      </if>
+      <if test="msg != null">
+        #{msg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- 获取第一级钻取前,先获取bmsCode信息列表 -->
+  <select id="queryBmsCodeListData" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions">
+  	SELECT
+			operator_id,
+			station_id,
+			equipment_id,
+			<!-- connector_id, -->
+			bms_code,
+			end_time
+		FROM
+			sec_battery_single_charge
+		<where>
+			<if test="param.bMSCode!=null and param.bMSCode!=''"><!-- bmsCode -->
+				 bms_code = #{param.bMSCode}
+			</if>
+			<if test="param.timeGranularity == 1">
+        		AND DATE_FORMAT(end_time, '%Y-%m-%d %H')
+				BETWEEN DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m-%d %H'
+					)
+				AND  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m-%d %H'
+				)
+      		</if>
+			<if test="param.timeGranularity == 2">
+        		AND DATE_FORMAT(end_time, '%Y-%m-%d')
+				BETWEEN DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m-%d'
+					)
+				AND  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m-%d'
+				)
+      		</if>
+			<if test="param.timeGranularity == 3">
+        		AND DATE_FORMAT(end_time, '%Y-%m')
+				BETWEEN DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m'
+					)
+				AND  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m'
+				)
+      		</if>
+			<if test="param.timeGranularity == 4">
+        		AND DATE_FORMAT(end_time, '%Y-%m')
+				BETWEEN DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m'
+					)
+				AND  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m'
+				)
+      		</if>
+			<if test="param.timeGranularity == 5">
+        		AND DATE_FORMAT(end_time, '%Y')
+				BETWEEN DATE_FORMAT(
+						#{param.startTime},
+						'%Y'
+					)
+				AND  DATE_FORMAT(
+					#{param.endTime},
+					'%Y'
+				)
+      		</if>
+			<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+				AND operator_id = #{param.operatorId}
+			</if>
+			 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+				AND	station_id = #{param.stationId}	
+			</if>
+			<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+				AND equipment_id = #{param.equipmentId}
+			</if>
+		</where>
+				AND bms_code is not null and bms_code !='' and bms_code !='0' and bms_code !='无' and bms_code !='暂无'
+				ORDER BY end_time DESC
+				
+  </select>
+  <!-- 第一级钻取 小时粒度 -->
+  <select id="queryFirstLevelData" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions">
+  	SELECT
+			bms_code,
+			operator_id,
+			station_id,
+			equipment_id,
+			connector_id,
+			COUNT(bms_code) AS statisticalTimes,
+			end_time as statisticalTime
+		FROM
+			sec_battery_single_charge
+		<where>
+			bms_code = #{param.bMSCode}
+			AND	DATE_FORMAT(end_time, '%Y-%m-%d %H')
+			BETWEEN DATE_FORMAT(
+					#{param.startTime},
+					'%Y-%m-%d %H'
+				)
+			AND  DATE_FORMAT(
+				#{param.endTime},
+				'%Y-%m-%d %H'
+			)
+			<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+				AND operator_id = #{param.operatorId}
+			</if>
+			 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+				AND	station_id = #{param.stationId}	
+			</if>
+			<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+				AND equipment_id = #{param.equipmentId}
+			</if>
+		</where>
+		GROUP BY
+			bms_code,
+			operator_id,
+			station_id,
+			equipment_id,
+			connector_id,
+			DATE_FORMAT(end_time, '%Y-%m-%d %H')
+		ORDER BY DATE_FORMAT(end_time, '%Y-%m-%d %H') ASC
+  </select>
+  <select id="querySecondLevelData" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions">
+  	SELECT
+			bms_code,
+			operator_id,
+			station_id,
+			equipment_id,
+			connector_id,
+			start_time,
+			end_time
+		FROM
+			sec_battery_single_charge
+		<where>
+			<if test="param.timeGranularity == 1">
+        		AND DATE_FORMAT(end_time, '%Y-%m-%d %H')
+				&gt;= DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m-%d %H'
+					)
+				AND DATE_FORMAT(end_time, '%Y-%m-%d %H')
+				&lt; DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m-%d %H'
+				)
+      		</if>
+			<if test="param.timeGranularity == 2">
+        		AND DATE_FORMAT(end_time, '%Y-%m-%d')
+				&gt;= DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m-%d'
+					)
+				AND DATE_FORMAT(end_time, '%Y-%m-%d')
+				&lt;  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m-%d'
+				)
+      		</if>
+			<if test="param.timeGranularity == 3">
+        		AND DATE_FORMAT(end_time, '%Y-%m-%d')
+				&gt;= DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m-%d'
+					)
+				AND DATE_FORMAT(end_time, '%Y-%m-%d')
+				&lt;=  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m-%d'
+				)
+      		</if>
+			<if test="param.timeGranularity == 4">
+        		AND DATE_FORMAT(end_time, '%Y%m')
+				&gt;= DATE_FORMAT(
+						#{param.startTime},
+						'%Y%m'
+					)
+				AND DATE_FORMAT(end_time, '%Y%m')
+				&lt;  DATE_FORMAT(
+					#{param.endTime},
+					'%Y%m'
+				)
+      		</if>
+			<if test="param.timeGranularity == 5">
+        		AND DATE_FORMAT(end_time, '%Y-%m')
+				&gt;= DATE_FORMAT(
+						#{param.startTime},
+						'%Y-%m'
+					)
+				AND DATE_FORMAT(end_time, '%Y-%m')
+				&lt;=  DATE_FORMAT(
+					#{param.endTime},
+					'%Y-%m'
+				)
+			</if>
+      	</where>
+        AND bms_code = #{param.bMSCode,jdbcType=VARCHAR} AND operator_id = #{param.operatorId,jdbcType=VARCHAR} AND connector_id = #{param.connectorId,jdbcType=VARCHAR}
+  </select>
+  <select id="queryThirdLevelData" resultMap="BaseResultMap" parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions">
+  	SELECT
+			bms_code,
+			voltage_h,
+			voltage_l,
+			before_soc,
+			after_soc,
+			soc,
+			tempture_h,
+			tempture_l,
+			sOH,
+			esti_r,
+			remain_capacity,
+			start_time,
+			end_time
+		FROM
+			sec_battery_single_charge
+		WHERE
+            start_time= DATE_FORMAT(#{param.startTime},'%Y-%m-%d %H:%i:%S')
+        AND end_time= DATE_FORMAT(#{param.endTime},'%Y-%m-%d %H:%i:%S')
+        AND bms_code = #{param.bMSCode,jdbcType=VARCHAR} 
+        AND operator_id = #{param.operatorId,jdbcType=VARCHAR} 
+        AND connector_id = #{param.connectorId,jdbcType=VARCHAR}
+  </select>
+  <select id="getSohListByparam" resultType="java.lang.Integer" parameterType="com.cpit.cpmt.dto.security.battery.other.BatteryDataConditions">
+  	SELECT
+		sOH
+	FROM
+		sec_battery_single_charge
+	<where>
+			bms_code = #{param.bMSCode,jdbcType=VARCHAR}
+		<if test="param.allOperators==0"><!-- 表明运营商单选 -->
+			AND operator_id = #{param.operatorId}
+		</if>
+		 <if test="param.allStations==0"><!-- 表明充电站单选 -->
+			AND	station_id = #{param.stationId}	
+		</if>
+		<if test="param.allEquipments==0"><!-- 表明充电设备单选 -->
+			AND equipment_id = #{param.equipmentId}
+		</if>
+		<if test="param.timeGranularity == 4">
+       		AND DATE_FORMAT(end_time, '%Y%m') = DATE_FORMAT(#{param.time},'%Y%m')
+     	</if>
+		<if test="param.timeGranularity == 5">
+       		AND DATE_FORMAT(end_time, '%Y%m')
+			&gt;= DATE_FORMAT(
+					#{param.startTime},
+					'%Y%m'
+				)
+			AND DATE_FORMAT(end_time, '%Y%m')
+			&lt;=  DATE_FORMAT(
+				#{param.endTime},
+				'%Y%m'
+			)
+		</if>
+		<if test="param.timeGranularity == 6">
+       		AND DATE_FORMAT(end_time, '%Y') = DATE_FORMAT(#{param.time},'%Y')
+		</if>
+		AND sOH IS NOT NULL
+     </where>
+  </select>
+</mapper>

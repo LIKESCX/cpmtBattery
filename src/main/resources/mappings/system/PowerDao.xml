@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.PowerDao">
+  <resultMap id="ListResultMap" type="com.cpit.cpmt.dto.system.Power">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="power" jdbcType="VARCHAR" property="power" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="is_leaf" jdbcType="INTEGER" property="isLeaf" />
+    <result column="has_add" jdbcType="INTEGER" property="hasAdd" />
+    <result column="has_del" jdbcType="INTEGER" property="hasDel" />
+    <result column="has_update" jdbcType="INTEGER" property="hasUpdate" />
+    <result column="has_query" jdbcType="INTEGER" property="hasQuery" />
+    <result column="has_check" jdbcType="INTEGER" property="hasCheck" />
+    <result column="has_other" jdbcType="INTEGER" property="hasOther" />
+  </resultMap>
+  
+ 
+  <sql id="Base_Column_List">
+    id, `power`, `name`, parent_id, is_leaf,
+    has_add, has_del, has_update,has_query,has_check,has_other
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_power
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="getAllPower" resultMap="ListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_power
+    order by id
+   </select>  
+  
+  <select id="selectChild" parameterType="java.lang.Integer" resultMap="ListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_power
+    where
+       parent_id = #{id}
+      <!--
+    	order by convert(name using gb2312)
+      -->    
+   </select>
+  
+  <select id="getPowersOfUser" resultMap="ListResultMap">
+    select 
+    a.id, a.power, a.parent_id, a.name, a.is_leaf, b.*
+    from sys_power a, sys_role_power b, sys_user c
+    where
+       a.id = b.power_id
+       and
+       b.role_id = c.role_id
+       and 
+       c.id = #{userId}
+      <!-- 
+    	order by parent_id, convert(name using gb2312)
+      -->    
+   </select>  
+  
+    
+   <select id="getPowersOfRole" resultMap="ListResultMap">
+    select 
+    a.id, b.*
+    from sys_power a, sys_role_power b
+    where
+       a.id = b.power_id
+       and
+       b.role_id = #{0}
+      <!-- 
+    	order by parent_id, convert(name using gb2312)
+      -->    
+   </select>    
+    
+  <select id="selectByCondition" parameterType="com.cpit.cpmt.dto.system.Power" resultMap="ListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_power
+    where
+       1=1
+      <if test="power != null">
+        and `power` = #{power,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null">
+        and `name` like concat('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="parentId != null">
+        and parent_id = #{parentId,jdbcType=INTEGER}
+      </if>
+      <if test="isLeaf != null">
+        is_leaf = #{isLeaf,jdbcType=INTEGER}
+      </if>
+       <!--
+    	order by parent_id, convert(name using gb2312) 
+    	--> 
+   </select> 
+
+  <select id="selectByPower" parameterType="java.lang.String" resultMap="ListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_power
+    where power = #{0}
+  </select>
+
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_power
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cpit.cpmt.dto.system.Power">
+    insert into sys_power (id, `power`, `name`, 
+      parent_id, is_leaf,has_add, has_del, has_update,
+      has_query,has_check,has_other
+      )
+    values (
+      #{id,jdbcType=INTEGER}, #{power,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{isLeaf,jdbcType=INTEGER},
+      #{hasAdd,jdbcType=INTEGER},
+      #{hasDel,jdbcType=INTEGER},
+      #{hasUpdate,jdbcType=INTEGER},
+      #{hasQuery,jdbcType=INTEGER},
+      #{hasCheck,jdbcType=INTEGER},
+      #{hasOther,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.Power">
+    insert into sys_power
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="power != null">
+        `power`,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="isLeaf != null">
+        is_leaf,
+      </if>
+      <if test="hasAdd != null">
+        has_add,
+      </if>
+      <if test="hasDel != null">
+        has_del,
+      </if>
+      <if test="hasUpdate != null">
+        has_update,
+      </if>
+      <if test="hasQuery != null">
+        has_query,
+      </if>      
+      <if test="hasCheck != null">
+        has_check,
+      </if>      
+      <if test="hasOther != null">
+        has_other,
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="power != null">
+        #{power,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="isLeaf != null">
+        #{isLeaf,jdbcType=INTEGER},
+      </if>
+      <if test="hasAdd != null">
+        #{hasAdd,jdbcType=INTEGER},
+      </if>      
+      <if test="hasDel != null">
+        #{hasDel,jdbcType=INTEGER},
+      </if>      
+      <if test="hasUpdate != null">
+        #{hasUpdate,jdbcType=INTEGER},
+      </if>      
+      <if test="hasQuery != null">
+        #{hasQuery,jdbcType=INTEGER},
+      </if>      
+      <if test="hasCheck != null">
+        #{hasCheck,jdbcType=INTEGER},
+      </if>      
+      <if test="hasOther != null">
+        #{hasOther,jdbcType=INTEGER},
+      </if>      
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.system.Power">
+    update sys_power
+    <set>
+      <if test="power != null">
+        `power` = #{power,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="isLeaf != null">
+        is_leaf = #{isLeaf,jdbcType=INTEGER},
+      </if>
+      <if test="hasAdd != null">
+        has_add = #{hasAdd,jdbcType=INTEGER},
+      </if>      
+      <if test="hasDel != null">
+        has_del = #{hasDel,jdbcType=INTEGER},
+      </if>      
+      <if test="hasUpdate != null">
+        has_update = #{hasUpdate,jdbcType=INTEGER},
+      </if>      
+      <if test="hasQuery != null">
+        has_query = #{hasQuery,jdbcType=INTEGER},
+      </if>      
+      <if test="hasCheck != null">
+        has_check = #{hasCheck,jdbcType=INTEGER},
+      </if>      
+      <if test="hasOther != null">
+        has_other = #{hasOther,jdbcType=INTEGER},
+      </if>        
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.cpit.cpmt.dto.system.Power">
+    update sys_power
+    set `power` = #{power,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      is_leaf = #{isLeaf,jdbcType=INTEGER},
+      has_add = #{hasAdd,jdbcType=INTEGER},
+      has_del = #{hasDel,jdbcType=INTEGER},
+      has_update = #{hasUpdate,jdbcType=INTEGER},
+      has_query = #{hasQuery,jdbcType=INTEGER},
+      has_check = #{hasCheck,jdbcType=INTEGER}
+      
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+</mapper>

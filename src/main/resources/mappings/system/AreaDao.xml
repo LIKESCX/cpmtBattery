@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.AreaDao">
+  
+  <resultMap id="ResultMap" type="com.cpit.cpmt.dto.system.Area">
+    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+    <result column="area_name" jdbcType="VARCHAR" property="areaName" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    area_code, area_name
+  </sql>
+  
+  <select id="getAreaByCode" parameterType="java.lang.String" resultMap="ResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_area_dict
+    where area_code = #{0}
+  </select>
+  
+ 
+  <select id="getAllArea" resultMap="ResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_area_dict
+    order by area_code
+   </select>  
+  
+  
+  <select id="getAreasOfUser" parameterType="java.lang.String" resultMap="ResultMap">
+    select 
+    a.*
+    from sys_area_dict a, sys_user_area b
+    where 
+    a.area_code = b.area_code 
+    and  
+    b.user_id = #{userId}
+   	order by area_code
+   </select>  
+   
+
+</mapper>

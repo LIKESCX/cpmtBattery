@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.monitor.RealTimeAlarmInfoDao" >
+  <resultMap id="RealTimeAlarmResultMap" type="com.cpit.cpmt.dto.exchange.basic.AlarmInfo" >
+    <result column="operator_id" property="operatorID" jdbcType="VARCHAR" />
+    <result column="operator_name" property="operatorName" jdbcType="VARCHAR" />
+    <result column="station_id" property="stationID" jdbcType="VARCHAR" />
+    <result column="station_name" property="stationName" jdbcType="VARCHAR" />
+    <result column="equipment_id" property="equipmentID" jdbcType="VARCHAR" />
+    <result column="equipment_name" property="equipmentName" jdbcType="VARCHAR" />
+    <result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+	<result column="street_id" property="streetId" jdbcType="VARCHAR" /> 
+	<result column="street_name" property="streetName" jdbcType="VARCHAR" /> 
+    <result column="connector_id" jdbcType="VARCHAR" property="connectorID" />
+    <result column="connector_name" jdbcType="VARCHAR" property="connectorName" />
+    <result column="alarm_status" jdbcType="VARCHAR" property="alarmStatus" />
+    <result column="alarm_code" jdbcType="VARCHAR" property="alarmCode" />
+    <result column="alarm_type" jdbcType="VARCHAR" property="alarmType" />
+    <result column="alarm_level" jdbcType="VARCHAR" property="alarmLevel" />
+    <result column="alarm_time" jdbcType="TIMESTAMP" property="alarmTime" />
+    <result column="alarmCount" jdbcType="INTEGER" property="alarmCount" />
+    <result column="alarmSumCount" jdbcType="TIMESTAMP" property="alarmSumCount" /><!-- 外加的统计每个枪的总告警次数 -->
+    <result column="alarm_desc" jdbcType="VARCHAR" property="alarmDesc" />
+    <result column="note_string" jdbcType="VARCHAR" property="noteString" />
+    <result column="received_time" jdbcType="TIMESTAMP" property="receivedTime" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="deal_result" jdbcType="INTEGER" property="dealResult" />
+    <result column="returnTime" jdbcType="TIMESTAMP" property="returnTime" /><!-- 便于统一返回的时间字段 -->
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, station_id, operator_id, equipment_owner_id, station_name, equipment_id, connector_id, 
+    alarm_status, alarm_code, alarm_type, alarm_level, alarm_time, note_string, received_time, 
+    in_time
+  </sql>
+  <!-- 充电设施实时AlarmInfo监控列表展示 -->
+  <select id="queryRealTimeAlarmInfoByCondition" parameterType="com.cpit.cpmt.dto.monitor.EquimentMonitorCondition" resultMap="RealTimeAlarmResultMap">
+	SELECT
+		operator_id,
+		station_id,
+		equipment_id,
+		connector_id,
+		COUNT(connector_id) AS alarmSumCount,
+		MAX(alarm_time) AS alarm_time
+	FROM
+		exc_alarm_info
+	WHERE 
+	     1=1
+		<if test="operatorID != null and operatorID!=''">
+       	   AND operator_id = #{operatorID}
+    	</if>
+		<if test="stationID != null and stationID!=''">
+	       AND station_id=#{stationID}
+	    </if>
+		<if test="equipmentID != null and equipmentID!=''">
+	       AND equipment_id=#{equipmentID}
+	    </if>
+		<if test="connectorID != null and connectorID!=''">
+	       AND connector_id=#{connectorID}
+	    </if>
+		<if test="bmsCode != null and bmsCode!=''">
+	       AND bms_code=#{bmsCode}
+	    </if>
+	    <if test="areaCodeList != null and areaCodeList.size()>0 ">
+      		and area_code in
+	      	<foreach collection="areaCodeList" item="areaCode" index="index" open="(" close=")" separator=",">
+	        	#{areaCode}
+	      	</foreach>
+    	</if>
+	GROUP BY
+		operator_id,
+		station_id,
+		equipment_id,
+		connector_id
+	ORDER BY alarm_time DESC
+  
+  </select>
+  <!-- 实时监控详情页面展示告警信息详情 -->
+  <select id="queryAlarmDetailInfosByConditions" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	 SELECT 
+  	 	operator_id,
+		station_id,
+		equipment_id,
+		connector_id,
+		alarm_status,
+		alarm_code,
+		alarm_type,
+		alarm_level,
+		alarm_desc,
+		note_string,
+	 	alarm_time,
+	 	deal_result,
+	 	remarks
+	 FROM 
+	 	exc_alarm_info
+	 WHERE 
+	 	operator_id = #{operatorID,jdbcType=VARCHAR}
+	 AND 
+	    connector_id = #{connectorID,jdbcType=VARCHAR}
+	 <![CDATA[AND alarm_time > #{startTime} AND alarm_time < #{endTime}]]>
+     ORDER BY alarm_time desc
+  	 
+  </select>
+  <!--告警级别、告警次数使用图形展示-->
+  <select id="queryAlarmGraphicDisplayInfoByConditions" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	   alarm_level,
+	   COUNT(alarm_code) alarmCount,
+	   alarm_time
+	  FROM
+	   exc_alarm_info
+	  WHERE
+	      operator_id = #{operatorID,jdbcType=VARCHAR} 
+	  AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	  <![CDATA[AND alarm_time > DATE_SUB(NOW(),INTERVAL 60 MINUTE)]]>
+	  GROUP BY
+	   alarm_level,
+	   alarm_time
+    ORDER BY alarm_time ASC
+  </select>
+  <select id="queryAlarmGraphicDisplayInfo2_1" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_level = 1
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 5
+	)
+  </select>
+  <select id="queryAlarmGraphicDisplayInfo2_2" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_level = 2
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 5
+	)
+  </select>
+  <select id="queryAlarmGraphicDisplayInfo2_3" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_level = 3
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 5
+	)
+  </select>
+  <select id="queryAlarmSumCountByConditions" resultMap="RealTimeAlarmResultMap">
+   SELECT 
+    a.alarm_time,
+    SUM(a.alarmCount) AS alarmSumCount
+   FROM 
+    (SELECT
+	   alarm_level,
+	   COUNT(alarm_code) AS alarmCount,
+	   alarm_time
+	  FROM
+	   exc_alarm_info
+	  WHERE
+	      operator_id = #{operatorID,jdbcType=VARCHAR} 
+	  AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	  <![CDATA[AND alarm_time > DATE_SUB(NOW(),INTERVAL 60 MINUTE)]]>
+	  GROUP BY
+	   alarm_level,
+	   alarm_time
+    ORDER BY alarm_time ASC) a GROUP BY a.alarm_time;
+  </select>
+  <select id="queryWithiTwoHoursUndeterminedNewAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_status = 1
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 5
+	)
+  </select>
+  <select id="queryWithiTwoHoursDeterminedNewAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					deal_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND deal_result = 2
+	AND alarm_time BETWEEN #{startTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		deal_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	deal_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			deal_time
+		) / 5
+	)
+  </select>
+  <select id="queryWithiTwoHoursDeterminedOldAndNewAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					deal_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND deal_result = 2
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		deal_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	deal_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			deal_time
+		) / 5
+	)
+  </select>
+  <select id="queryWithiTwoHoursUndeterminedOldAndNewAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 5 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 5
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND deal_result = 1
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 5
+	)
+  </select>
+  
+  <!--告警历史详情页面的 -->
+  <!-- 实时监控告警历史详情页面展示告警信息详情 -->
+  <select id="queryAlarmHistoryDtailInfoByConditions" resultMap="RealTimeAlarmResultMap">
+  	 SELECT 
+  	 	operator_id,
+		station_id,
+		equipment_id,
+		connector_id,
+		alarm_status,
+		alarm_code,
+		alarm_type,
+		alarm_level,
+		alarm_desc,
+		note_string,
+	 	alarm_time,
+	 	deal_result,
+	 	remarks
+	 FROM 
+	 	exc_alarm_info
+	 WHERE 
+	 	operator_id = #{operatorID,jdbcType=VARCHAR}
+	 AND 
+	    connector_id = #{connectorID,jdbcType=VARCHAR}
+	 <![CDATA[AND alarm_time >= #{startTime,jdbcType=TIMESTAMP}]]>
+	 <![CDATA[AND alarm_time <= #{endTime,jdbcType=TIMESTAMP}]]>
+     ORDER BY alarm_time desc
+  	 
+  </select>
+  <select id="queryAlarmGraphicDisplayInfo3_1" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 60 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 60
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_level = 1
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 60
+	)
+  </select>
+  <select id="queryAlarmGraphicDisplayInfo3_2" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 60 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 60
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_level = 2
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 60
+	)
+  </select>
+  <select id="queryAlarmGraphicDisplayInfo3_3" resultMap="RealTimeAlarmResultMap">
+   SELECT
+	count(*) AS alarmCount,
+	<!-- floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			'2020-02-26 09:00:00',
+			alarm_time
+		) / 5
+	) + 1, -->
+	date_add(
+		#{startTime},
+		INTERVAL 60 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 60
+			) + 1
+		) MINUTE
+	) AS returnTime
+FROM
+	exc_alarm_info
+WHERE
+	operator_id = #{operatorID,jdbcType=VARCHAR} 
+	AND connector_id = #{connectorID,jdbcType=VARCHAR}
+	AND alarm_level = 3
+AND	TIMESTAMPDIFF(
+		MINUTE,
+		#{endTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &lt; 0
+AND TIMESTAMPDIFF(
+	MINUTE,
+	#{startTime,jdbcType=TIMESTAMP},
+	alarm_time
+) &gt; 0
+GROUP BY
+	floor(
+		TIMESTAMPDIFF(
+			MINUTE,
+			#{startTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) / 60
+	)
+  </select>
+  <select id="queryWithoutTwoHoursOccurrenceStateOldAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	date_add(
+		#{startTime},
+		INTERVAL 60 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 60
+			) + 1
+		) MINUTE
+	) AS returnTime
+	FROM
+		exc_alarm_info
+	WHERE
+			operator_id = #{operatorID,jdbcType=VARCHAR} 
+		AND connector_id = #{connectorID,jdbcType=VARCHAR}
+		AND alarm_status = 1
+	AND	TIMESTAMPDIFF(
+			MINUTE,
+			#{endTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) &lt; 0
+	AND TIMESTAMPDIFF(
+		MINUTE,
+		#{startTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &gt; 0
+	GROUP BY
+		floor(
+			TIMESTAMPDIFF(
+				MINUTE,
+				#{startTime,jdbcType=TIMESTAMP},
+				alarm_time
+			) / 60
+		)
+  </select>
+  
+  <select id="queryWithoutTwoHoursDeterminedOldAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	date_add(
+		#{startTime},
+		INTERVAL 60 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					deal_time
+				) / 60
+			) + 1
+		) MINUTE
+	) AS returnTime
+	FROM
+		exc_alarm_info
+	WHERE
+			operator_id = #{operatorID,jdbcType=VARCHAR} 
+		AND connector_id = #{connectorID,jdbcType=VARCHAR}
+		AND deal_result = 2
+	AND	TIMESTAMPDIFF(
+			MINUTE,
+			#{endTime,jdbcType=TIMESTAMP},
+			deal_time
+		) &lt; 0
+	AND TIMESTAMPDIFF(
+		MINUTE,
+		#{startTime,jdbcType=TIMESTAMP},
+		deal_time
+	) &gt; 0
+	GROUP BY
+		floor(
+			TIMESTAMPDIFF(
+				MINUTE,
+				#{startTime,jdbcType=TIMESTAMP},
+				deal_time
+			) / 60
+		)
+   </select>
+   
+  <select id="queryWithoutTwoHoursUndeterminedOldAlarmNums" parameterType="com.cpit.cpmt.dto.monitor.AlarmConditions" resultMap="RealTimeAlarmResultMap">
+  	SELECT
+	count(*) AS alarmCount,
+	date_add(
+		#{startTime},
+		INTERVAL 60 * (
+			floor(
+				TIMESTAMPDIFF(
+					MINUTE,
+					#{startTime},
+					alarm_time
+				) / 60
+			) + 1
+		) MINUTE
+	) AS returnTime
+	FROM
+		exc_alarm_info
+	WHERE
+			operator_id = #{operatorID,jdbcType=VARCHAR} 
+		AND connector_id = #{connectorID,jdbcType=VARCHAR}
+		AND deal_result = 1
+	AND	TIMESTAMPDIFF(
+			MINUTE,
+			#{endTime,jdbcType=TIMESTAMP},
+			alarm_time
+		) &lt; 0
+	AND TIMESTAMPDIFF(
+		MINUTE,
+		#{startTime,jdbcType=TIMESTAMP},
+		alarm_time
+	) &gt; 0
+	GROUP BY
+		floor(
+			TIMESTAMPDIFF(
+				MINUTE,
+				#{startTime,jdbcType=TIMESTAMP},
+				alarm_time
+			) / 60
+		)
+  </select>
+</mapper>

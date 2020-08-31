@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpit.cpmt.biz.dao.system.UserDao">
+
+  <resultMap id="QuickListResultMap"  type="com.cpit.cpmt.dto.system.User">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="src" jdbcType="INTEGER" property="src" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="last_updated_by" jdbcType="VARCHAR" property="lastUpdatedBy" />
+    <result column="last_update_date" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
+    <result column="delete_date" jdbcType="TIMESTAMP" property="deleteDate" />
+    <result column="orgnization" jdbcType="VARCHAR" property="orgnization" />
+    <result column="role_id" jdbcType="VARCHAR" property="roleId" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <association property="operator" column="operator_id" select="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.selectByPrimaryKey"/> 
+  </resultMap>
+
+
+  <resultMap id="BaseResultMap" extends="QuickListResultMap" type="com.cpit.cpmt.dto.system.User">
+    <result column="password" jdbcType="VARCHAR" property="password" />
+<!--     <collection property="areas" select="com.cpit.cpmt.biz.dao.system.AreaDao.getAreasOfUser" column="id"/> -->
+<!--     <collection property="operators" select="getOperatorsOfUser" column="id"/> -->
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    id, account, `name`, `type`, `password`, description, src, status, 
+    sex, email, telephone, 
+    created_by, create_date, 
+    last_updated_by, last_update_date,  
+    deleted_by,delete_date, orgnization,
+    role_id,operator_id
+  </sql>
+  
+
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+ 
+  <select id="getUserByLoginName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where account = #{0}
+  </select>
+  
+  
+  
+  <select id="selectByCondition" parameterType="com.cpit.cpmt.dto.system.User" resultMap="QuickListResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    <where>
+      <if test="account != null">
+        and account = #{account,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null">
+        and `name` like concat('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="type != null">
+        and `type` = #{type,jdbcType=INTEGER}
+      </if>
+      <if test="status != null">
+        and status = #{status,jdbcType=INTEGER}
+      </if>
+      <if test="src != null">
+        and src = #{src,jdbcType=INTEGER}
+      </if>
+      <if test="roleId != null">
+        and role_id = #{roleId,jdbcType=VARCHAR}
+      </if>    
+      <if test="operatorId != null">
+        and operator_id = #{operatorId,jdbcType=VARCHAR}
+      </if>         
+      <if test="statusList != null and statusList.size() != 0">
+        and  status in
+           <foreach collection="statusList" item="si" index="index"
+                    open="(" close=")" separator=",">
+               #{si}
+           </foreach>
+      </if>   
+      <if test="typeList != null and typeList.size() != 0">
+        and  type in
+           <foreach collection="typeList" item="ti" index="index"
+                    open="(" close=")" separator=",">
+               #{ti}
+           </foreach>
+      </if>   
+     </where>     
+         
+    order by id desc   
+  </select> 
+
+  
+  <select id="quickGetUserById" parameterType="java.lang.String" resultMap="QuickListResultMap">
+    select 
+    *
+    from sys_user 
+    where 
+    id = #{0}
+  </select>  
+  
+  
+  <select id="getOperatorsOfUser" parameterType="java.lang.String" resultMap="com.cpit.cpmt.biz.dao.exchange.operator.OperatorInfoDao.BaseResultMap">
+    select 
+    a.* 
+    from exc_operator_info a, sys_user_operator b
+    where 
+    a.operator_id = b.operator_id
+    and
+    b.user_id = #{0}
+    order by a.operator_id
+  </select>
+
+  <select id="getByRoleAndAreaOrStreet" resultMap="QuickListResultMap">
+    select
+    a.*
+    from sys_user a
+    left join sys_role b on a.role_id = b.id
+    left join sys_user_area c on a.id = c.user_id
+    left join sys_user_street d on a.id = d.user_id
+    <where>
+      <if test="roleName != null">
+        <![CDATA[ and instr(b.name,#{roleName}) > 0 ]]>
+      </if>
+      <if test="areaCodes != null and areaCodes.size() != 0">
+        and  c.area_code in
+        <foreach collection="areaCodes" item="a" index="index"
+                 open="(" close=")" separator=",">
+          #{a}
+        </foreach>
+      </if>
+      <if test="streetIds != null and streetIds.size() != 0">
+        and  d.street_id in
+        <foreach collection="streetIds" item="s" index="index"
+                 open="(" close=")" separator=",">
+          #{s}
+        </foreach>
+      </if>
+    </where>
+    order by a.id
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_user
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+ 
+  <insert id="insertSelective" parameterType="com.cpit.cpmt.dto.system.User">
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="password != null">
+        `password`,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="src != null">
+        src,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="createdBy != null">
+        created_by,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="lastUpdatedBy != null">
+        last_updated_by,
+      </if>
+      <if test="lastUpdateDate != null">
+        last_update_date,
+      </if>
+      <if test="deletedBy != null">
+        deleted_by,
+      </if>
+      <if test="deleteDate != null">
+        delete_date,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>   
+      <if test="orgnization != null">
+        orgnization,
+      </if>          
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="src != null">
+        #{src,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdatedBy != null">
+        #{lastUpdatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedBy != null">
+        #{deleted_by,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteDate != null">
+        #{deleteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>   
+      <if test="orgnization != null">
+        #{orgnization,jdbcType=VARCHAR},
+      </if>           
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.cpit.cpmt.dto.system.User">
+    update sys_user
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="password != null">
+        `password` = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="src != null">
+        src = #{src,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdatedBy != null">
+        last_updated_by = #{lastUpdatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateDate != null">
+        last_update_date = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedBy != null">
+        deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteDate != null">
+        delete_date = #{deleteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=VARCHAR},
+      </if>    
+      <if test="orgnization != null">
+        orgnization = #{orgnization,jdbcType=VARCHAR},
+      </if>          
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+
+</mapper>
