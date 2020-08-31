@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cpit.cpmt.biz.dao.exchange.supplement.SupplementInfoDao" >
+  <resultMap id="BaseResultMap" type="com.cpit.cpmt.biz.dto.SupplementInfo" >
+     <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="operator_id" property="operatorID" jdbcType="VARCHAR" />
+    <result column="station_id" property="stationID" jdbcType="VARCHAR" />
+     <result column="equipment_id" property="equipmentID" jdbcType="VARCHAR" />
+    <result column="connector_id" property="connectorID" jdbcType="VARCHAR" />
+    <result column="inf_name" property="infName" jdbcType="VARCHAR" />
+    <result column="inf_ver" property="infVer" jdbcType="VARCHAR" />
+    <result column="inf_type" property="infType" jdbcType="VARCHAR" />
+    <result column="original_time" property="originalTime" jdbcType="VARCHAR" />
+    <result column="is_need_supply" property="isNeedSupply" jdbcType="VARCHAR" />
+    <result column="supply_time" property="supplyTime" jdbcType="VARCHAR" />
+    <result column="supply_type" property="supplyType" jdbcType="VARCHAR" />
+    <result column="supply_result" property="supplyResult" jdbcType="VARCHAR" />
+     <result column="supply_fail_reason" property="supplyFailReason" jdbcType="VARCHAR" />
+    <result column ="supply_times" property ="supplyTimes" jdbcType="VARCHAR"/>
+      <result column="memo1" property="memo1" jdbcType="VARCHAR" />
+       <result column="memo2" property="memo2" jdbcType="VARCHAR" />
+  </resultMap>
+     <insert id="addDto" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo">
+  insert into  exc_supplement_info (id, operator_id,station_id,connector_id,equipment_id,
+  inf_name,
+  inf_ver,
+  inf_type,
+  original_time,
+  is_need_supply,
+  supply_time,
+  supply_type,
+  supply_result,
+  supply_fail_reason,
+  supply_times,
+  memo1,memo2
+  )values (#{id,jdbcType=INTEGER},
+  #{operatorID,jdbcType=VARCHAR},
+  #{stationID,jdbcType=VARCHAR},
+  #{connectorID,jdbcType=VARCHAR},
+    #{equipmentID,jdbcType=VARCHAR},
+  #{infName,jdbcType=VARCHAR},
+  #{infVer,jdbcType=VARCHAR},
+  #{infType,jdbcType=VARCHAR},
+  #{originalTime,jdbcType=VARCHAR},
+  #{isNeedSupply,jdbcType=VARCHAR},
+  #{supplyTime,jdbcType=VARCHAR},
+  #{supplyType,jdbcType=VARCHAR},
+  #{supplyResult,jdbcType=VARCHAR},
+  #{supplyFailReason,jdbcType=VARCHAR},
+  #{supplyTimes,jdbcType=VARCHAR},
+  #{memo1,jdbcType=VARCHAR},
+  #{memo2,jdbcType=VARCHAR}
+  )
+
+  </insert>
+  
+  
+  
+  <select id="search" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo" resultMap="BaseResultMap">
+  select * from exc_supplement_info where
+  operator_id =#{operatorID}
+  
+  and inf_name =#{infName}
+  and original_time between #{startTime} and #{endTime}
+  and  supply_times&lt;= '3'
+  </select>
+  
+  
+   <select id="searchStationInfoById" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo" resultMap="BaseResultMap">
+
+  	select 
+  	*
+	
+	from   exc_supplement_info e2
+	where e2.operator_id =#{operatorID}
+  and e2.station_id =#{stationID}
+ 
+  and e2.inf_name =#{infName}
+  and e2.original_time between #{startTime} and #{endTime}
+  and  e2.supply_times &lt;= '3'
+  </select>
+  
+    <select id="searchById" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo" resultMap="BaseResultMap">
+
+  	select 
+  	e1.connector_name as memo1,
+  	e2.operator_id as operator_id,
+	e2.connector_id as connector_id,
+	e2.inf_name as inf_name,
+	e2.original_time as original_time,
+
+	e2.inf_type as inf_type,
+	e2.is_need_supply as is_need_supply,
+	e2.supply_time as supply_time,
+	e2.equipment_id as equipment_id,
+	e2.station_id as station_id
+	
+	from  exc_connector_info e1,exc_supplement_info e2
+	where e1.operator_id = e2.operator_id
+	and e1.connector_id = e2.connector_id
+	and  e2.operator_id =#{operatorID}
+  and e2.station_id =#{stationID}
+ 
+  and e2.inf_name =#{infName}
+  and e2.original_time between #{startTime} and #{endTime}
+  and  e2.supply_times &lt;= '3'
+  </select>
+  
+
+    <select id="getNeedSupply" parameterType ="String" resultMap="BaseResultMap">
+  select * from exc_supplement_info where
+  original_time between #{startTime} and #{endTime}
+  and  supply_times &lt;= '3'
+  union
+  select * from exc_supplement_info where 
+   original_time  &gt;=#{startTime}  
+   and inf_name ='notification_bmsInfo'
+   and supply_times &lt;= '3'
+  
+  </select>
+   <select id="getById" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo" resultMap="BaseResultMap">
+  select * from exc_supplement_info where
+  id =#{id}
+  
+  </select>
+  
+  
+   <select id="getByInfo" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo" resultMap="BaseResultMap">
+  select * from exc_supplement_info where
+   operator_id = #{operatorID,jdbcType=VARCHAR}
+      and  inf_name =#{infName,jdbcType=VARCHAR}
+      and  inf_ver = #{infVer,jdbcType=VARCHAR}
+      and original_time = #{originalTime,jdbcType=VARCHAR}
+       <if test="stationID != null">
+       and station_id = #{stationID,jdbcType=VARCHAR}
+       </if>
+         <if test="connectorID != null">
+       and connector_id = #{connectorID,jdbcType=VARCHAR}
+       </if>
+  
+  </select>
+ <update id ="updateSupplyResultById" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo">
+ update exc_supplement_info 
+<trim prefix="set" suffixOverrides=",">  
+   <if test="supplyResult != null">
+        supply_result = #{supplyResult,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyFailReason != null">
+        supply_fail_reason = #{supplyFailReason,jdbcType=VARCHAR},
+      </if>
+       <if test="supplyTimes != null">
+        supply_times = #{supplyTimes,jdbcType=VARCHAR},
+      </if>
+       <if test="supplyType != null">
+        supply_type = #{supplyType,jdbcType=VARCHAR},
+      </if>
+       <if test="isNeedSupply != null">
+        is_need_supply = #{isNeedSupply,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyTime != null">
+        supply_time = #{supplyTime,jdbcType=VARCHAR},
+      </if>
+      </trim>
+      WHERE
+     
+       id=#{id}
+      
+      
+ </update>
+ 
+ 
+ <delete id = "delDto" parameterType ="com.cpit.cpmt.biz.dto.SupplementInfo">
+ delete from exc_supplement_info   where   id=#{id,jdbcType=VARCHAR}
+      </delete>
+     
+      
+      <select id ="getCalFail" resultMap="BaseResultMap">
+     select * from  exc_supplement_info where memo2 like '%电池%';
+      </select>
+      
+        <select id ="getByIdTime" resultMap="BaseResultMap">
+     select * from  exc_supplement_info where 
+       operator_id = #{operatorID,jdbcType=VARCHAR}
+      and  inf_name =#{infName,jdbcType=VARCHAR}
+      and  inf_ver = #{infVer,jdbcType=VARCHAR}
+      and original_time = #{originalTime,jdbcType=VARCHAR}
+      </select>
+      
+      
+          <select id ="getBmsInfoTime" resultMap="BaseResultMap">
+     select * from  exc_supplement_info where 
+       operator_id = #{operatorID,jdbcType=VARCHAR}
+      and  inf_name ='notification_bmsInfo'
+      and  inf_ver = #{infVer,jdbcType=VARCHAR}
+      
+      and original_time like  CONCAT('%',#{originalTime,jdbcType=VARCHAR},'%')
+      </select>
+</mapper>
