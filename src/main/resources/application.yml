@@ -3,17 +3,17 @@ spring:
     name: cpmt-biz
 # rabitmq will used in future
   rabbitmq:
-    addresses: 127.0.0.1
+    addresses: 10.100.10.155
     port: 5672
-    username: guest
-    password: guest
+    username: test
+    password: 123456
 #used management port to refresh
   redis:
     database: 4
-    host: 127.0.0.1 #read from config-server
-    port: 6379
-    password: potevio123
-    timeout: 2000
+    host: 10.100.10.155 #read from config-server
+    port: 6680
+    password: test
+    timeout: 123456
     pool:
       max-active: 20
       max-wait: 2000
@@ -48,21 +48,21 @@ spring:
   data:
     mongodb:
       first: #当前库 
-        host: 127.0.0.1
+        host: 172.16.11.95
         port: 27017
         username: bms
         password: abc123smb
         database: bmsc
         authentication-database: bmsc
       second: #监控库
-        host: 127.0.0.1
+        host: 172.16.11.95
         port: 27017
         username: bms
         password: abc123smb
         database: bmsc
         authentication-database: bmsc
       third: #历史库
-        host: 127.0.0.1
+        host: 172.16.11.95
         port: 27017
         username: bms
         password: abc123smb
