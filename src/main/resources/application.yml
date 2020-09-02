@@ -47,7 +47,7 @@ spring:
         connection-test-query: SELECT 1
   data:
     mongodb:
-      first: #当前库 
+      first: #当前库
         host: 172.16.11.95
         port: 27017
         username: bms
